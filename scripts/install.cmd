@@ -485,6 +485,30 @@ echo Address the annotation feedback above. The user has reviewed your last mess
 
 echo Installed /plannotator-last command to !CLAUDE_COMMANDS_DIR!\plannotator-last.md
 
+REM Install OpenCode skill-launcher slash commands
+set "OPENCODE_COMMANDS_DIR=%USERPROFILE%\.config\opencode\commands"
+if not exist "!OPENCODE_COMMANDS_DIR!" mkdir "!OPENCODE_COMMANDS_DIR!"
+
+(
+echo ---
+echo description: Turn an idea or objective into a goal package for /goal
+echo ---
+echo.
+echo Use $plannotator-setup-goal to turn the user's idea or objective into a goal package. Treat any command arguments as the starting objective; if there are no arguments, infer the objective from the current conversation or ask the user for the missing objective.
+) > "!OPENCODE_COMMANDS_DIR!\plannotator-setup-goal.md"
+
+echo Installed /plannotator-setup-goal command to !OPENCODE_COMMANDS_DIR!\plannotator-setup-goal.md
+
+(
+echo ---
+echo description: Generate a Plannotator-themed self-contained HTML visual explainer
+echo ---
+echo.
+echo Use $plannotator-visual-explainer to generate a self-contained HTML visualization with Plannotator theming. Treat any command arguments as the visualization brief; if there are no arguments, infer the brief from the current conversation or ask the user for the missing details.
+) > "!OPENCODE_COMMANDS_DIR!\plannotator-visual-explainer.md"
+
+echo Installed /plannotator-visual-explainer command to !OPENCODE_COMMANDS_DIR!\plannotator-visual-explainer.md
+
 REM Install skills (requires git)
 REM Remove legacy Codex-oriented skills from the older shared agent scope.
 set "LEGACY_AGENTS_SKILLS_DIR=%USERPROFILE%\.agents\skills"
@@ -497,10 +521,10 @@ for %%S in (plannotator-review plannotator-annotate plannotator-last) do (
 )
 if "!LEGACY_SKILLS_REMOVED!"=="1" echo Removed legacy Plannotator skills from !LEGACY_AGENTS_SKILLS_DIR!
 
-REM Remove Plannotator skills that belong in the shared agent scope from Codex.
+REM Remove Plannotator skills that still belong only in the shared agent scope from Codex.
 set "STALE_CODEX_SKILLS_DIR=%USERPROFILE%\.codex\skills"
 set "STALE_CODEX_SKILLS_REMOVED=0"
-for %%S in (plannotator-compound plannotator-setup-goal) do (
+for %%S in (plannotator-compound) do (
     if exist "!STALE_CODEX_SKILLS_DIR!\%%S" (
         rmdir /s /q "!STALE_CODEX_SKILLS_DIR!\%%S" >nul 2>&1
         set "STALE_CODEX_SKILLS_REMOVED=1"
@@ -537,7 +561,9 @@ if !ERRORLEVEL! equ 0 (
                 if exist "apps\skills\plannotator-review" xcopy /s /i /y /q "apps\skills\plannotator-review" "!CODEX_SKILLS_DIR!\plannotator-review\" >nul 2>&1
                 if exist "apps\skills\plannotator-annotate" xcopy /s /i /y /q "apps\skills\plannotator-annotate" "!CODEX_SKILLS_DIR!\plannotator-annotate\" >nul 2>&1
                 if exist "apps\skills\plannotator-last" xcopy /s /i /y /q "apps\skills\plannotator-last" "!CODEX_SKILLS_DIR!\plannotator-last\" >nul 2>&1
-                echo Installed skills to !CLAUDE_SKILLS_DIR!\, Codex command skills to !CODEX_SKILLS_DIR!\, and shared agent skills to !AGENTS_SKILLS_DIR!\
+                if exist "apps\skills\plannotator-setup-goal" xcopy /s /i /y /q "apps\skills\plannotator-setup-goal" "!CODEX_SKILLS_DIR!\plannotator-setup-goal\" >nul 2>&1
+                if exist "apps\skills\plannotator-visual-explainer" xcopy /s /i /y /q "apps\skills\plannotator-visual-explainer" "!CODEX_SKILLS_DIR!\plannotator-visual-explainer\" >nul 2>&1
+                echo Installed skills to !CLAUDE_SKILLS_DIR!\, Codex skills to !CODEX_SKILLS_DIR!\, and shared agent skills to !AGENTS_SKILLS_DIR!\
             ) else (
                 echo Installed skills to !CLAUDE_SKILLS_DIR!\ and shared agent skills to !AGENTS_SKILLS_DIR!\
             )
@@ -689,7 +715,7 @@ echo Then install the Claude Code plugin:
 echo   /plugin marketplace add backnotprop/plannotator
 echo   /plugin install plannotator@plannotator
 echo.
-echo The /plannotator-review, /plannotator-annotate, and /plannotator-last commands are ready to use!
+echo The /plannotator-review, /plannotator-annotate, /plannotator-last, /plannotator-setup-goal, and /plannotator-visual-explainer commands are ready to use!
 
 REM Warn if plannotator is configured in both settings.json hooks AND the plugin (causes double execution)
 REM Only warn when the plugin is installed — manual-only users won't have overlap

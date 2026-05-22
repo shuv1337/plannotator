@@ -30,7 +30,7 @@ Add to your `opencode.json`:
 
 Restart OpenCode. By default, the `submit_plan` tool is available to OpenCode's `plan` agent, not to `build` or other primary agents.
 
-> **Slash commands:** Run the install script to get `/plannotator-review`, `/plannotator-annotate`, and `/plannotator-last`:
+> **Slash commands:** Run the install script to get `/plannotator-review`, `/plannotator-annotate`, `/plannotator-last`, `/plannotator-setup-goal`, and `/plannotator-visual-explainer`:
 > ```bash
 > curl -fsSL https://plannotator.ai/install.sh | bash
 > ```
@@ -41,7 +41,7 @@ Restart OpenCode. By default, the `submit_plan` tool is available to OpenCode's 
 Plannotator supports four OpenCode workflows:
 
 - **`plan-agent`** (default): `submit_plan` is available to OpenCode's built-in `plan` agent plus any extra agents listed in `planningAgents`. This keeps Plannotator integrated with OpenCode plan mode without nudging `build` to call it.
-- **`manual`**: `submit_plan` is not registered. Use `/plannotator-last`, `/plannotator-annotate`, `/plannotator-review`, and `/plannotator-archive` when you want Plannotator.
+- **`manual`**: `submit_plan` is not registered. Use `/plannotator-last`, `/plannotator-annotate`, `/plannotator-review`, `/plannotator-archive`, `/plannotator-setup-goal`, and `/plannotator-visual-explainer` when you want Plannotator.
 - **`user-managed`**: `submit_plan` is registered but no prompts or agent permissions are modified. You manage which agents can call `submit_plan` via OpenCode's native agent configuration.
 - **`all-agents`**: legacy broad behavior. Primary agents can see and call `submit_plan`.
 
@@ -132,6 +132,8 @@ Register the tool but manage prompts and permissions yourself:
 - **Plan Diff**: See what changed when the agent revises a plan after feedback
 - **Annotate last message**: Run `/plannotator-last` to annotate the agent's most recent response
 - **Annotate files, folders, and URLs**: Run `/plannotator-annotate` when you want manual review of an artifact
+- **Setup goal packages**: Run `/plannotator-setup-goal` to turn an objective into a reviewed `/goal` package
+- **Visual explainers**: Run `/plannotator-visual-explainer` to generate self-contained Plannotator-themed HTML walkthroughs
 - **Obsidian integration**: Auto-save approved plans to your vault with frontmatter and tags
 
 ## Environment Variables

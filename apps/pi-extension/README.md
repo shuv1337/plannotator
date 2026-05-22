@@ -178,6 +178,14 @@ Run `/plannotator-annotate <file.md>` to open any markdown file in the annotatio
 
 Run `/plannotator-last` to annotate the agent's most recent response. The message opens in the annotation UI where you can highlight text, add comments, and send structured feedback back to the agent.
 
+### Setup goal
+
+Run `/plannotator-setup-goal <objective>` to ask the agent to use the bundled `plannotator-setup-goal` skill and turn an idea into a reviewed `/goal` package.
+
+### Visual explainer
+
+Run `/plannotator-visual-explainer <brief>` to ask the agent to use the bundled `plannotator-visual-explainer` skill and generate a self-contained Plannotator-themed HTML visualization.
+
 ### Archive browser
 
 The Plannotator archive browser is available through the shared event API as `archive`, which opens the saved plan/decision browser for future callers. The orchestrator does not expose a dedicated archive command yet.
@@ -195,6 +203,8 @@ During execution, the agent marks completed steps with `[DONE:n]` markers. Progr
 | `/plannotator-review` | Open code review UI for current changes |
 | `/plannotator-annotate <file>` | Open markdown file in annotation UI |
 | `/plannotator-last` | Annotate the last assistant message |
+| `/plannotator-setup-goal <objective>` | Turn an idea into a reviewed `/goal` package |
+| `/plannotator-visual-explainer <brief>` | Generate a Plannotator-themed HTML visual explainer |
 
 ## Flags
 

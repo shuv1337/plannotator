@@ -505,6 +505,26 @@ description: Annotate the last assistant message
 
 Write-Host "Installed /plannotator-last command to $opencodeCommandsDir\plannotator-last.md"
 
+@"
+---
+description: Turn an idea or objective into a goal package for /goal
+---
+
+Use `$plannotator-setup-goal to turn the user's idea or objective into a goal package. Treat any command arguments as the starting objective; if there are no arguments, infer the objective from the current conversation or ask the user for the missing objective.
+"@ | Set-Content -Path "$opencodeCommandsDir\plannotator-setup-goal.md"
+
+Write-Host "Installed /plannotator-setup-goal command to $opencodeCommandsDir\plannotator-setup-goal.md"
+
+@"
+---
+description: Generate a Plannotator-themed self-contained HTML visual explainer
+---
+
+Use `$plannotator-visual-explainer to generate a self-contained HTML visualization with Plannotator theming. Treat any command arguments as the visualization brief; if there are no arguments, infer the brief from the current conversation or ask the user for the missing details.
+"@ | Set-Content -Path "$opencodeCommandsDir\plannotator-visual-explainer.md"
+
+Write-Host "Installed /plannotator-visual-explainer command to $opencodeCommandsDir\plannotator-visual-explainer.md"
+
 # Remove legacy Codex-oriented skills from the older shared agent scope.
 $legacyAgentsSkillsDir = "$env:USERPROFILE\.agents\skills"
 $legacySkillsRemoved = $false
@@ -519,10 +539,10 @@ if ($legacySkillsRemoved) {
     Write-Host "Removed legacy Plannotator skills from $legacyAgentsSkillsDir"
 }
 
-# Remove Plannotator skills that belong in the shared agent scope from Codex.
+# Remove Plannotator skills that still belong only in the shared agent scope from Codex.
 $staleCodexSkillsDir = "$env:USERPROFILE\.codex\skills"
 $staleCodexSkillsRemoved = $false
-foreach ($skill in @("plannotator-compound", "plannotator-setup-goal")) {
+foreach ($skill in @("plannotator-compound")) {
     $staleSkillPath = Join-Path $staleCodexSkillsDir $skill
     if (Test-Path $staleSkillPath) {
         Remove-Item -Recurse -Force $staleSkillPath -ErrorAction SilentlyContinue
@@ -582,7 +602,9 @@ if (Get-Command git -ErrorAction SilentlyContinue) {
                             Copy-SkillIfPresent "apps\skills\plannotator-review" $codexSkillsDir
                             Copy-SkillIfPresent "apps\skills\plannotator-annotate" $codexSkillsDir
                             Copy-SkillIfPresent "apps\skills\plannotator-last" $codexSkillsDir
-                            Write-Host "Installed skills to $claudeSkillsDir\, Codex command skills to $codexSkillsDir\, and shared agent skills to $agentsSkillsDir\"
+                            Copy-SkillIfPresent "apps\skills\plannotator-setup-goal" $codexSkillsDir
+                            Copy-SkillIfPresent "apps\skills\plannotator-visual-explainer" $codexSkillsDir
+                            Write-Host "Installed skills to $claudeSkillsDir\, Codex skills to $codexSkillsDir\, and shared agent skills to $agentsSkillsDir\"
                         } else {
                             Write-Host "Installed skills to $claudeSkillsDir\ and shared agent skills to $agentsSkillsDir\"
                         }
@@ -718,7 +740,7 @@ Write-Host "Add the plugin to your opencode.json:"
 Write-Host ""
 Write-Host '  "plugin": ["@plannotator/opencode@latest"]'
 Write-Host ""
-Write-Host "Then restart OpenCode. The /plannotator-review, /plannotator-annotate, and /plannotator-last commands are ready!"
+Write-Host "Then restart OpenCode. The /plannotator-review, /plannotator-annotate, /plannotator-last, /plannotator-setup-goal, and /plannotator-visual-explainer commands are ready!"
 Write-Host ""
 Write-Host "=========================================="
 Write-Host "  PI USERS"
@@ -736,7 +758,7 @@ Write-Host "Install the Claude Code plugin:"
 Write-Host "  /plugin marketplace add backnotprop/plannotator"
 Write-Host "  /plugin install plannotator@plannotator"
 Write-Host ""
-Write-Host "The /plannotator-review, /plannotator-annotate, and /plannotator-last commands are ready to use after you restart Claude Code!"
+Write-Host "The /plannotator-review, /plannotator-annotate, /plannotator-last, /plannotator-setup-goal, and /plannotator-visual-explainer commands are ready to use after you restart Claude Code!"
 
 # Warn if plannotator is configured in both settings.json hooks AND the plugin (causes double execution)
 # Only warn when the plugin is installed — manual-only users won't have overlap

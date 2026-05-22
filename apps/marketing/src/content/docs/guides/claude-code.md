@@ -69,7 +69,7 @@ If you want to approve with minor notes, use "Send Feedback" — Claude will see
 
 ## Slash commands
 
-The plugin registers three slash commands that work inside your Claude Code session:
+The plugin registers slash commands that work inside your Claude Code session:
 
 ### `/plannotator-review`
 
@@ -88,6 +88,14 @@ Opens any markdown file in the annotation UI. See the [annotate docs](/docs/comm
 ### `/plannotator-last`
 
 Annotates the agent's most recent message. See the [annotate last docs](/docs/commands/annotate-last/) for details.
+
+### `/plannotator-setup-goal`
+
+Turns an idea or objective into a reviewed `/goal` package.
+
+### `/plannotator-visual-explainer`
+
+Generates a self-contained Plannotator-themed HTML explainer.
 
 ## Plugin installation
 

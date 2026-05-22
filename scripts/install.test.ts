@@ -71,6 +71,8 @@ describe("install.sh", () => {
     expect(script).toContain('copy_skill_if_present apps/skills/plannotator-review "$CODEX_SKILLS_DIR"');
     expect(script).toContain('copy_skill_if_present apps/skills/plannotator-annotate "$CODEX_SKILLS_DIR"');
     expect(script).toContain('copy_skill_if_present apps/skills/plannotator-last "$CODEX_SKILLS_DIR"');
+    expect(script).toContain('copy_skill_if_present apps/skills/plannotator-setup-goal "$CODEX_SKILLS_DIR"');
+    expect(script).toContain('copy_skill_if_present apps/skills/plannotator-visual-explainer "$CODEX_SKILLS_DIR"');
     expect(script).toContain('copy_skill_if_present apps/skills/plannotator-compound "$AGENTS_SKILLS_DIR"');
     expect(script).toContain('copy_skill_if_present apps/skills/plannotator-setup-goal "$AGENTS_SKILLS_DIR"');
     expect(script).toContain('if [ "$codex_available" -eq 1 ]; then');
@@ -87,15 +89,18 @@ describe("install.sh", () => {
     expect(script).not.toContain("plannotator-review plannotator-annotate plannotator-last plannotator-setup-goal");
   });
 
-  test("removes shared-agent Plannotator skills from Codex scope", () => {
+  test("removes only shared-agent-only Plannotator skills from Codex scope", () => {
     expect(script).toContain("STALE_CODEX_SKILLS_DIR");
-    expect(script).toContain("plannotator-compound plannotator-setup-goal");
+    expect(script).toContain("for skill in plannotator-compound; do");
+    expect(script).not.toContain("for skill in plannotator-compound plannotator-setup-goal; do");
   });
 
   test("installs slash commands for Claude Code and OpenCode", () => {
     expect(script).toContain("plannotator-review.md");
     expect(script).toContain("plannotator-annotate.md");
     expect(script).toContain("plannotator-last.md");
+    expect(script).toContain("plannotator-setup-goal.md");
+    expect(script).toContain("plannotator-visual-explainer.md");
     expect(script).toContain("CLAUDE_COMMANDS_DIR");
     expect(script).toContain("OPENCODE_COMMANDS_DIR");
   });
@@ -215,6 +220,8 @@ describe("install.ps1", () => {
     expect(script).toContain('Copy-SkillIfPresent "apps\\skills\\plannotator-review" $codexSkillsDir');
     expect(script).toContain('Copy-SkillIfPresent "apps\\skills\\plannotator-annotate" $codexSkillsDir');
     expect(script).toContain('Copy-SkillIfPresent "apps\\skills\\plannotator-last" $codexSkillsDir');
+    expect(script).toContain('Copy-SkillIfPresent "apps\\skills\\plannotator-setup-goal" $codexSkillsDir');
+    expect(script).toContain('Copy-SkillIfPresent "apps\\skills\\plannotator-visual-explainer" $codexSkillsDir');
     expect(script).toContain('Copy-SkillIfPresent "apps\\skills\\plannotator-compound" $agentsSkillsDir');
     expect(script).toContain('Copy-SkillIfPresent "apps\\skills\\plannotator-setup-goal" $agentsSkillsDir');
     expect(script).toContain("if ($codexAvailable)");
@@ -231,9 +238,10 @@ describe("install.ps1", () => {
     expect(script).not.toContain('"plannotator-review", "plannotator-annotate", "plannotator-last", "plannotator-setup-goal"');
   });
 
-  test("removes shared-agent Plannotator skills from Codex scope", () => {
+  test("removes only shared-agent-only Plannotator skills from Codex scope", () => {
     expect(script).toContain("staleCodexSkillsDir");
-    expect(script).toContain('"plannotator-compound", "plannotator-setup-goal"');
+    expect(script).toContain('"plannotator-compound"');
+    expect(script).not.toContain('"plannotator-compound", "plannotator-setup-goal"');
   });
 
   test("does not treat a skills-only Codex home as configured", () => {
@@ -246,6 +254,8 @@ describe("install.ps1", () => {
     expect(script).toContain("plannotator-review.md");
     expect(script).toContain("plannotator-annotate.md");
     expect(script).toContain("plannotator-last.md");
+    expect(script).toContain("plannotator-setup-goal.md");
+    expect(script).toContain("plannotator-visual-explainer.md");
   });
 
   test("configures Pi to skip bundled skills only after shared skills exist", () => {
@@ -331,6 +341,8 @@ describe("install.cmd", () => {
     expect(script).toContain('if exist "apps\\skills\\plannotator-review" xcopy /s /i /y /q "apps\\skills\\plannotator-review" "!CODEX_SKILLS_DIR!\\plannotator-review\\"');
     expect(script).toContain('if exist "apps\\skills\\plannotator-annotate" xcopy /s /i /y /q "apps\\skills\\plannotator-annotate" "!CODEX_SKILLS_DIR!\\plannotator-annotate\\"');
     expect(script).toContain('if exist "apps\\skills\\plannotator-last" xcopy /s /i /y /q "apps\\skills\\plannotator-last" "!CODEX_SKILLS_DIR!\\plannotator-last\\"');
+    expect(script).toContain('if exist "apps\\skills\\plannotator-setup-goal" xcopy /s /i /y /q "apps\\skills\\plannotator-setup-goal" "!CODEX_SKILLS_DIR!\\plannotator-setup-goal\\"');
+    expect(script).toContain('if exist "apps\\skills\\plannotator-visual-explainer" xcopy /s /i /y /q "apps\\skills\\plannotator-visual-explainer" "!CODEX_SKILLS_DIR!\\plannotator-visual-explainer\\"');
     expect(script).toContain('if exist "apps\\skills\\plannotator-compound" xcopy /s /i /y /q "apps\\skills\\plannotator-compound" "!AGENTS_SKILLS_DIR!\\plannotator-compound\\"');
     expect(script).toContain('if exist "apps\\skills\\plannotator-setup-goal" xcopy /s /i /y /q "apps\\skills\\plannotator-setup-goal" "!AGENTS_SKILLS_DIR!\\plannotator-setup-goal\\"');
     expect(script).not.toContain('xcopy /s /y /q "skills\\*" "!CODEX_SKILLS_DIR!\\"');
@@ -345,9 +357,10 @@ describe("install.cmd", () => {
     expect(script).not.toContain("plannotator-review plannotator-annotate plannotator-last plannotator-setup-goal");
   });
 
-  test("removes shared-agent Plannotator skills from Codex scope", () => {
+  test("removes only shared-agent-only Plannotator skills from Codex scope", () => {
     expect(script).toContain("STALE_CODEX_SKILLS_DIR");
-    expect(script).toContain("plannotator-compound plannotator-setup-goal");
+    expect(script).toContain("for %%S in (plannotator-compound) do");
+    expect(script).not.toContain("for %%S in (plannotator-compound plannotator-setup-goal) do");
   });
 
   test("does not treat a skills-only Codex home as configured", () => {
@@ -359,6 +372,8 @@ describe("install.cmd", () => {
     expect(script).toContain("plannotator-review.md");
     expect(script).toContain("plannotator-annotate.md");
     expect(script).toContain("plannotator-last.md");
+    expect(script).toContain("plannotator-setup-goal.md");
+    expect(script).toContain("plannotator-visual-explainer.md");
   });
 
   test("Gemini settings merge uses || idiom (issue #506 regression)", () => {
@@ -411,8 +426,14 @@ describe("install.cmd", () => {
 });
 
 describe("Codex Plannotator skills", () => {
-  test("command-overlap skills include OpenAI agent config", () => {
-    for (const skill of ["plannotator-review", "plannotator-annotate", "plannotator-last"]) {
+  test("installed Codex skills include OpenAI agent config", () => {
+    for (const skill of [
+      "plannotator-review",
+      "plannotator-annotate",
+      "plannotator-last",
+      "plannotator-setup-goal",
+      "plannotator-visual-explainer",
+    ]) {
       const configPath = join(scriptsDir, "..", "apps", "skills", skill, "agents", "openai.yaml");
       expect(existsSync(configPath)).toBe(true);
     }

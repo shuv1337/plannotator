@@ -108,7 +108,7 @@ Add the plugin to your `opencode.json`:
 
 Restart OpenCode. By default, `submit_plan` is available to OpenCode's `plan` agent only. Use the [OpenCode guide](/docs/guides/opencode/) if you want commands-only mode or the legacy all-agents behavior.
 
-For slash commands (`/plannotator-review`, `/plannotator-annotate`), also run the install script:
+For slash commands (`/plannotator-review`, `/plannotator-annotate`, `/plannotator-last`, `/plannotator-setup-goal`, `/plannotator-visual-explainer`), also run the install script:
 
 ```bash
 curl -fsSL https://plannotator.ai/install.sh | bash
@@ -190,6 +190,6 @@ Or try it without installing:
 pi -e npm:@plannotator/pi-extension
 ```
 
-Start plan mode with `pi --plan`, or toggle mid-session with `/plannotator` or `Ctrl+Alt+P`. The extension provides file-based plan review, code review (`/plannotator-review`), markdown annotation (`/plannotator-annotate`), bash safety gating during planning, and progress tracking during execution.
+Start plan mode with `pi --plan`, or toggle mid-session with `/plannotator` or `Ctrl+Alt+P`. The extension provides file-based plan review, code review (`/plannotator-review`), markdown annotation (`/plannotator-annotate`), goal setup (`/plannotator-setup-goal`), visual explainers (`/plannotator-visual-explainer`), bash safety gating during planning, and progress tracking during execution.
 
 See [Plannotator Meets Pi](/blog/plannotator-meets-pi) for the full walkthrough.

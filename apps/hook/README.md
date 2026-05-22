@@ -106,13 +106,15 @@ Host your-server
 
 ## Slash Commands
 
-The plugin registers three slash commands:
+The plugin registers these slash commands:
 
 | Command | Description |
 |---------|-------------|
 | `/plannotator-review [--git]` | Open code review UI for current changes or a GitHub PR; `--git` forces Git in JJ workspaces |
 | `/plannotator-annotate <file.md>` | Annotate any markdown file |
 | `/plannotator-last` | Annotate the agent's last message |
+| `/plannotator-setup-goal <objective>` | Turn an idea into a reviewed `/goal` package |
+| `/plannotator-visual-explainer <brief>` | Generate a Plannotator-themed HTML visual explainer |
 
 ## Obsidian Integration
 

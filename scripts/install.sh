@@ -729,6 +729,26 @@ COMMAND_EOF
 
 echo "Installed /plannotator-last command to ${OPENCODE_COMMANDS_DIR}/plannotator-last.md"
 
+cat > "$OPENCODE_COMMANDS_DIR/plannotator-setup-goal.md" << 'COMMAND_EOF'
+---
+description: Turn an idea or objective into a goal package for /goal
+---
+
+Use $plannotator-setup-goal to turn the user's idea or objective into a goal package. Treat any command arguments as the starting objective; if there are no arguments, infer the objective from the current conversation or ask the user for the missing objective.
+COMMAND_EOF
+
+echo "Installed /plannotator-setup-goal command to ${OPENCODE_COMMANDS_DIR}/plannotator-setup-goal.md"
+
+cat > "$OPENCODE_COMMANDS_DIR/plannotator-visual-explainer.md" << 'COMMAND_EOF'
+---
+description: Generate a Plannotator-themed self-contained HTML visual explainer
+---
+
+Use $plannotator-visual-explainer to generate a self-contained HTML visualization with Plannotator theming. Treat any command arguments as the visualization brief; if there are no arguments, infer the brief from the current conversation or ask the user for the missing details.
+COMMAND_EOF
+
+echo "Installed /plannotator-visual-explainer command to ${OPENCODE_COMMANDS_DIR}/plannotator-visual-explainer.md"
+
 # Remove legacy Codex-oriented skills from the older shared agent scope.
 LEGACY_AGENTS_SKILLS_DIR="$HOME/.agents/skills"
 legacy_skills_removed=0
@@ -744,11 +764,11 @@ if [ "$legacy_skills_removed" -eq 1 ]; then
     echo "Removed legacy Plannotator skills from ${LEGACY_AGENTS_SKILLS_DIR}"
 fi
 
-# Remove Plannotator skills that belong in the shared agent scope from Codex.
+# Remove Plannotator skills that still belong only in the shared agent scope from Codex.
 STALE_CODEX_SKILLS_DIR="$HOME/.codex/skills"
 stale_codex_skills_removed=0
 if [ -d "$STALE_CODEX_SKILLS_DIR" ]; then
-    for skill in plannotator-compound plannotator-setup-goal; do
+    for skill in plannotator-compound; do
         if [ -d "$STALE_CODEX_SKILLS_DIR/$skill" ]; then
             rm -rf "$STALE_CODEX_SKILLS_DIR/$skill"
             stale_codex_skills_removed=1
@@ -805,10 +825,12 @@ if command -v git &>/dev/null; then
             copy_skill_if_present apps/skills/plannotator-review "$CODEX_SKILLS_DIR"
             copy_skill_if_present apps/skills/plannotator-annotate "$CODEX_SKILLS_DIR"
             copy_skill_if_present apps/skills/plannotator-last "$CODEX_SKILLS_DIR"
+            copy_skill_if_present apps/skills/plannotator-setup-goal "$CODEX_SKILLS_DIR"
+            copy_skill_if_present apps/skills/plannotator-visual-explainer "$CODEX_SKILLS_DIR"
         fi
     ); then
         if [ "$codex_available" -eq 1 ]; then
-            echo "Installed skills to ${CLAUDE_SKILLS_DIR}/, Codex command skills to ${CODEX_SKILLS_DIR}/, and shared agent skills to ${AGENTS_SKILLS_DIR}/"
+            echo "Installed skills to ${CLAUDE_SKILLS_DIR}/, Codex skills to ${CODEX_SKILLS_DIR}/, and shared agent skills to ${AGENTS_SKILLS_DIR}/"
         else
             echo "Installed skills to ${CLAUDE_SKILLS_DIR}/ and shared agent skills to ${AGENTS_SKILLS_DIR}/"
         fi
@@ -937,7 +959,7 @@ echo "Add the plugin to your opencode.json:"
 echo ""
 echo '  "plugin": ["@plannotator/opencode@latest"]'
 echo ""
-echo "Then restart OpenCode. The /plannotator-review, /plannotator-annotate, and /plannotator-last commands are ready!"
+echo "Then restart OpenCode. The /plannotator-review, /plannotator-annotate, /plannotator-last, /plannotator-setup-goal, and /plannotator-visual-explainer commands are ready!"
 echo ""
 echo "=========================================="
 echo "  PI USERS"
@@ -972,6 +994,8 @@ if [ "$codex_available" -eq 1 ]; then
     echo "  \$plannotator-review"
     echo "  \$plannotator-annotate <file|url|folder>"
     echo "  \$plannotator-last"
+    echo "  \$plannotator-setup-goal"
+    echo "  \$plannotator-visual-explainer"
 else
     echo "Codex was not detected. After installing Codex, rerun this installer to add"
     echo "the Stop hook and Codex skills."
@@ -985,7 +1009,7 @@ echo "Install the Claude Code plugin:"
 echo "  /plugin marketplace add backnotprop/plannotator"
 echo "  /plugin install plannotator@plannotator"
 echo ""
-echo "The /plannotator-review, /plannotator-annotate, and /plannotator-last commands are ready to use after you restart Claude Code!"
+echo "The /plannotator-review, /plannotator-annotate, /plannotator-last, /plannotator-setup-goal, and /plannotator-visual-explainer commands are ready to use after you restart Claude Code!"
 
 # Warn if plannotator is configured in both settings.json hooks AND the plugin (causes double execution)
 # Only warn when the plugin is installed — manual-only users won't have overlap

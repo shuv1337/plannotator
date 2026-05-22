@@ -14,6 +14,7 @@
  * - [DONE:n] markers for execution progress tracking
  * - /plannotator-review command for code review
  * - /plannotator-annotate command for markdown annotation
+ * - /plannotator-setup-goal and /plannotator-visual-explainer skill launchers
  */
 
 import { existsSync, readFileSync, statSync } from "node:fs";
@@ -22,6 +23,7 @@ import type { ThinkingLevel } from "@mariozechner/pi-agent-core";
 import { Type } from "@mariozechner/pi-ai";
 import type {
 	ExtensionAPI,
+	ExtensionCommandContext,
 	ExtensionContext,
 } from "@mariozechner/pi-coding-agent";
 import { Key } from "@mariozechner/pi-tui";
@@ -205,6 +207,25 @@ function sendUserMessageWithCurrentSessionFallback(
 		if (trySendUserMessageToDifferentCurrentSession(content, options, errorMessage, origin)) return;
 		throw err;
 	}
+}
+
+function sendSkillPrompt(pi: ExtensionAPI, ctx: ExtensionCommandContext, message: string): void {
+	if (ctx.isIdle()) {
+		pi.sendUserMessage(message);
+		return;
+	}
+
+	pi.sendUserMessage(message, { deliverAs: "followUp" });
+	ctx.ui.notify("Plannotator skill request queued.", "info");
+}
+
+function buildSkillPrompt(skillName: string, action: string, args: string): string {
+	const trimmed = args.trim();
+	if (!trimmed) {
+		return `Use $${skillName} to ${action}. If the current conversation does not provide enough detail, ask the user for the missing input.`;
+	}
+
+	return `Use $${skillName} to ${action}.\n\nUser request:\n${trimmed}`;
 }
 
 export default function plannotator(pi: ExtensionAPI): void {
@@ -403,6 +424,36 @@ export default function plannotator(pi: ExtensionAPI): void {
 				parts.push(`Progress: ${done}/${checklistItems.length}`);
 			}
 			ctx.ui.notify(parts.join("\n"), "info");
+		},
+	});
+
+	pi.registerCommand("plannotator-setup-goal", {
+		description: "Turn an idea or objective into a goal package for /goal",
+		handler: async (args, ctx) => {
+			sendSkillPrompt(
+				pi,
+				ctx,
+				buildSkillPrompt(
+					"plannotator-setup-goal",
+					"turn this idea or objective into a goal package for /goal",
+					args ?? "",
+				),
+			);
+		},
+	});
+
+	pi.registerCommand("plannotator-visual-explainer", {
+		description: "Generate a Plannotator-themed self-contained HTML visual explainer",
+		handler: async (args, ctx) => {
+			sendSkillPrompt(
+				pi,
+				ctx,
+				buildSkillPrompt(
+					"plannotator-visual-explainer",
+					"generate a self-contained HTML visualization with Plannotator theming",
+					args ?? "",
+				),
+			);
 		},
 	});
 

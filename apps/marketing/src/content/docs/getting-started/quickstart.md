@@ -68,3 +68,5 @@ Beyond plan review, Plannotator provides slash commands you can use anytime duri
 - **`/plannotator-review`** — Review uncommitted code changes, or pass a GitHub PR URL to review a pull request. See [Code Review](/docs/commands/code-review/).
 - **`/plannotator-annotate <file.md>`** — Annotate any markdown file. See [Annotate](/docs/commands/annotate/).
 - **`/plannotator-last`** — Annotate the agent's last message. See [Annotate Last](/docs/commands/annotate-last/).
+- **`/plannotator-setup-goal`** — Turn an idea into a reviewed `/goal` package.
+- **`/plannotator-visual-explainer`** — Generate a self-contained Plannotator-themed HTML explainer.

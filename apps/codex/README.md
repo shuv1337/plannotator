@@ -1,6 +1,7 @@
 # Plannotator for Codex
 
 Code review, markdown annotation, and plan review are supported in Codex.
+The installer also adds Plannotator's goal setup and visual explainer skills to Codex when Codex is detected.
 
 Plan review uses Codex's experimental `Stop` hook. This is a post-render review flow: when a turn stops, Plannotator reads the current rollout transcript, extracts the latest plan, and opens the normal plan review UI. If you deny the plan, Plannotator returns continuation feedback so Codex revises the plan in the same turn.
 
@@ -109,6 +110,14 @@ Run `!plannotator last` to annotate the agent's most recent response:
 ```
 
 The message opens in the annotation UI where you can highlight text, add comments, and send structured feedback back to the agent.
+
+### Setup Goal
+
+Use `$plannotator-setup-goal` to turn an idea or objective into a reviewed `/goal` package.
+
+### Visual Explainer
+
+Use `$plannotator-visual-explainer` to generate self-contained HTML visualizations with Plannotator theming.
 
 ## Environment Variables
 

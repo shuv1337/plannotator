@@ -7,7 +7,19 @@ import { createCookieProxy } from "./cookie-proxy";
 import { PanelManager } from "./panel-manager";
 import { setActiveProxyPort, registerEditorAnnotationCommand } from "./editor-annotations";
 
-const IPC_REGISTRY = path.join(os.homedir(), ".plannotator", "vscode-ipc.json");
+function dataPathForWrite(...segments: string[]): string {
+  return path.join(os.homedir(), ".shuvplan", ...segments);
+}
+
+function dataPathForRead(...segments: string[]): string {
+  const next = dataPathForWrite(...segments);
+  if (fs.existsSync(next)) return next;
+  const legacy = path.join(os.homedir(), ".plannotator", ...segments);
+  return fs.existsSync(legacy) ? legacy : next;
+}
+
+const IPC_REGISTRY = dataPathForRead("vscode-ipc.json");
+const IPC_REGISTRY_WRITE = dataPathForWrite("vscode-ipc.json");
 
 function readIpcRegistry(): Record<string, number> {
   try {
@@ -18,9 +30,9 @@ function readIpcRegistry(): Record<string, number> {
 }
 
 function writeIpcRegistry(registry: Record<string, number>): void {
-  const dir = path.dirname(IPC_REGISTRY);
+  const dir = path.dirname(IPC_REGISTRY_WRITE);
   fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(IPC_REGISTRY, JSON.stringify(registry, null, 2));
+  fs.writeFileSync(IPC_REGISTRY_WRITE, JSON.stringify(registry, null, 2));
 }
 
 function registerIpcPort(workspacePath: string, port: number): void {
@@ -37,7 +49,7 @@ function unregisterIpcPort(workspacePath: string): void {
 
 const COOKIE_KEY = "plannotator-cookies";
 
-const log = vscode.window.createOutputChannel("Plannotator", { log: true });
+const log = vscode.window.createOutputChannel("shuvplan", { log: true });
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   const panelManager = new PanelManager();
@@ -75,7 +87,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       setActiveProxyPort(null);
     });
 
-    vscode.window.showInformationMessage("Plannotator panel opened");
+    vscode.window.showInformationMessage("shuvplan panel opened");
   };
 
   // Start local IPC server to receive URLs from the router script.
@@ -84,7 +96,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const { server, port } = await createIpcServer((url) => {
     openInPanel(url).catch((err) => {
       log.error(`[open] failed: ${err}`);
-      vscode.window.showErrorMessage(`Plannotator: ${err}`);
+      vscode.window.showErrorMessage(`shuvplan: ${err}`);
     });
   }, lastPort);
   context.workspaceState.update("ipcPort", port);
@@ -106,8 +118,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     const binDir = path.join(context.extensionPath, "bin");
     const routerPath = path.join(binDir, "open-in-vscode");
     context.environmentVariableCollection.replace(
+      "SHUVPLAN_BROWSER",
+      routerPath,
+    );
+    context.environmentVariableCollection.replace(
       "PLANNOTATOR_BROWSER",
       routerPath,
+    );
+    context.environmentVariableCollection.replace(
+      "SHUVPLAN_VSCODE_PORT",
+      String(port),
     );
     context.environmentVariableCollection.replace(
       "PLANNOTATOR_VSCODE_PORT",
@@ -124,13 +144,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     "plannotator-webview.openUrl",
     async () => {
       const url = await vscode.window.showInputBox({
-        prompt: "Enter the Plannotator URL to open",
+        prompt: "Enter the shuvplan URL to open",
         placeHolder: "http://localhost:3000",
       });
       if (url) {
         openInPanel(url).catch((err) => {
           log.error(`[open] failed: ${err}`);
-          vscode.window.showErrorMessage(`Plannotator: ${err}`);
+          vscode.window.showErrorMessage(`shuvplan: ${err}`);
         });
       }
     },

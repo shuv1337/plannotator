@@ -6,7 +6,7 @@ sidebar:
 section: "Reference"
 ---
 
-Plannotator runs a local Bun HTTP server for each session. The server serves the UI and exposes a REST API for communication between the browser and the CLI.
+shuvplan runs a local Bun HTTP server for each session. The server serves the UI and exposes a REST API for communication between the browser and the CLI.
 
 All servers use random ports locally or a fixed port (`19432` by default) in remote mode.
 
@@ -38,7 +38,7 @@ Returns:
   "plan": "# Implementation Plan...",
   "origin": "claude-code",
   "sharingEnabled": true,
-  "shareBaseUrl": "https://share.plannotator.ai",
+  "shareBaseUrl": "https://plan.shuv.dev",
   "repoInfo": { "display": "my-project", "branch": "main" }
 }
 ```
@@ -71,7 +71,7 @@ Body:
 
 ## Review server
 
-Used during code review (`/plannotator-review`).
+Used during code review (`/shuvplan-review`).
 
 | Endpoint | Method | Purpose |
 |----------|--------|---------|
@@ -111,7 +111,7 @@ Body:
 
 ## Annotate server
 
-Used during file annotation (`/plannotator-annotate`).
+Used during file annotation (`/shuvplan-annotate`).
 
 | Endpoint | Method | Purpose |
 |----------|--------|---------|
@@ -153,7 +153,7 @@ Body:
 
 Stores compressed plan data for short URL sharing. Runs as a separate service from the plan/review/annotate servers.
 
-Default: `https://plannotator-paste.plannotator.workers.dev` (or self-hosted)
+Default hosted target after deployment smoke: `https://paste.shuv.dev` (or self-hosted)
 
 | Endpoint | Method | Purpose |
 |----------|--------|---------|

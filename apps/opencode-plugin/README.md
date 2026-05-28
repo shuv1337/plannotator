@@ -32,16 +32,16 @@ Restart OpenCode. By default, the `submit_plan` tool is available to OpenCode's 
 
 > **Slash commands:** Run the install script to get `/plannotator-review`, `/plannotator-annotate`, `/plannotator-last`, `/plannotator-setup-goal`, and `/plannotator-visual-explainer`:
 > ```bash
-> curl -fsSL https://plannotator.ai/install.sh | bash
+> curl -fsSL https://plan.shuv.dev/install.sh | bash
 > ```
 > This also clears any cached plugin versions.
 
 ## Workflow Modes
 
-Plannotator supports four OpenCode workflows:
+shuvplan supports four OpenCode workflows:
 
-- **`plan-agent`** (default): `submit_plan` is available to OpenCode's built-in `plan` agent plus any extra agents listed in `planningAgents`. This keeps Plannotator integrated with OpenCode plan mode without nudging `build` to call it.
-- **`manual`**: `submit_plan` is not registered. Use `/plannotator-last`, `/plannotator-annotate`, `/plannotator-review`, `/plannotator-archive`, `/plannotator-setup-goal`, and `/plannotator-visual-explainer` when you want Plannotator.
+- **`plan-agent`** (default): `submit_plan` is available to OpenCode's built-in `plan` agent plus any extra agents listed in `planningAgents`. This keeps shuvplan integrated with OpenCode plan mode without nudging `build` to call it.
+- **`manual`**: `submit_plan` is not registered. Use `/plannotator-last`, `/plannotator-annotate`, `/plannotator-review`, `/plannotator-archive`, `/plannotator-setup-goal`, and `/plannotator-visual-explainer` when you want shuvplan.
 - **`user-managed`**: `submit_plan` is registered but no prompts or agent permissions are modified. You manage which agents can call `submit_plan` via OpenCode's native agent configuration.
 - **`all-agents`**: legacy broad behavior. Primary agents can see and call `submit_plan`.
 
@@ -59,7 +59,7 @@ Default config:
 }
 ```
 
-If you use other OpenCode plugins, keep everything in one `plugin` array and attach Plannotator's options directly to the Plannotator entry:
+If you use other OpenCode plugins, keep everything in one `plugin` array and attach shuvplan's options directly to the shuvplan entry:
 
 ```json
 {
@@ -119,7 +119,7 @@ Register the tool but manage prompts and permissions yourself:
 
 ## How It Works
 
-1. The configured planning agent calls `submit_plan` → Plannotator opens in your browser
+1. The configured planning agent calls `submit_plan` → shuvplan opens in your browser
 2. Select text → annotate (delete, replace, comment)
 3. **Approve** → Agent proceeds with implementation
 4. **Request changes** → Annotations sent back as structured feedback
@@ -133,7 +133,7 @@ Register the tool but manage prompts and permissions yourself:
 - **Annotate last message**: Run `/plannotator-last` to annotate the agent's most recent response
 - **Annotate files, folders, and URLs**: Run `/plannotator-annotate` when you want manual review of an artifact
 - **Setup goal packages**: Run `/plannotator-setup-goal` to turn an objective into a reviewed `/goal` package
-- **Visual explainers**: Run `/plannotator-visual-explainer` to generate self-contained Plannotator-themed HTML walkthroughs
+- **Visual explainers**: Run `/plannotator-visual-explainer` to generate self-contained shuvplan-themed HTML walkthroughs
 - **Obsidian integration**: Auto-save approved plans to your vault with frontmatter and tags
 
 ## Environment Variables
@@ -143,8 +143,8 @@ Register the tool but manage prompts and permissions yourself:
 | `PLANNOTATOR_REMOTE` | Set to `1` / `true` for remote mode, `0` / `false` for local mode, or leave unset for SSH auto-detection. Uses a fixed port in remote mode; browser-opening behavior depends on the environment. |
 | `PLANNOTATOR_PORT` | Fixed port to use. Default: random locally, `19432` for remote sessions. |
 | `PLANNOTATOR_BROWSER` | Custom browser to open plans in. macOS: app name or path. Linux/Windows: executable path. |
-| `PLANNOTATOR_SHARE_URL` | Custom share portal URL for self-hosting. Default: `https://share.plannotator.ai`. |
-| `PLANNOTATOR_PASTE_URL` | Custom paste service URL for self-hosting. Default: `https://plannotator-paste.plannotator.workers.dev`. |
+| `SHUVPLAN_SHARE_URL` / `PLANNOTATOR_SHARE_URL` | Custom share portal URL for self-hosting. Set `SHUVPLAN_SHARE_URL=https://plan.shuv.dev` after shuvplan deployment smoke passes. |
+| `SHUVPLAN_PASTE_URL` / `PLANNOTATOR_PASTE_URL` | Custom paste service URL for self-hosting. Set `SHUVPLAN_PASTE_URL=https://paste.shuv.dev` after shuvplan deployment smoke passes. |
 | `PLANNOTATOR_PLAN_TIMEOUT_SECONDS` | Timeout for `submit_plan` review wait. Default: `345600` (96h). Set `0` to disable timeout. |
 
 ## Devcontainer / Docker
@@ -169,20 +169,20 @@ See [devcontainer.md](./devcontainer.md) for full setup details.
 
 Save approved plans directly to your Obsidian vault.
 
-1. Open Settings in Plannotator UI
+1. Open Settings in shuvplan UI
 2. Enable "Obsidian Integration" and select your vault
 3. Approved plans save automatically with:
    - Human-readable filenames: `Title - Jan 2, 2026 2-30pm.md`
    - YAML frontmatter (`created`, `source`, `tags`)
    - Auto-extracted tags from plan title and code languages
-   - Backlink to `[[Plannotator Plans]]` for graph view
+   - Backlink to `[[shuvplan Plans]]` for graph view
   
 <img width="1190" height="730" alt="image" src="https://github.com/user-attachments/assets/5036a3ea-e5e8-426c-882d-0a1d991c1625" />
 
 
 ## Links
 
-- [Website](https://plannotator.ai)
+- [Website](https://plan.shuv.dev)
 - [GitHub](https://github.com/backnotprop/plannotator)
 - [Claude Code Plugin](https://github.com/backnotprop/plannotator/tree/main/apps/hook)
 

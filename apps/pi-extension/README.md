@@ -1,6 +1,6 @@
-# Plannotator for Pi
+# shuvplan for Pi
 
-Plannotator integration for the [Pi coding agent](https://github.com/earendil-works/pi). Adds file-based plan mode with a visual browser UI for reviewing, annotating, and approving agent plans.
+shuvplan integration for the [Pi coding agent](https://github.com/earendil-works/pi). Adds file-based plan mode with a visual browser UI for reviewing, annotating, and approving agent plans.
 
 ## Install
 
@@ -55,7 +55,7 @@ In plan mode the agent is restricted — destructive commands are blocked, write
 - [ ] Update error messages in the UI
 ```
 
-When the agent calls `plannotator_submit_plan`, the Plannotator UI opens in your browser. You can:
+When the agent calls `plannotator_submit_plan`, the shuvplan UI opens in your browser. You can:
 
 - **Approve** the plan to begin execution
 - **Deny with annotations** to send structured feedback back to the agent
@@ -65,7 +65,7 @@ The agent iterates on the plan until you approve, then executes with full tool a
 
 ### Configuring per-phase behavior
 
-Plannotator loads configuration in three layers:
+shuvplan loads configuration in three layers:
 
 1. Built-in base config shipped with the package: `plannotator.json`
 2. Global user config: `~/.pi/agent/plannotator.json`
@@ -135,7 +135,7 @@ Use these inside `systemPrompt` strings:
 #### Behavior notes
 
 - Unknown template variables trigger a warning in the UI and are rendered as empty strings.
-- `activeTools` are additive with the tools currently active in the session, so Plannotator still preserves tools provided by other extensions.
+- `activeTools` are additive with the tools currently active in the session, so shuvplan still preserves tools provided by other extensions.
 - Execution progress remains dynamic (`[DONE:n]` + checklist tracking), even if `statusLabel` is set.
 
 #### Example files
@@ -146,11 +146,11 @@ Use these inside `systemPrompt` strings:
 
 ### Code review
 
-Run `/plannotator-review` to open your current git changes in the code review UI. Annotate specific lines, switch between diff views (uncommitted, staged, last commit, branch), and submit feedback that gets sent to the agent.
+Run `/shuvplan-review` to open your current git changes in the code review UI. Annotate specific lines, switch between diff views (uncommitted, staged, last commit, branch), and submit feedback that gets sent to the agent.
 
-### Shared Plannotator event API
+### Shared shuvplan event API
 
-Plannotator also listens on the shared `plannotator:request` event channel so other extensions can reuse the same browser review flows without importing Plannotator internals.
+shuvplan also listens on the shared `plannotator:request` event channel so other extensions can reuse the same browser review flows without importing shuvplan internals.
 
 Supported actions and payloads:
 
@@ -164,31 +164,31 @@ Supported actions and payloads:
 Plan review is asynchronous:
 
 - callers send `plannotator:request` with action `plan-review`
-- Plannotator opens the browser review and immediately responds with `{ status: "handled", result: { status: "pending", reviewId } }`
-- when the human approves or rejects in the browser, Plannotator emits `plannotator:review-result` with `{ reviewId, approved, feedback, savedPath?, agentSwitch?, permissionMode? }`
+- shuvplan opens the browser review and immediately responds with `{ status: "handled", result: { status: "pending", reviewId } }`
+- when the human approves or rejects in the browser, shuvplan emits `plannotator:review-result` with `{ reviewId, approved, feedback, savedPath?, agentSwitch?, permissionMode? }`
 - callers can query `review-status` with the same `reviewId` to recover from startup races or session restarts
 
 The other shared actions remain request/response flows. Payloads are intentionally minimal and only include fields the shared implementation actually uses.
 
 ### Markdown annotation
 
-Run `/plannotator-annotate <file.md>` to open any markdown file in the annotation UI. Useful for reviewing documentation or design specs with the agent.
+Run `/shuvplan-annotate <file.md>` to open any markdown file in the annotation UI. Useful for reviewing documentation or design specs with the agent.
 
 ### Annotate last message
 
-Run `/plannotator-last` to annotate the agent's most recent response. The message opens in the annotation UI where you can highlight text, add comments, and send structured feedback back to the agent.
+Run `/shuvplan-last` to annotate the agent's most recent response. The message opens in the annotation UI where you can highlight text, add comments, and send structured feedback back to the agent.
 
 ### Setup goal
 
-Run `/plannotator-setup-goal <objective>` to ask the agent to use the bundled `plannotator-setup-goal` skill and turn an idea into a reviewed `/goal` package.
+Run `/shuvplan-setup-goal <objective>` to ask the agent to use the bundled `plannotator-setup-goal` skill and turn an idea into a reviewed `/goal` package.
 
 ### Visual explainer
 
-Run `/plannotator-visual-explainer <brief>` to ask the agent to use the bundled `plannotator-visual-explainer` skill and generate a self-contained Plannotator-themed HTML visualization.
+Run `/shuvplan-visual-explainer <brief>` to ask the agent to use the bundled `plannotator-visual-explainer` skill and generate a self-contained shuvplan-themed HTML visualization.
 
 ### Archive browser
 
-The Plannotator archive browser is available through the shared event API as `archive`, which opens the saved plan/decision browser for future callers. The orchestrator does not expose a dedicated archive command yet.
+The shuvplan archive browser is available through the shared event API as `archive`, which opens the saved plan/decision browser for future callers. The orchestrator does not expose a dedicated archive command yet.
 
 ### Progress tracking
 
@@ -199,12 +199,12 @@ During execution, the agent marks completed steps with `[DONE:n]` markers. Progr
 | Command | Description |
 |---------|-------------|
 | `/plannotator` | Toggle plan mode. The agent writes a markdown plan file anywhere in the working directory and submits its path |
-| `/plannotator-status` | Show current phase, plan file, and progress |
-| `/plannotator-review` | Open code review UI for current changes |
-| `/plannotator-annotate <file>` | Open markdown file in annotation UI |
-| `/plannotator-last` | Annotate the last assistant message |
-| `/plannotator-setup-goal <objective>` | Turn an idea into a reviewed `/goal` package |
-| `/plannotator-visual-explainer <brief>` | Generate a Plannotator-themed HTML visual explainer |
+| `/shuvplan-status` | Show current phase, plan file, and progress |
+| `/shuvplan-review` | Open code review UI for current changes |
+| `/shuvplan-annotate <file>` | Open markdown file in annotation UI |
+| `/shuvplan-last` | Annotate the last assistant message |
+| `/shuvplan-setup-goal <objective>` | Turn an idea into a reviewed `/goal` package |
+| `/shuvplan-visual-explainer <brief>` | Generate a shuvplan-themed HTML visual explainer |
 
 ## Flags
 

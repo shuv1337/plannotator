@@ -1,5 +1,5 @@
 /**
- * ConfigStore — Unified config resolver for Plannotator
+ * ConfigStore — Unified config resolver for shuvplan
  *
  * Singleton that resolves settings with precedence:
  *   server config file > cookie > default

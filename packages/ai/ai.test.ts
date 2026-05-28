@@ -325,7 +325,7 @@ describe("Context builders", () => {
       },
     };
     const prompt = buildSystemPrompt(ctx);
-    expect(prompt).toContain("Plannotator");
+    expect(prompt).toContain("shuvplan");
     expect(prompt).toContain("# My Plan");
     expect(prompt).toContain("Step 1: do things");
     expect(prompt).toContain("Plan version: 3 of 4");
@@ -339,7 +339,7 @@ describe("Context builders", () => {
       review: { patch: "diff --git a/foo.ts b/foo.ts\n+hello" },
     };
     const prompt = buildSystemPrompt(ctx);
-    expect(prompt).toContain("Plannotator");
+    expect(prompt).toContain("shuvplan");
     expect(prompt).toContain("diff --git");
   });
 
@@ -355,7 +355,7 @@ describe("Context builders", () => {
       },
     };
     const prompt = buildSystemPrompt(ctx);
-    expect(prompt).toContain("Plannotator");
+    expect(prompt).toContain("shuvplan");
     expect(prompt).toContain("/tmp/test.md");
     expect(prompt).toContain("https://example.com/doc.html");
     expect(prompt).toContain("Render mode: html");
@@ -372,7 +372,7 @@ describe("Context builders", () => {
       parent: { sessionId: "parent-123", cwd: "/project" },
     };
     const preamble = buildForkPreamble(ctx);
-    expect(preamble).toContain("reviewing your work in Plannotator");
+    expect(preamble).toContain("reviewing your work in shuvplan");
     expect(preamble).toContain("# Plan");
     expect(preamble).toContain("Remove section 3");
   });

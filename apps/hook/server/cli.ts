@@ -9,7 +9,7 @@ export function isVersionInvocation(args: string[]): boolean {
 declare const __CLI_VERSION__: string;
 
 export function formatVersion(): string {
-  return `plannotator ${typeof __CLI_VERSION__ !== "undefined" ? __CLI_VERSION__ : "dev"}`;
+  return `shuvplan ${typeof __CLI_VERSION__ !== "undefined" ? __CLI_VERSION__ : "dev"}`;
 }
 
 export function isInteractiveNoArgInvocation(
@@ -22,35 +22,39 @@ export function isInteractiveNoArgInvocation(
 export function formatTopLevelHelp(): string {
   return [
     "Usage:",
-    "  plannotator --help",
-    "  plannotator --version, -v",
-    "  plannotator [--browser <name>]",
-    "  plannotator review [--git] [PR_URL]",
-    "  plannotator annotate <file.md | file.html | https://... | folder/>  [--no-jina] [--gate] [--json] [--hook]",
-    "  plannotator setup-goal <interview|facts> <bundle.json | -> [--json]",
-    "  plannotator last",
-    "  plannotator archive",
-    "  plannotator sessions",
-    "  plannotator improve-context",
+    "  shuvplan --help",
+    "  shuvplan --version, -v",
+    "  shuvplan [--browser <name>]",
+    "  shuvplan review [--git] [PR_URL]",
+    "  shuvplan annotate <file.md | file.html | https://... | folder/>  [--no-jina] [--gate] [--json] [--hook]",
+    "  shuvplan setup-goal <interview|facts> <bundle.json | -> [--json]",
+    "  shuvplan last",
+    "  shuvplan archive",
+    "  shuvplan sessions",
+    "  shuvplan submissions [--last] [--limit N]",
+    "  shuvplan improve-context",
     "",
     "Note:",
-    "  running 'plannotator' without arguments is for hook integration and expects JSON on stdin",
+    "  running 'shuvplan' without arguments is for hook integration and expects JSON on stdin",
+    "  legacy 'plannotator' commands remain available during the compatibility window",
   ].join("\n");
 }
 
 export function formatInteractiveNoArgClarification(): string {
   return [
-    "plannotator (without arguments) is usually launched automatically by Claude Code hooks.",
+    "shuvplan (without arguments) is usually launched automatically by agent hooks.",
     "It expects hook JSON on stdin.",
     "",
     "For interactive use, try:",
-    "  plannotator review",
-    "  plannotator annotate <file.md | file.html | https://...>",
-    "  plannotator setup-goal interview bundle.json --json",
-    "  plannotator last",
-    "  plannotator archive",
-    "  plannotator sessions",
+    "  shuvplan review",
+    "  shuvplan annotate <file.md | file.html | https://...>",
+    "  shuvplan setup-goal interview bundle.json --json",
+    "  shuvplan last",
+    "  shuvplan archive",
+    "  shuvplan sessions",
+    "  shuvplan submissions --last",
     "",
-    "Run 'plannotator --help' for top-level usage.",
+    "Legacy 'plannotator' commands continue to work during the compatibility window.",
+    "Run 'shuvplan --help' for top-level usage.",
   ].join("\n");
 }

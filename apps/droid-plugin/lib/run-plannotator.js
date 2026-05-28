@@ -69,7 +69,7 @@ function exitWithFailure(result, invocation) {
       process.stderr,
       [
         `Could not run \`${invocation}\` because the \`plannotator\` CLI is not installed or not on PATH.`,
-        "Install it first: https://plannotator.ai/docs/getting-started/installation/",
+        "Install it first: https://plan.shuv.dev/docs/getting-started/installation/",
       ].join("\n"),
     );
   } else if (result.error) {

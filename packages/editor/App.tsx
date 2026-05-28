@@ -190,7 +190,7 @@ const App: React.FC = () => {
   const goalSetupMode = goalSetupBundle !== null;
 
   useEffect(() => {
-    document.title = repoInfo ? `${repoInfo.display} · Plannotator` : "Plannotator";
+    document.title = repoInfo ? `${repoInfo.display} · shuvplan` : "shuvplan";
   }, [repoInfo]);
 
   const [initialExportTab, setInitialExportTab] = useState<'share' | 'annotations' | 'notes'>();
@@ -935,7 +935,7 @@ const App: React.FC = () => {
       if (vaultPath) {
         body.obsidian = {
           vaultPath,
-          folder: obsSettings.folder || 'plannotator',
+          folder: obsSettings.folder || 'shuvplan',
           plan: markdown,
           ...(obsSettings.filenameFormat && { filenameFormat: obsSettings.filenameFormat }),
           ...(obsSettings.filenameSeparator && obsSettings.filenameSeparator !== 'space' && { filenameSeparator: obsSettings.filenameSeparator }),
@@ -959,7 +959,7 @@ const App: React.FC = () => {
       body.octarine = {
         plan: markdown,
         workspace: octSettings.workspace,
-        folder: octSettings.folder || 'plannotator',
+        folder: octSettings.folder || 'shuvplan',
       };
       targets.push('Octarine');
     }
@@ -1089,7 +1089,7 @@ const App: React.FC = () => {
       if (obsidianSettings.enabled && effectiveVaultPath) {
         body.obsidian = {
           vaultPath: effectiveVaultPath,
-          folder: obsidianSettings.folder || 'plannotator',
+          folder: obsidianSettings.folder || 'shuvplan',
           plan: markdown,
           ...(obsidianSettings.filenameFormat && { filenameFormat: obsidianSettings.filenameFormat }),
           ...(obsidianSettings.filenameSeparator && obsidianSettings.filenameSeparator !== 'space' && { filenameSeparator: obsidianSettings.filenameSeparator }),
@@ -1110,7 +1110,7 @@ const App: React.FC = () => {
         body.octarine = {
           plan: markdown,
           workspace: octarineSettings.workspace,
-          folder: octarineSettings.folder || 'plannotator',
+          folder: octarineSettings.folder || 'shuvplan',
         };
       }
 
@@ -1680,7 +1680,7 @@ const App: React.FC = () => {
       if (vaultPath) {
         body.obsidian = {
           vaultPath,
-          folder: s.folder || 'plannotator',
+          folder: s.folder || 'shuvplan',
           plan: markdown,
           ...(s.filenameFormat && { filenameFormat: s.filenameFormat }),
           ...(s.filenameSeparator && s.filenameSeparator !== 'space' && { filenameSeparator: s.filenameSeparator }),
@@ -1700,7 +1700,7 @@ const App: React.FC = () => {
       body.octarine = {
         plan: markdown,
         workspace: os.workspace,
-        folder: os.folder || 'plannotator',
+        folder: os.folder || 'shuvplan',
       };
     }
 
@@ -1928,14 +1928,14 @@ const App: React.FC = () => {
 
   if (isLoading && !isSharedSession) {
     return (
-      <ThemeProvider defaultTheme="dark">
+      <ThemeProvider defaultTheme="system" defaultColorTheme="shuvplan">
         <div className="h-screen bg-background" />
       </ThemeProvider>
     );
   }
 
   return (
-    <ThemeProvider defaultTheme="dark">
+    <ThemeProvider defaultTheme="system" defaultColorTheme="shuvplan">
       <TooltipProvider delayDuration={900} skipDelayDuration={200} disableHoverableContent>
       <div data-print-region="root" className="h-screen flex flex-col bg-background overflow-hidden">
         <AppHeader
@@ -2508,7 +2508,7 @@ const App: React.FC = () => {
             submitted === 'exited'
               ? 'Annotation session closed without feedback.'
               : archive.archiveMode
-                ? 'You can reopen with plannotator archive.'
+                ? 'You can reopen with shuvplan archive.'
                 : goalSetupMode
                   ? `${agentName} will use your answers to continue.`
                 : submitted === 'approved'

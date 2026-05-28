@@ -48,11 +48,11 @@ export const PlanAIAnnouncementDialog: React.FC<PlanAIAnnouncementDialogProps> =
             <h3 className="font-semibold text-base">New: Ask AI for annotated documents</h3>
           </div>
           <p className="text-sm text-muted-foreground">
-            Chat with plans and annotated documents directly inside Plannotator.
+            Chat with plans and annotated documents directly inside shuvplan.
           </p>
           {providerLabel && (
             <p className="text-xs text-muted-foreground/70 mt-1">
-              Plannotator selected {providerLabel} for {agentLabel}.
+              shuvplan selected {providerLabel} for {agentLabel}.
             </p>
           )}
         </div>

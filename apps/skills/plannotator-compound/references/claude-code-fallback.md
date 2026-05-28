@@ -1,6 +1,6 @@
 # Claude Code Fallback
 
-Read this file only when the user does **not** have a usable Plannotator archive.
+Read this file only when the user does **not** have a usable shuvplan archive.
 
 This is the secondary path for ordinary Claude Code users whose denial history
 exists in `~/.claude/projects/` rather than `~/.plannotator/plans/`.
@@ -75,7 +75,7 @@ Use the part files only after you understand the overall dataset shape.
 
 ## Inventory In Fallback Mode
 
-In Claude Code fallback mode, report this dataset instead of the Plannotator file counts:
+In Claude Code fallback mode, report this dataset instead of the shuvplan file counts:
 
 - human denial reasons found
 - total `ExitPlanMode` attempts scanned
@@ -94,7 +94,7 @@ Also calculate:
 - average `plan_length_chars` where present
 - percentage of all denials that contain a recoverable human reason
 
-Do **not** fabricate Plannotator-only inventory fields in fallback mode:
+Do **not** fabricate shuvplan-only inventory fields in fallback mode:
 
 - no `*-approved.md` counts
 - no `*.annotations.md` counts
@@ -108,7 +108,7 @@ does not contain those artifacts.
 
 Previous report detection still applies. Check the user's home directory or
 `~/.plannotator/plans/` for existing `compound-planning-report*.html` files. If
-found, offer the same incremental vs full choice as Plannotator mode. In
+found, offer the same incremental vs full choice as shuvplan mode. In
 incremental mode, filter the parser output by timestamp rather than by filename
 date — use the `timestamp` field in each JSON record.
 
@@ -194,7 +194,7 @@ The reduction step stays conceptually the same:
 - evolution over time
 - corrective prompt instructions
 
-Use `model: "sonnet"` for reduction agents, same as Plannotator mode. The
+Use `model: "sonnet"` for reduction agents, same as shuvplan mode. The
 two-stage reduce (partial reduces for 21+ extraction files) also applies when
 there are many part files.
 
@@ -222,7 +222,7 @@ In fallback mode:
 
 ### KPI Sidebar Substitutes
 
-The Plannotator version uses a revision-rate KPI that may not exist here.
+The shuvplan version uses a revision-rate KPI that may not exist here.
 
 In fallback mode, prefer this KPI trio:
 
@@ -235,7 +235,7 @@ If a better third metric emerges from the data, use it, but do not invent one.
 ### Footer / Provenance
 
 The footer tagline should mention that the report was derived from Claude Code
-denial reasons rather than Plannotator markdown archives.
+denial reasons rather than shuvplan markdown archives.
 
 ### Important Limitation To State
 

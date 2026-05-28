@@ -104,7 +104,7 @@ export function notifyCurrentPiSession(
 		current.notify(message, type);
 		return true;
 	} catch (err) {
-		console.error(`Plannotator current-session notification failed: ${getErrorMessage(err)}`);
+		console.error(`shuvplan current-session notification failed: ${getErrorMessage(err)}`);
 		return false;
 	}
 }
@@ -121,7 +121,7 @@ function getCurrentPiSessionLabel(): string {
 
 export function withCurrentPiSessionFallbackHeader(content: SendUserMessageContent): SendUserMessageContent {
 	if (typeof content !== "string") return content;
-	return `This Plannotator feedback was submitted from a browser tab opened before Pi switched sessions. It is being delivered to ${getCurrentPiSessionLabel()} because the original Pi session is no longer active.
+	return `This shuvplan feedback was submitted from a browser tab opened before Pi switched sessions. It is being delivered to ${getCurrentPiSessionLabel()} because the original Pi session is no longer active.
 
 ${content}`;
 }

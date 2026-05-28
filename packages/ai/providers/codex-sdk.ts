@@ -1,8 +1,8 @@
 /**
- * Codex SDK provider — bridges Plannotator's AI layer with OpenAI's Codex agent.
+ * Codex SDK provider — bridges shuvplan's AI layer with OpenAI's Codex agent.
  *
  * Uses @openai/codex-sdk to create sessions that can:
- * - Start fresh with Plannotator context as the system prompt
+ * - Start fresh with shuvplan context as the system prompt
  * - Fake-fork from a parent session (fresh thread + preamble, no real history)
  * - Resume a previous thread by ID
  * - Stream text deltas back to the UI in real time

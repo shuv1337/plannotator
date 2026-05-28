@@ -1,12 +1,12 @@
 ---
 title: AI Features
-description: "How to use Plannotator's AI chat during plan review, annotate, and code review — provider setup, model selection, and how it works."
+description: "How to use shuvplan's AI chat during plan review, annotate, and code review — provider setup, model selection, and how it works."
 sidebar:
   order: 25
 section: "Guides"
 ---
 
-Plannotator embeds an AI chat sidebar directly in live review sessions. In plan review and annotate, you can ask a general question about the current plan or document, or select text, open the comment popover, and choose **Ask AI**. In code review, you can select lines in a diff and ask questions about the code.
+shuvplan embeds an AI chat sidebar directly in live review sessions. In plan review and annotate, you can ask a general question about the current plan or document, or select text, open the comment popover, and choose **Ask AI**. In code review, you can select lines in a diff and ask questions about the code.
 
 The AI sees the relevant review context automatically: the current plan and previous plan version for plan review, the active document and source metadata for annotate, or the full diff for code review. AI chat history stays separate from approve, deny, and send-annotations output unless you manually copy text into normal feedback.
 
@@ -37,13 +37,13 @@ Requires the `codex` CLI installed and authenticated. The AI operates in a sandb
 
 ### Pi (via RPC subprocess)
 
-Requires the `pi` CLI installed and configured. Plannotator spawns `pi --mode rpc` and communicates over JSONL/stdio. Models are discovered dynamically from your Pi installation — whatever models you've configured in Pi are available here.
+Requires the `pi` CLI installed and configured. shuvplan spawns `pi --mode rpc` and communicates over JSONL/stdio. Models are discovered dynamically from your Pi installation — whatever models you've configured in Pi are available here.
 
-No API keys are managed by Plannotator — Pi uses its own local configuration.
+No API keys are managed by shuvplan — Pi uses its own local configuration.
 
 ### OpenCode (via OpenCode SDK)
 
-Requires the `opencode` CLI installed and authenticated. Plannotator spawns `opencode serve` and communicates via HTTP + SSE. Models are discovered dynamically from your connected providers.
+Requires the `opencode` CLI installed and authenticated. shuvplan spawns `opencode serve` and communicates via HTTP + SSE. Models are discovered dynamically from your connected providers.
 
 OpenCode supports session forking, resuming, and runtime permission approvals — the richest capability set of all four providers.
 
@@ -51,7 +51,7 @@ OpenCode supports session forking, resuming, and runtime permission approvals �
 
 Provider and model selection is available in **Settings > AI**. These persist via cookies across sessions.
 
-By default, Plannotator prefers the provider that matches the detected agent origin: Claude Code uses Claude, Codex uses Codex, OpenCode uses OpenCode, and Pi uses Pi when those providers are available. GitHub Copilot CLI and Gemini CLI do not have dedicated Ask AI providers yet, so they fall back to your saved provider or the server default.
+By default, shuvplan prefers the provider that matches the detected agent origin: Claude Code uses Claude, Codex uses Codex, OpenCode uses OpenCode, and Pi uses Pi when those providers are available. GitHub Copilot CLI and Gemini CLI do not have dedicated Ask AI providers yet, so they fall back to your saved provider or the server default.
 
 You can also override the provider and model per-session using the config bar at the bottom of the AI sidebar. Changing the provider or model starts a new session — old messages stay visible but the conversation resets.
 

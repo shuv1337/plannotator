@@ -1,5 +1,5 @@
 /**
- * Portable sharing utilities for Plannotator
+ * Portable sharing utilities for shuvplan
  *
  * Enables sharing plan + annotations via URL hash using:
  * - Native CompressionStream/DecompressionStream (deflate-raw)

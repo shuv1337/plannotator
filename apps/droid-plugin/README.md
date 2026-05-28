@@ -1,6 +1,6 @@
-# Plannotator for Droid
+# shuvplan for Droid
 
-Plannotator's Droid plugin ships the manual slash-command workflow only:
+shuvplan's Droid plugin ships the manual slash-command workflow only:
 
 - `/plannotator-review`
 - `/plannotator-annotate <file|folder|url>`
@@ -14,7 +14,7 @@ It does not attempt plan-mode interception or host-level planning integration.
 Install the `plannotator` CLI first:
 
 ```bash
-curl -fsSL https://plannotator.ai/install.sh | bash
+curl -fsSL https://plan.shuv.dev/install.sh | bash
 ```
 
 Then add the marketplace and install the plugin:
@@ -35,5 +35,5 @@ droid plugin install plannotator@plannotator
 ## Notes
 
 - The plugin expects `plannotator` on `PATH`.
-- Review and annotate flows still open the Plannotator browser UI and return the result to the Droid session.
+- Review and annotate flows still open the shuvplan browser UI and return the result to the Droid session.
 - The command wrappers set `PLANNOTATOR_ORIGIN=droid` so the UI can label the host correctly.

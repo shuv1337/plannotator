@@ -9,6 +9,7 @@ import { PlanHeaderMenu } from '@plannotator/ui/components/PlanHeaderMenu';
 import type { CallbackConfig } from '@plannotator/ui/utils/callback';
 import type { UIPreferences } from '@plannotator/ui/utils/uiPreferences';
 import { SparklesIcon } from '@plannotator/ui/components/SparklesIcon';
+import { ShuvplanBrand } from '@plannotator/ui/components/ShuvplanBrand';
 
 interface AppHeaderProps {
   // Mode flags (stable after mount)
@@ -149,7 +150,7 @@ export const AppHeader = React.memo<AppHeaderProps>(({
   octarineConfigured,
 }) => {
   return (
-    <header data-app-header="true" className="h-12 flex items-center justify-between px-2 md:px-4 border-b border-border/50 bg-card/50 backdrop-blur-xl sticky top-0 z-[50]">
+    <header data-app-header="true" className="sp-pagehead h-12 flex items-center justify-between px-2 md:px-4 backdrop-blur-xl sticky top-0 z-[50]">
       <AppHeaderLogo />
 
       <div className="flex items-center gap-1 md:gap-2">
@@ -353,13 +354,6 @@ export const AppHeader = React.memo<AppHeaderProps>(({
 
 const AppHeaderLogo = () => (
   <div className="flex items-center gap-2 md:gap-3">
-    <a
-      href="https://plannotator.ai"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="flex items-center gap-1.5 md:gap-2 hover:opacity-80 transition-opacity"
-    >
-      <span className="text-sm font-semibold tracking-tight">Plannotator</span>
-    </a>
+    <ShuvplanBrand />
   </div>
 );

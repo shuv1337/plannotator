@@ -12,9 +12,9 @@ tags: ["compound-planning", "plan-mode", "claude-code"]
   <source src="https://d17ygohy796f9l.cloudfront.net/videos/compound-planning.mp4" type="video/mp4" />
 </video>
 
-If you use plan mode and deny plans, you already have the data. The skill reads it and puts it to work. It works day one for any Claude Code user who has been actively using plan mode. [Plannotator](https://github.com/backnotprop/plannotator) users get an even richer analysis since Plannotator captures full plan text and inline annotations with every denial. Plannotator is [open source](https://github.com/backnotprop/plannotator) and free.
+If you use plan mode and deny plans, you already have the data. The skill reads it and puts it to work. It works day one for any Claude Code user who has been actively using plan mode. [shuvplan](https://github.com/backnotprop/plannotator) users get an even richer analysis since shuvplan captures full plan text and inline annotations with every denial. shuvplan is [open source](https://github.com/backnotprop/plannotator) and free.
 
-[Install Plannotator](https://github.com/backnotprop/plannotator?tab=readme-ov-file#install-for-claude-code), then run:
+[Install shuvplan](https://github.com/backnotprop/plannotator?tab=readme-ov-file#install-for-claude-code), then run:
 
 ```
 /plannotator-compound
@@ -22,7 +22,7 @@ If you use plan mode and deny plans, you already have the data. The skill reads 
 
 ## How it works
 
-When you deny a plan in Claude Code, that interaction gets logged. If you're a Plannotator user, it's even better. The more you use it, the richer your archive gets. Full plan text, inline annotations, structural feedback, all saved as markdown files that build up over time.
+When you deny a plan in Claude Code, that interaction gets logged. If you're a shuvplan user, it's even better. The more you use it, the richer your archive gets. Full plan text, inline annotations, structural feedback, all saved as markdown files that build up over time.
 
 Compound Planning reads that archive in three steps:
 
@@ -38,7 +38,7 @@ The report is personalized. Every quote is pulled from your actual feedback. Eve
 
 ## Works for all Claude Code users
 
-Plannotator users get the richest analysis since the archive contains full plan text and inline annotations. But you don't need Plannotator.
+shuvplan users get the richest analysis since the archive contains full plan text and inline annotations. But you don't need shuvplan.
 
 If you use Claude Code with plan mode, your denial reasons live in `~/.claude/projects/`. The skill includes a Python parser that extracts your `ExitPlanMode` outcomes, filters out boilerplate, and produces clean records of your human-authored feedback. The same analysis pipeline runs on this data and produces the same report.
 
@@ -50,6 +50,6 @@ Your denied plans aren't wasted work. They're the specification for better plans
 
 ## Try it
 
-If you have [Plannotator](https://github.com/backnotprop/plannotator) installed, it works out of the box. If you're using Claude Code without Plannotator, the skill works with your existing session logs, no additional setup.
+If you have [shuvplan](https://github.com/backnotprop/plannotator) installed, it works out of the box. If you're using Claude Code without shuvplan, the skill works with your existing session logs, no additional setup.
 
 The more denial history you have, the richer the analysis. Start with the [installation guide](/docs/getting-started/installation/) or check out the [repo](https://github.com/backnotprop/plannotator).

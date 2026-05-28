@@ -4,15 +4,15 @@ const BASE_CORS_HEADERS = {
   "Access-Control-Max-Age": "86400",
 };
 
-// Defaults target the hosted plannotator.ai deployment.
+// Defaults allow the hosted shuvplan portal and legacy shuvplan portal.
 // Self-hosters should set PASTE_ALLOWED_ORIGINS (Bun) or ALLOWED_ORIGINS (Cloudflare)
-// to their own portal origin so requests from the hosted share.plannotator.ai
-// portal are not granted CORS access against their service.
+// to their own portal origin so unrelated hosted portals are not granted
+// CORS access against their service.
 export function getAllowedOrigins(envValue?: string): string[] {
   if (envValue) {
     return envValue.split(",").map((o) => o.trim());
   }
-  return ["https://share.plannotator.ai", "http://localhost:3001"];
+  return ["https://plan.shuv.dev", "https://share.plannotator.ai", "http://localhost:3001"];
 }
 
 export function corsHeaders(

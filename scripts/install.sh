@@ -28,7 +28,7 @@ VERSION="latest"
 # which would otherwise silently overwrite the earlier value and 404.
 VERSION_EXPLICIT=0
 # Three-layer opt-in for SLSA build-provenance verification.
-# Precedence: CLI flag > env var > ~/.plannotator/config.json > default (off).
+# Precedence: CLI flag > env var > ~/.shuvplan/config.json > ~/.plannotator/config.json > default (off).
 # -1 = flag not set yet (fall through to lower layers); 0 = disable; 1 = enable.
 VERIFY_ATTESTATION_FLAG=-1
 
@@ -45,18 +45,18 @@ Options:
                          `gh attestation verify`. Fails the install if gh is
                          not available or the check does not pass.
   --skip-attestation     Force-skip provenance verification even if enabled
-                         via env var or ~/.plannotator/config.json.
+                         via env var or ~/.shuvplan/config.json.
   -h, --help             Show this help and exit.
 
 Provenance verification is off by default. Enable it by any of:
   - passing --verify-attestation
-  - exporting PLANNOTATOR_VERIFY_ATTESTATION=1
-  - setting { "verifyAttestation": true } in ~/.plannotator/config.json
+  - exporting SHUVPLAN_VERIFY_ATTESTATION=1
+  - setting { "verifyAttestation": true } in ~/.shuvplan/config.json
 
 Examples:
-  curl -fsSL https://plannotator.ai/install.sh | bash
-  curl -fsSL https://plannotator.ai/install.sh | bash -s -- --version vX.Y.Z
-  curl -fsSL https://plannotator.ai/install.sh | bash -s -- --verify-attestation
+  curl -fsSL https://plan.shuv.dev/install.sh | bash
+  curl -fsSL https://plan.shuv.dev/install.sh | bash -s -- --version vX.Y.Z
+  curl -fsSL https://plan.shuv.dev/install.sh | bash -s -- --verify-attestation
   bash install.sh vX.Y.Z
 USAGE
 }
@@ -144,7 +144,7 @@ done
 case "$(uname -s)" in
     Darwin) os="darwin" ;;
     Linux)  os="linux" ;;
-    *)      echo "Unsupported OS. For Windows, run: irm https://plannotator.ai/install.ps1 | iex" >&2; exit 1 ;;
+    *)      echo "Unsupported OS. For Windows, run: irm https://plan.shuv.dev/install.ps1 | iex" >&2; exit 1 ;;
 esac
 
 case "$(uname -m)" in
@@ -187,20 +187,29 @@ echo "Installing plannotator ${latest_tag}..."
 # provenance support. The three layers (config file, env var, CLI flag) are
 # all cheap to check — no reason to defer this past the arg parse.
 #
-# Precedence: CLI flag > env var > ~/.plannotator/config.json > default (off).
+# Precedence: CLI flag > env var > ~/.shuvplan/config.json > ~/.plannotator/config.json > default (off).
 verify_attestation=0
 
 # Layer 3: config file (lowest precedence of the opt-in sources).
 # Crude grep against a flat boolean — PlannotatorConfig has no nested
 # verifyAttestation, so false positives are not a concern.
-if [ -f "$HOME/.plannotator/config.json" ]; then
-    if grep -q '"verifyAttestation"[[:space:]]*:[[:space:]]*true' "$HOME/.plannotator/config.json" 2>/dev/null; then
+config_path="$HOME/.shuvplan/config.json"
+legacy_config_path="$HOME/.plannotator/config.json"
+if [ ! -f "$config_path" ] && [ -f "$legacy_config_path" ]; then
+    config_path="$legacy_config_path"
+fi
+if [ -f "$config_path" ]; then
+    if grep -q '"verifyAttestation"[[:space:]]*:[[:space:]]*true' "$config_path" 2>/dev/null; then
         verify_attestation=1
     fi
 fi
 
-# Layer 2: env var (overrides config file).
+# Layer 2: env vars (override config file; SHUVPLAN_* wins over legacy PLANNOTATOR_*).
 case "${PLANNOTATOR_VERIFY_ATTESTATION:-}" in
+    1|true|yes|TRUE|YES|True|Yes) verify_attestation=1 ;;
+    0|false|no|FALSE|NO|False|No) verify_attestation=0 ;;
+esac
+case "${SHUVPLAN_VERIFY_ATTESTATION:-}" in
     1|true|yes|TRUE|YES|True|Yes) verify_attestation=1 ;;
     0|false|no|FALSE|NO|False|No) verify_attestation=0 ;;
 esac
@@ -222,8 +231,8 @@ if [ "$verify_attestation" -eq 1 ]; then
         echo "build provenance is ${MIN_ATTESTED_VERSION}. Options:" >&2
         echo "  - Pin to ${MIN_ATTESTED_VERSION} or later: --version ${MIN_ATTESTED_VERSION}" >&2
         echo "  - Install without provenance verification: --skip-attestation" >&2
-        echo "  - Or unset PLANNOTATOR_VERIFY_ATTESTATION / remove verifyAttestation" >&2
-        echo "    from ~/.plannotator/config.json" >&2
+        echo "  - Or unset SHUVPLAN_VERIFY_ATTESTATION / remove verifyAttestation" >&2
+        echo "    from ~/.shuvplan/config.json" >&2
         exit 1
     fi
 fi
@@ -279,24 +288,26 @@ if [ "$verify_attestation" -eq 1 ]; then
     else
         echo "verifyAttestation is enabled but gh CLI was not found." >&2
         echo "Install https://cli.github.com (and run 'gh auth login')," >&2
-        echo "or unset PLANNOTATOR_VERIFY_ATTESTATION / remove verifyAttestation from" >&2
-        echo "~/.plannotator/config.json / pass --skip-attestation." >&2
+        echo "or unset SHUVPLAN_VERIFY_ATTESTATION / remove verifyAttestation from" >&2
+        echo "~/.shuvplan/config.json / pass --skip-attestation." >&2
         rm -f "$tmp_file"
         exit 1
     fi
 else
     echo "SHA256 verified. For build provenance verification, see"
-    echo "https://plannotator.ai/docs/getting-started/installation/#verifying-your-install"
+    echo "https://plan.shuv.dev/docs/getting-started/installation/#verifying-your-install"
 fi
 
-# Remove old binary first (handles Windows .exe and locked file issues)
-rm -f "$INSTALL_DIR/plannotator" "$INSTALL_DIR/plannotator.exe" 2>/dev/null || true
+# Remove old binaries first (handles Windows .exe and locked file issues)
+rm -f "$INSTALL_DIR/shuvplan" "$INSTALL_DIR/shuvplan.exe" "$INSTALL_DIR/plannotator" "$INSTALL_DIR/plannotator.exe" 2>/dev/null || true
 
-mv "$tmp_file" "$INSTALL_DIR/plannotator"
-chmod +x "$INSTALL_DIR/plannotator"
+mv "$tmp_file" "$INSTALL_DIR/shuvplan"
+chmod +x "$INSTALL_DIR/shuvplan"
+ln -sf "$INSTALL_DIR/shuvplan" "$INSTALL_DIR/plannotator"
 
 echo ""
-echo "plannotator ${latest_tag} installed to ${INSTALL_DIR}/plannotator"
+echo "shuvplan ${latest_tag} installed to ${INSTALL_DIR}/shuvplan"
+echo "Compatibility alias installed to ${INSTALL_DIR}/plannotator"
 
 if ! echo "$PATH" | tr ':' '\n' | grep -qx "$INSTALL_DIR"; then
     echo ""
@@ -328,7 +339,7 @@ if [ "$codex_available" -eq 1 ]; then
     CODEX_DIR="$HOME/.codex"
     CODEX_CONFIG="$CODEX_DIR/config.toml"
     CODEX_HOOKS="$CODEX_DIR/hooks.json"
-    PLANNOTATOR_BIN="${INSTALL_DIR}/plannotator"
+    PLANNOTATOR_BIN="${INSTALL_DIR}/shuvplan"
     codex_hook_configured=0
 
     mkdir -p "$CODEX_DIR"
@@ -346,7 +357,7 @@ CODEX_CONFIG_EOF
         if grep -Eq '^[[:space:]]*features[[:space:]]*=' "$CODEX_CONFIG"; then
             echo ""
             echo "Codex config uses inline features in ${CODEX_CONFIG}; leaving it unchanged."
-            echo "Add this manually to enable Plannotator plan review:"
+            echo "Add this manually to enable shuvplan plan review:"
             echo ""
             echo "  [features]"
             echo "  hooks = true"
@@ -472,7 +483,7 @@ NODE
         ); then
             case "$codex_merge_result" in
                 custom)
-                    echo "Existing custom Codex Plannotator hook found at ${CODEX_HOOKS}; left it unchanged."
+                    echo "Existing custom Codex shuvplan/plannotator hook found at ${CODEX_HOOKS}; left it unchanged."
                     ;;
                 added)
                     echo "Added Codex hooks at ${CODEX_HOOKS}"
@@ -614,7 +625,7 @@ if (!changed) {
 const tmpPath = `${settingsPath}.${process.pid}.tmp`;
 fs.writeFileSync(tmpPath, `${JSON.stringify(settings, null, 2)}\n`);
 fs.renameSync(tmpPath, settingsPath);
-console.log("Configured Pi to use global Plannotator skills and skip bundled package skills.");
+console.log("Configured Pi to use global shuvplan skills and skip bundled package skills.");
 NODE
 }
 
@@ -628,7 +639,7 @@ update_pi_extension_if_present() {
         if plannotator_shared_agent_skills_available; then
             configure_pi_plannotator_package_filter
         else
-            echo "Leaving Pi bundled skills enabled (global Plannotator agent skills not found)."
+            echo "Leaving Pi bundled skills enabled (global shuvplan agent skills not found)."
         fi
         echo "Pi extension updated."
     else
@@ -702,7 +713,7 @@ cat > "$OPENCODE_COMMANDS_DIR/plannotator-review.md" << 'COMMAND_EOF'
 description: Open interactive code review for current changes
 ---
 
-The Plannotator Code Review has been triggered. Opening the review UI...
+The shuvplan Code Review has been triggered. Opening the review UI...
 Acknowledge "Opening code review..." and wait for the user's feedback.
 COMMAND_EOF
 
@@ -714,7 +725,7 @@ cat > "$OPENCODE_COMMANDS_DIR/plannotator-annotate.md" << 'COMMAND_EOF'
 description: Open interactive annotation UI for a markdown file
 ---
 
-The Plannotator Annotate has been triggered. Opening the annotation UI...
+The shuvplan Annotate has been triggered. Opening the annotation UI...
 Acknowledge "Opening annotation UI..." and wait for the user's feedback.
 COMMAND_EOF
 
@@ -741,13 +752,35 @@ echo "Installed /plannotator-setup-goal command to ${OPENCODE_COMMANDS_DIR}/plan
 
 cat > "$OPENCODE_COMMANDS_DIR/plannotator-visual-explainer.md" << 'COMMAND_EOF'
 ---
-description: Generate a Plannotator-themed self-contained HTML visual explainer
+description: Generate a shuvplan-themed self-contained HTML visual explainer
 ---
 
-Use $plannotator-visual-explainer to generate a self-contained HTML visualization with Plannotator theming. Treat any command arguments as the visualization brief; if there are no arguments, infer the brief from the current conversation or ask the user for the missing details.
+Use $plannotator-visual-explainer to generate a self-contained HTML visualization with shuvplan theming. Treat any command arguments as the visualization brief; if there are no arguments, infer the brief from the current conversation or ask the user for the missing details.
 COMMAND_EOF
 
 echo "Installed /plannotator-visual-explainer command to ${OPENCODE_COMMANDS_DIR}/plannotator-visual-explainer.md"
+
+for command_file in \
+    plannotator-review.md \
+    plannotator-annotate.md \
+    plannotator-last.md; do
+    shuvplan_file="${command_file/plannotator-/shuvplan-}"
+    sed 's/Plannotator/shuvplan/g; s/plannotator/shuvplan/g' \
+        "${CLAUDE_COMMANDS_DIR}/${command_file}" > "${CLAUDE_COMMANDS_DIR}/${shuvplan_file}"
+    echo "Installed /${shuvplan_file%.md} command to ${CLAUDE_COMMANDS_DIR}/${shuvplan_file}"
+done
+
+for command_file in \
+    plannotator-review.md \
+    plannotator-annotate.md \
+    plannotator-last.md \
+    plannotator-setup-goal.md \
+    plannotator-visual-explainer.md; do
+    shuvplan_file="${command_file/plannotator-/shuvplan-}"
+    sed 's/Plannotator/shuvplan/g; s/plannotator/shuvplan/g' \
+        "${OPENCODE_COMMANDS_DIR}/${command_file}" > "${OPENCODE_COMMANDS_DIR}/${shuvplan_file}"
+    echo "Installed /${shuvplan_file%.md} command to ${OPENCODE_COMMANDS_DIR}/${shuvplan_file}"
+done
 
 # Remove legacy Codex-oriented skills from the older shared agent scope.
 LEGACY_AGENTS_SKILLS_DIR="$HOME/.agents/skills"
@@ -761,10 +794,10 @@ if [ -d "$LEGACY_AGENTS_SKILLS_DIR" ]; then
     done
 fi
 if [ "$legacy_skills_removed" -eq 1 ]; then
-    echo "Removed legacy Plannotator skills from ${LEGACY_AGENTS_SKILLS_DIR}"
+    echo "Removed legacy shuvplan/plannotator skills from ${LEGACY_AGENTS_SKILLS_DIR}"
 fi
 
-# Remove Plannotator skills that still belong only in the shared agent scope from Codex.
+# Remove shuvplan/plannotator skills that still belong only in the shared agent scope from Codex.
 STALE_CODEX_SKILLS_DIR="$HOME/.codex/skills"
 stale_codex_skills_removed=0
 if [ -d "$STALE_CODEX_SKILLS_DIR" ]; then
@@ -776,7 +809,7 @@ if [ -d "$STALE_CODEX_SKILLS_DIR" ]; then
     done
 fi
 if [ "$stale_codex_skills_removed" -eq 1 ]; then
-    echo "Removed shared-agent Plannotator skills from ${STALE_CODEX_SKILLS_DIR}"
+    echo "Removed shared-agent shuvplan/plannotator skills from ${STALE_CODEX_SKILLS_DIR}"
 fi
 
 # Install skills (requires git)
@@ -854,7 +887,7 @@ if [ -d "$HOME/.gemini" ]; then
     GEMINI_POLICIES_DIR="$HOME/.gemini/policies"
     mkdir -p "$GEMINI_POLICIES_DIR"
     cat > "$GEMINI_POLICIES_DIR/plannotator.toml" << 'GEMINI_POLICY_EOF'
-# Plannotator policy for Gemini CLI
+# shuvplan policy for Gemini CLI
 # Allows exit_plan_mode without TUI confirmation so the browser UI is the sole gate.
 [[rule]]
 toolName = "exit_plan_mode"
@@ -947,6 +980,12 @@ Address the annotation feedback above. The user has reviewed the markdown file a
 """
 GEMINI_CMD_EOF
 
+    for command_file in plannotator-review.toml plannotator-annotate.toml; do
+        shuvplan_file="${command_file/plannotator-/shuvplan-}"
+        sed 's/Plannotator/shuvplan/g; s/plannotator/shuvplan/g' \
+            "${GEMINI_COMMANDS_DIR}/${command_file}" > "${GEMINI_COMMANDS_DIR}/${shuvplan_file}"
+    done
+
     echo "Installed Gemini slash commands to ${GEMINI_COMMANDS_DIR}/"
 fi
 
@@ -959,7 +998,8 @@ echo "Add the plugin to your opencode.json:"
 echo ""
 echo '  "plugin": ["@plannotator/opencode@latest"]'
 echo ""
-echo "Then restart OpenCode. The /plannotator-review, /plannotator-annotate, /plannotator-last, /plannotator-setup-goal, and /plannotator-visual-explainer commands are ready!"
+echo "Then restart OpenCode. The /shuvplan-review, /shuvplan-annotate, /shuvplan-last, /shuvplan-setup-goal, and /shuvplan-visual-explainer commands are ready!"
+echo "Legacy /plannotator-* commands remain installed as compatibility aliases."
 echo ""
 echo "=========================================="
 echo "  PI USERS"
@@ -991,11 +1031,12 @@ if [ "$codex_available" -eq 1 ]; then
     echo "Plan review is configured through the Codex Stop hook."
     echo ""
     echo "Codex skills are also installed:"
-    echo "  \$plannotator-review"
-    echo "  \$plannotator-annotate <file|url|folder>"
-    echo "  \$plannotator-last"
-    echo "  \$plannotator-setup-goal"
-    echo "  \$plannotator-visual-explainer"
+    echo "  \$shuvplan-review"
+    echo "  \$shuvplan-annotate <file|url|folder>"
+    echo "  \$shuvplan-last"
+    echo "  \$shuvplan-setup-goal"
+    echo "  \$shuvplan-visual-explainer"
+    echo "  Legacy \$plannotator-* skills remain available as compatibility aliases."
 else
     echo "Codex was not detected. After installing Codex, rerun this installer to add"
     echo "the Stop hook and Codex skills."
@@ -1009,7 +1050,8 @@ echo "Install the Claude Code plugin:"
 echo "  /plugin marketplace add backnotprop/plannotator"
 echo "  /plugin install plannotator@plannotator"
 echo ""
-echo "The /plannotator-review, /plannotator-annotate, /plannotator-last, /plannotator-setup-goal, and /plannotator-visual-explainer commands are ready to use after you restart Claude Code!"
+echo "The /shuvplan-review, /shuvplan-annotate, /shuvplan-last, /shuvplan-setup-goal, and /shuvplan-visual-explainer commands are ready to use after you restart Claude Code!"
+echo "Legacy /plannotator-* commands remain installed as compatibility aliases."
 
 # Warn if plannotator is configured in both settings.json hooks AND the plugin (causes double execution)
 # Only warn when the plugin is installed — manual-only users won't have overlap

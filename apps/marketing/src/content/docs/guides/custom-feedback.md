@@ -1,18 +1,18 @@
 ---
 title: Custom Feedback Messages
-description: "How to customize the messages Plannotator sends to your agent when you approve, deny, or annotate plans and documents."
+description: "How to customize the messages shuvplan sends to your agent when you approve, deny, or annotate plans and documents."
 sidebar:
   order: 29
 section: "Guides"
 ---
 
-Every time you approve a plan, deny it with feedback, annotate a file, or finish a code review, Plannotator sends a message to the agent. These messages are what the agent actually sees and acts on. By default they work well, but you can change any of them to match how you want your agent to behave.
+Every time you approve a plan, deny it with feedback, annotate a file, or finish a code review, shuvplan sends a message to the agent. These messages are what the agent actually sees and acts on. By default they work well, but you can change any of them to match how you want your agent to behave.
 
-All customization happens in `~/.plannotator/config.json` under the `prompts` key. No restart needed. Changes take effect the next time a feedback message is generated. You can set overrides that apply globally, or target a specific agent runtime (Claude Code, OpenCode, Pi, etc.) with [runtime-specific overrides](#runtime-specific-overrides).
+All customization happens in `~/.shuvplan/config.json` under the `prompts` key. No restart needed. Changes take effect the next time a feedback message is generated. You can set overrides that apply globally, or target a specific agent runtime (Claude Code, OpenCode, Pi, etc.) with [runtime-specific overrides](#runtime-specific-overrides).
 
 ## Quick example
 
-Say you want a shorter, more direct plan denial message. Add a `prompts.plan.denied` override to your config file (`~/.plannotator/config.json`):
+Say you want a shorter, more direct plan denial message. Add a `prompts.plan.denied` override to your config file (`~/.shuvplan/config.json`):
 
 ```json
 {
@@ -43,7 +43,7 @@ These are sent when you approve or deny a plan in the review UI.
 
 ### Annotation feedback
 
-These are sent when you annotate a file (`/plannotator-annotate`) or the last assistant message (`/plannotator-last`).
+These are sent when you annotate a file (`/shuvplan-annotate`) or the last assistant message (`/shuvplan-last`).
 
 | Key | When it's used | Available variables |
 |-----|---------------|-------------------|
@@ -52,7 +52,7 @@ These are sent when you annotate a file (`/plannotator-annotate`) or the last as
 
 ### Review feedback
 
-These are sent during code review (`/plannotator-review`).
+These are sent during code review (`/shuvplan-review`).
 
 | Key | When it's used | Available variables |
 |-----|---------------|-------------------|
@@ -134,7 +134,7 @@ Here's a config that customizes several messages at once:
 
 ## Defaults
 
-If you don't set any `prompts` config, everything works the same as it always has. The built-in defaults are the exact messages Plannotator has always sent. Here are the key ones for reference:
+If you don't set any `prompts` config, everything works the same as it always has. The built-in defaults are the exact messages shuvplan has always sent. Here are the key ones for reference:
 
 **Plan denied (default):**
 

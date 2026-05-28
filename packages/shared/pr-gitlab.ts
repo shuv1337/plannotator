@@ -5,11 +5,11 @@
  * Self-hosted instances are supported via the --hostname flag.
  */
 
-import { homedir } from "os";
 import { join } from "path";
-import { mkdirSync, writeFileSync } from "fs";
+import { writeFileSync } from "fs";
 import type { PRRuntime, PRMetadata, PRContext, PRReviewFileComment, CommandResult } from "./pr-types";
 import { encodeApiFilePath } from "./pr-types";
+import { getDataDirForWrite } from "./data-dir";
 
 // GitLab-specific MRRef shape (used internally)
 interface GlMRRef {
@@ -562,8 +562,7 @@ export async function submitGlMRReview(
         .filter((c): c is PRReviewFileComment => c !== null);
       let savedTo: string | null = null;
       try {
-        const dir = join(homedir(), ".plannotator", "failed-comments");
-        mkdirSync(dir, { recursive: true });
+        const dir = getDataDirForWrite("failed-comments");
         const slug = `${ref.host}-${ref.projectPath.replace(/\//g, "_")}-mr${ref.iid}-${Date.now()}`;
         savedTo = join(dir, `${slug}.json`);
         writeFileSync(

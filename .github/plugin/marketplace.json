@@ -4,13 +4,13 @@
     "name": "backnotprop"
   },
   "metadata": {
-    "description": "Interactive Plan & Code Review plugins"
+    "description": "shuvplan interactive plan and code review plugins"
   },
   "plugins": [
     {
       "name": "plannotator-copilot",
       "source": "./apps/copilot",
-      "description": "Interactive Plan & Code Review for GitHub Copilot CLI. Visual annotations, team sharing, structured feedback.",
+      "description": "shuvplan interactive plan and code review for GitHub Copilot CLI. Visual annotations, team sharing, structured feedback.",
       "version": "0.17.0"
     }
   ]

@@ -8,8 +8,8 @@ export async function GET(context: APIContext) {
     .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
   return rss({
-    title: 'Plannotator Blog',
-    description: 'News and updates from Plannotator',
+    title: 'shuvplan Blog',
+    description: 'News and updates from shuvplan',
     site: context.site!,
     items: posts.map((post) => ({
       title: post.data.title,

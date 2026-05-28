@@ -1,28 +1,28 @@
 ---
 title: "Quickstart"
-description: "Your first plan review with Plannotator — from agent plan to approval."
+description: "Your first plan review with shuvplan — from agent plan to approval."
 sidebar:
   order: 2
 section: "Getting Started"
 ---
 
-Once Plannotator is installed, it works automatically. Here's what a plan review looks like.
+Once shuvplan is installed, it works automatically. Here's what a plan review looks like.
 
 ## 1. Your agent generates a plan
 
-Ask your agent to do something that requires planning. When the agent reaches its plan handoff point, Plannotator opens the review UI in your browser.
+Ask your agent to do something that requires planning. When the agent reaches its plan handoff point, shuvplan opens the review UI in your browser.
 
 ```
 Agent proposes a plan
         ↓
-Plannotator hook or plugin fires
+shuvplan hook or plugin fires
         ↓
-Plannotator reads the plan from stdin
+shuvplan reads the plan from stdin
         ↓
 Browser opens with the plan review UI
 ```
 
-Claude Code uses an `ExitPlanMode` hook. Codex uses a `Stop` hook after a plan turn completes. Both flows open Plannotator automatically after installation.
+Claude Code uses an `ExitPlanMode` hook. Codex uses a `Stop` hook after a plan turn completes. Both flows open shuvplan automatically after installation.
 
 ## 2. Review the plan
 
@@ -63,10 +63,10 @@ After approval, the agent continues through its native implementation workflow. 
 
 ## Other commands
 
-Beyond plan review, Plannotator provides slash commands you can use anytime during a session:
+Beyond plan review, shuvplan provides slash commands you can use anytime during a session:
 
-- **`/plannotator-review`** — Review uncommitted code changes, or pass a GitHub PR URL to review a pull request. See [Code Review](/docs/commands/code-review/).
-- **`/plannotator-annotate <file.md>`** — Annotate any markdown file. See [Annotate](/docs/commands/annotate/).
-- **`/plannotator-last`** — Annotate the agent's last message. See [Annotate Last](/docs/commands/annotate-last/).
-- **`/plannotator-setup-goal`** — Turn an idea into a reviewed `/goal` package.
-- **`/plannotator-visual-explainer`** — Generate a self-contained Plannotator-themed HTML explainer.
+- **`/shuvplan-review`** — Review uncommitted code changes, or pass a GitHub PR URL to review a pull request. See [Code Review](/docs/commands/code-review/).
+- **`/shuvplan-annotate <file.md>`** — Annotate any markdown file. See [Annotate](/docs/commands/annotate/).
+- **`/shuvplan-last`** — Annotate the agent's last message. See [Annotate Last](/docs/commands/annotate-last/).
+- **`/shuvplan-setup-goal`** — Turn an idea into a reviewed `/goal` package.
+- **`/shuvplan-visual-explainer`** — Generate a self-contained shuvplan-themed HTML explainer.

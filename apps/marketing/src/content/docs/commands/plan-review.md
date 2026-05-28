@@ -6,7 +6,7 @@ sidebar:
 section: "Commands"
 ---
 
-Plan review is the core Plannotator workflow. It's not a slash command. Plannotator opens automatically when the host agent reaches its plan handoff point.
+Plan review is the core shuvplan workflow. It's not a slash command. shuvplan opens automatically when the host agent reaches its plan handoff point.
 
 ## How it works
 
@@ -31,14 +31,14 @@ The hook configuration lives at `apps/hook/hooks/hooks.json` and matches the `Ex
 
 ## Codex flow
 
-Codex does not expose a dedicated `ExitPlanMode` interception point. Instead, Plannotator integrates through Codex's experimental `Stop` hook.
+Codex does not expose a dedicated `ExitPlanMode` interception point. Instead, shuvplan integrates through Codex's experimental `Stop` hook.
 
 ```
 Codex turn stops
         ↓
 Stop hook fires
         ↓
-Plannotator reads transcript_path rollout
+shuvplan reads transcript_path rollout
         ↓
 Latest completed plan item is extracted
 fallback: raw <proposed_plan> block from assistant response
@@ -50,7 +50,7 @@ Deny    → Stop hook returns continuation feedback
         ↓
 Codex revises the plan in the same turn
         ↓
-Plannotator reopens only if the revised plan actually changed
+shuvplan reopens only if the revised plan actually changed
 ```
 
 This means Codex plan review is post-render rather than pre-submit, but you still get the same annotations, plan history, diff view, and revision loop.
@@ -77,7 +77,7 @@ You can paste or upload images and attach them to annotations. Images are given 
 
 To attach an image:
 1. Copy an image to your clipboard
-2. Paste anywhere in the Plannotator UI
+2. Paste anywhere in the shuvplan UI
 3. Optionally draw on the image to highlight areas
 4. Name the image and confirm
 
@@ -106,7 +106,7 @@ Images are stored as temporary files and referenced by name in the feedback sent
 
 ## Agent switching (OpenCode)
 
-OpenCode users can configure which agent receives the approved plan. Set this in Settings — choose from available agents or enter a custom agent name. If the configured agent isn't found, Plannotator shows a warning before approval.
+OpenCode users can configure which agent receives the approved plan. Set this in Settings — choose from available agents or enter a custom agent name. If the configured agent isn't found, shuvplan shows a warning before approval.
 
 ## Server API
 

@@ -1,6 +1,6 @@
 /**
  * Tracks whether the user has seen the plan/document Ask AI announcement.
- * Uses cookies so the dismissal survives Plannotator's random localhost ports.
+ * Uses cookies so the dismissal survives shuvplan's random localhost ports.
  */
 
 import { storage } from './storage';

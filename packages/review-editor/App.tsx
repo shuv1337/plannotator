@@ -46,6 +46,7 @@ import { ReviewSidebar } from './components/ReviewSidebar';
 import type { ReviewSidebarTab } from './components/ReviewSidebar';
 import { SparklesIcon } from '@plannotator/ui/components/SparklesIcon';
 import { ReviewAgentsIcon } from '@plannotator/ui/components/ReviewAgentsIcon';
+import { ShuvplanBrand } from '@plannotator/ui/components/ShuvplanBrand';
 import { useSidebar } from '@plannotator/ui/hooks/useSidebar';
 import { FileTree } from './components/FileTree';
 import { StackedPRLabel } from './components/StackedPRLabel';
@@ -212,7 +213,7 @@ const ReviewApp: React.FC = () => {
   const [repoInfo, setRepoInfo] = useState<{ display: string; branch?: string } | null>(null);
 
   useEffect(() => {
-    document.title = repoInfo ? `${repoInfo.display} · Code Review` : "Code Review";
+    document.title = repoInfo ? `${repoInfo.display} · shuvplan review` : "shuvplan review";
   }, [repoInfo]);
 
   const { prMetadata, prStackInfo, prStackTree, prDiffScope, prDiffScopeOptions, updatePRSession } = usePRSession();
@@ -1596,7 +1597,7 @@ const ReviewApp: React.FC = () => {
       const bodyForTarget = (target: SubmissionTarget) => {
         const parts: string[] = [];
         if (generalComment) parts.push(generalComment);
-        parts.push('Review from Plannotator');
+        parts.push('Review from shuvplan');
         if (target.fileScopedBody) parts.push(target.fileScopedBody);
         return parts.join('\n\n');
       };
@@ -1787,7 +1788,7 @@ const ReviewApp: React.FC = () => {
 
   if (isLoading) {
     return (
-      <ThemeProvider defaultTheme="dark">
+      <ThemeProvider defaultTheme="system" defaultColorTheme="shuvplan">
         <div className="h-screen flex items-center justify-center bg-background">
           <div className="text-muted-foreground text-sm">Loading diff...</div>
         </div>
@@ -1796,15 +1797,19 @@ const ReviewApp: React.FC = () => {
   }
 
   return (
-    <ThemeProvider defaultTheme="dark">
+    <ThemeProvider defaultTheme="system" defaultColorTheme="shuvplan">
       <TooltipProvider delayDuration={200} skipDelayDuration={100}>
       <ReviewStateProvider value={reviewStateValue}>
       <JobLogsProvider value={jobLogsValue}>
       {isSwitchingPRScope && <PRSwitchOverlay />}
       <div className="h-screen flex flex-col bg-background overflow-hidden">
         {/* Header */}
-        <header className="py-1 flex items-center justify-between px-2 md:px-4 border-b border-border/50 bg-card/50 backdrop-blur-xl z-50">
+        <header className="sp-pagehead py-1 flex items-center justify-between px-2 md:px-4 backdrop-blur-xl z-50">
           <div className="min-w-0 flex items-center gap-2 md:gap-3 -ml-1.5 md:-ml-3">
+            <div className="ml-1.5 md:ml-3 hidden sm:flex">
+              <ShuvplanBrand compact />
+            </div>
+            <div className="w-px h-5 bg-border/50 hidden sm:block" />
             {shouldShowFileTree && (
               <>
                 <button

@@ -1,12 +1,12 @@
 /**
- * Plannotator Shared Server
+ * shuvplan Shared Server
  *
  * Provides a consistent server implementation for both Claude Code and OpenCode plugins.
  *
  * Environment variables:
- *   PLANNOTATOR_REMOTE - Set to "1"/"true" for remote, "0"/"false" for local
- *   PLANNOTATOR_PORT   - Fixed port to use (default: random locally, 19432 for remote)
- *   PLANNOTATOR_ORIGIN - Explicit origin override; validated against AGENT_CONFIG
+ *   SHUVPLAN_REMOTE / PLANNOTATOR_REMOTE - Set to "1"/"true" for remote, "0"/"false" for local
+ *   SHUVPLAN_PORT / PLANNOTATOR_PORT     - Fixed port to use (default: random locally, 19432 for remote)
+ *   SHUVPLAN_ORIGIN / PLANNOTATOR_ORIGIN - Explicit origin override; validated against AGENT_CONFIG
  *                        in packages/shared/agents.ts. Supported values:
  *                        "claude-code", "opencode", "codex", "copilot-cli",
  *                        "gemini-cli", "pi".
@@ -116,7 +116,7 @@ const MAX_RETRIES = 5;
 const RETRY_DELAY_MS = 500;
 
 /**
- * Start the Plannotator server
+ * Start the shuvplan server
  *
  * Handles:
  * - Remote detection and port configuration
@@ -614,7 +614,7 @@ export async function startPlannotatorServer(
       }
 
       if (isAddressInUse) {
-        const hint = isRemote ? " (set PLANNOTATOR_PORT to use different port)" : "";
+        const hint = isRemote ? " (set SHUVPLAN_PORT or PLANNOTATOR_PORT to use different port)" : "";
         throw new Error(`Port ${configuredPort} in use after ${MAX_RETRIES} retries${hint}`);
       }
 

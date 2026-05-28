@@ -1,46 +1,46 @@
 ---
 title: "Annotate"
-description: "The /plannotator-annotate slash command for annotating markdown files, HTML files, URLs, and folders."
+description: "The /shuvplan-annotate slash command for annotating markdown files, HTML files, URLs, and folders."
 sidebar:
   order: 12
 section: "Commands"
 ---
 
-The `/plannotator-annotate` command opens files, URLs, or folders in the Plannotator annotation UI.
+The `/shuvplan-annotate` command opens files, URLs, or folders in the shuvplan annotation UI.
 
 ## What you can annotate
 
 | Input | Command | What happens |
 |-------|---------|--------------|
-| Markdown file | `plannotator annotate README.md` | Opens the file directly |
-| HTML file | `plannotator annotate docs/guide.html` | Converts to markdown via Turndown, then opens |
-| URL | `plannotator annotate https://docs.stripe.com/api` | Fetches the page, converts to markdown, then opens |
-| Folder | `plannotator annotate ./docs/` | Opens a file browser showing all `.md`, `.mdx`, `.html`, and `.htm` files |
+| Markdown file | `shuvplan annotate README.md` | Opens the file directly |
+| HTML file | `shuvplan annotate docs/guide.html` | Converts to markdown via Turndown, then opens |
+| URL | `shuvplan annotate https://docs.stripe.com/api` | Fetches the page, converts to markdown, then opens |
+| Folder | `shuvplan annotate ./docs/` | Opens a file browser showing all `.md`, `.mdx`, `.html`, and `.htm` files |
 
 ### Slash command (inside an agent session)
 
 ```
-/plannotator-annotate path/to/file.md
-/plannotator-annotate https://docs.stripe.com/api
-/plannotator-annotate ./specs/
+/shuvplan-annotate path/to/file.md
+/shuvplan-annotate https://docs.stripe.com/api
+/shuvplan-annotate ./specs/
 ```
 
-The agent runs `plannotator annotate <arg>` under the hood. The annotation UI opens in the browser. When you submit, feedback is returned to the agent as structured output.
+The agent runs `shuvplan annotate <arg>` under the hood. The annotation UI opens in the browser. When you submit, feedback is returned to the agent as structured output.
 
 ### Standalone CLI (outside an agent session)
 
 ```bash
-plannotator annotate path/to/file.md
-plannotator annotate index.html
-plannotator annotate https://example.com/docs
-plannotator annotate ./docs/
+shuvplan annotate path/to/file.md
+shuvplan annotate index.html
+shuvplan annotate https://example.com/docs
+shuvplan annotate ./docs/
 ```
 
 Starts a local server, opens the browser, and blocks until you submit. Formatted feedback is printed to stdout.
 
 ## Folders
 
-When you pass a folder, Plannotator opens a file browser showing all markdown and HTML files in the directory tree. Click any file to open it in the annotation UI. This is useful for annotating a set of specs, documentation, or your Obsidian vault.
+When you pass a folder, shuvplan opens a file browser showing all markdown and HTML files in the directory tree. Click any file to open it in the annotation UI. This is useful for annotating a set of specs, documentation, or your Obsidian vault.
 
 Build output directories like `_site/`, `public/`, `.docusaurus/`, and `node_modules/` are automatically excluded from the file browser.
 
@@ -56,15 +56,15 @@ Set `JINA_API_KEY` in your environment for higher rate limits (500 req/min vs 20
 
 ### Direct fetch (`--no-jina`)
 
-If you don't want to use Jina, pass `--no-jina`. Plannotator will fetch the HTML directly and convert it with Turndown. This is useful for pages behind authentication, internal docs, or when you just prefer not to route through a third-party service.
+If you don't want to use Jina, pass `--no-jina`. shuvplan will fetch the HTML directly and convert it with Turndown. This is useful for pages behind authentication, internal docs, or when you just prefer not to route through a third-party service.
 
 ```bash
-plannotator annotate https://internal.company.com/docs --no-jina
+shuvplan annotate https://internal.company.com/docs --no-jina
 ```
 
 ### .md and .mdx URLs
 
-URLs ending in `.md` or `.mdx` are fetched as raw text with no conversion. If the server returns HTML instead (like GitHub's rendered markdown viewer), Plannotator falls through to Jina or Turndown automatically.
+URLs ending in `.md` or `.mdx` are fetched as raw text with no conversion. If the server returns HTML instead (like GitHub's rendered markdown viewer), shuvplan falls through to Jina or Turndown automatically.
 
 ### Local and private URLs
 
@@ -75,8 +75,8 @@ URLs pointing to `localhost`, `127.x.x.x`, `10.x.x.x`, `192.168.x.x`, and other 
 Three ways to disable Jina Reader, in priority order:
 
 1. **CLI flag:** `--no-jina`
-2. **Environment variable:** `PLANNOTATOR_JINA=0` or `PLANNOTATOR_JINA=false`
-3. **Config file:** `~/.plannotator/config.json` with `{ "jina": false }`
+2. **Environment variable:** `SHUVPLAN_JINA=0` or `SHUVPLAN_JINA=false`
+3. **Config file:** `~/.shuvplan/config.json` with `{ "jina": false }`
 
 If none of these are set, Jina is enabled by default.
 
@@ -186,7 +186,7 @@ The annotate server respects the same environment variables as plan review, plus
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `PLANNOTATOR_JINA` | enabled | Set to `0` or `false` to disable Jina Reader for URL annotation. |
+| `SHUVPLAN_JINA` | enabled | Set to `0` or `false` to disable Jina Reader for URL annotation. |
 | `JINA_API_KEY` | (none) | Optional Jina Reader API key for higher rate limits (500 RPM vs 20 RPM). |
 
 See the [environment variables reference](/docs/reference/environment-variables/) for all options.

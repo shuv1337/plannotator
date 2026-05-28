@@ -1,4 +1,4 @@
 interface:
   display_name: "Visual Explainer"
-  short_description: "Generate a Plannotator-themed HTML visual explainer."
-  default_prompt: "Use $plannotator-visual-explainer to generate a self-contained HTML visualization with Plannotator theming."
+  short_description: "Generate a shuvplan-themed HTML visual explainer."
+  default_prompt: "Use $plannotator-visual-explainer to generate a self-contained HTML visualization with shuvplan theming."

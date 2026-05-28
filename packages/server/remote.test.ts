@@ -9,7 +9,14 @@ import { isRemoteSession, getServerHostname, getServerPort } from "./remote";
 
 // Save and restore env between tests
 const savedEnv: Record<string, string | undefined> = {};
-const envKeys = ["PLANNOTATOR_REMOTE", "PLANNOTATOR_PORT", "SSH_TTY", "SSH_CONNECTION"];
+const envKeys = [
+  "SHUVPLAN_REMOTE",
+  "PLANNOTATOR_REMOTE",
+  "SHUVPLAN_PORT",
+  "PLANNOTATOR_PORT",
+  "SSH_TTY",
+  "SSH_CONNECTION",
+];
 
 function clearEnv() {
   for (const key of envKeys) {
@@ -37,6 +44,13 @@ describe("isRemoteSession", () => {
   test("true when PLANNOTATOR_REMOTE=1", () => {
     clearEnv();
     process.env.PLANNOTATOR_REMOTE = "1";
+    expect(isRemoteSession()).toBe(true);
+  });
+
+  test("SHUVPLAN_REMOTE wins over PLANNOTATOR_REMOTE", () => {
+    clearEnv();
+    process.env.SHUVPLAN_REMOTE = "1";
+    process.env.PLANNOTATOR_REMOTE = "0";
     expect(isRemoteSession()).toBe(true);
   });
 
@@ -108,6 +122,13 @@ describe("getServerPort", () => {
     clearEnv();
     process.env.PLANNOTATOR_PORT = "8080";
     expect(getServerPort()).toBe(8080);
+  });
+
+  test("SHUVPLAN_PORT wins over PLANNOTATOR_PORT", () => {
+    clearEnv();
+    process.env.SHUVPLAN_PORT = "8081";
+    process.env.PLANNOTATOR_PORT = "8080";
+    expect(getServerPort()).toBe(8081);
   });
 
   test("explicit port overrides remote default", () => {

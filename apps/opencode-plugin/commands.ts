@@ -122,7 +122,7 @@ export async function handleReviewCommand(
     onReady: (url, isRemote, port) => {
       handleReviewServerReady(url, isRemote, port);
       if (isRemote) {
-        client.app.log({ level: "info", message: `[Plannotator] Open in browser: ${url}` });
+        client.app.log({ level: "info", message: `[shuvplan] Open in browser: ${url}` });
       }
     },
   });
@@ -296,7 +296,7 @@ export async function handleAnnotateCommand(
     onReady: (url, isRemote, port) => {
       handleAnnotateServerReady(url, isRemote, port);
       if (isRemote) {
-        client.app.log({ level: "info", message: `[Plannotator] Open in browser: ${url}` });
+        client.app.log({ level: "info", message: `[shuvplan] Open in browser: ${url}` });
       }
     },
   });
@@ -402,7 +402,7 @@ export async function handleAnnotateLastCommand(
     onReady: (url, isRemote, port) => {
       handleAnnotateServerReady(url, isRemote, port);
       if (isRemote) {
-        client.app.log({ level: "info", message: `[Plannotator] Open in browser: ${url}` });
+        client.app.log({ level: "info", message: `[shuvplan] Open in browser: ${url}` });
       }
     },
   });
@@ -438,7 +438,7 @@ export async function handleArchiveCommand(
     onReady: (url, isRemote, port) => {
       handleServerReady(url, isRemote, port);
       if (isRemote) {
-        client.app.log({ level: "info", message: `[Plannotator] Open in browser: ${url}` });
+        client.app.log({ level: "info", message: `[shuvplan] Open in browser: ${url}` });
       }
     },
   });

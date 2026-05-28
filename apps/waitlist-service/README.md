@@ -1,7 +1,7 @@
 # @plannotator/waitlist-service
 
-Cloudflare Worker + D1 backend for the Plannotator Workspaces waitlist signup
-form on `plannotator.ai/workspaces/`.
+Cloudflare Worker + D1 backend for the shuvplan Workspaces waitlist signup
+form on `plan.shuv.dev/workspaces/`.
 
 ## Layout
 

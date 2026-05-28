@@ -102,8 +102,9 @@ describe("createCookieProxy", () => {
       // Should contain the injected script
       expect(html).toContain("/___ext/cookies");
       expect(html).toContain("/___ext/close");
-      // Should contain the virtual cookie store with saved cookies
+      // Should contain the virtual cookie store with saved and migrated cookies
       expect(html).toContain('"plannotator-identity":"tater-42"');
+      expect(html).toContain('"shuvplan-identity":"tater-42"');
       expect(html).toContain('"other-cookie":"ignore"');
       // Should still contain original content
       expect(html).toContain("<title>Test</title>");

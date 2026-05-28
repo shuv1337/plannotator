@@ -39,6 +39,12 @@ describe("install.sh", () => {
     expect(script).toContain('INSTALL_DIR="$HOME/.local/bin"');
   });
 
+  test("installs shuvplan primary binary and plannotator compatibility alias", () => {
+    expect(script).toContain('mv "$tmp_file" "$INSTALL_DIR/shuvplan"');
+    expect(script).toContain('ln -sf "$INSTALL_DIR/shuvplan" "$INSTALL_DIR/plannotator"');
+    expect(script).toContain('PLANNOTATOR_BIN="${INSTALL_DIR}/shuvplan"');
+  });
+
   test("verifies checksums", () => {
     expect(script).toContain("shasum -a 256");
     expect(script).toContain("sha256sum");
@@ -101,6 +107,8 @@ describe("install.sh", () => {
     expect(script).toContain("plannotator-last.md");
     expect(script).toContain("plannotator-setup-goal.md");
     expect(script).toContain("plannotator-visual-explainer.md");
+    expect(script).toContain("shuvplan_file");
+    expect(script).toContain("s/Plannotator/shuvplan/g; s/plannotator/shuvplan/g");
     expect(script).toContain("CLAUDE_COMMANDS_DIR");
     expect(script).toContain("OPENCODE_COMMANDS_DIR");
   });
@@ -127,10 +135,10 @@ describe("install.sh", () => {
     expect(script).toContain('grep -Eq \'^[[:space:]]*features[[:space:]]*=\' "$CODEX_CONFIG"');
   });
 
-  test("preserves custom Codex Plannotator hook wrappers", () => {
+  test("preserves custom Codex shuvplan/plannotator hook wrappers", () => {
     expect(script).toContain("isManagedPlannotatorCommand");
     expect(script).toContain("foundCustomPlannotatorHook");
-    expect(script).toContain("Existing custom Codex Plannotator hook found");
+    expect(script).toContain("Existing custom Codex shuvplan/plannotator hook found");
     expect(script).not.toContain('hook.command.includes("plannotator")) {\n      hook.command = command;');
   });
 
@@ -140,8 +148,8 @@ describe("install.sh", () => {
     expect(script).toContain("PI_CODING_AGENT_DIR");
     expect(script).toContain("npm:@plannotator/pi-extension");
     expect(script).toContain("return { source: entry, skills: [] };");
-    expect(script).toContain("Leaving Pi bundled skills enabled (global Plannotator agent skills not found).");
-    expect(script).toContain("Configured Pi to use global Plannotator skills and skip bundled package skills.");
+    expect(script).toContain("Leaving Pi bundled skills enabled (global shuvplan agent skills not found).");
+    expect(script).toContain("Configured Pi to use global shuvplan skills and skip bundled package skills.");
     expect(script).toContain("if plannotator_shared_agent_skills_available; then\n            configure_pi_plannotator_package_filter");
 
     const skillsInstallIndex = script.indexOf("# Install skills (requires git)");
@@ -172,6 +180,12 @@ describe("install.ps1", () => {
   test("uses full exe path in hooks.json", () => {
     expect(script).toContain("$exePathJson");
     expect(script).toContain(".Replace('\\', '/')");
+  });
+
+  test("installs shuvplan primary exe and plannotator compatibility alias", () => {
+    expect(script).toContain('$installDir = "$env:LOCALAPPDATA\\shuvplan"');
+    expect(script).toContain('Move-Item -Force $tmpFile "$installDir\\shuvplan.exe"');
+    expect(script).toContain('Copy-Item -Force "$installDir\\shuvplan.exe" "$installDir\\plannotator.exe"');
   });
 
   test("handles both PS 5.1 and PS 7+ checksum response types", () => {
@@ -256,6 +270,8 @@ describe("install.ps1", () => {
     expect(script).toContain("plannotator-last.md");
     expect(script).toContain("plannotator-setup-goal.md");
     expect(script).toContain("plannotator-visual-explainer.md");
+    expect(script).toContain("shuvplanFile");
+    expect(script).toContain('.Replace("plannotator-", "shuvplan-")');
   });
 
   test("configures Pi to skip bundled skills only after shared skills exist", () => {
@@ -267,8 +283,8 @@ describe("install.ps1", () => {
     expect(script).toContain("New-Object System.Text.UTF8Encoding -ArgumentList $false");
     expect(script).toContain("[System.IO.File]::WriteAllText($tmpPath, $json, $utf8NoBom)");
     expect(script).not.toContain("$settings | ConvertTo-Json -Depth 20 | Set-Content -Path $tmpPath -Encoding UTF8");
-    expect(script).toContain("Leaving Pi bundled skills enabled (global Plannotator agent skills not found).");
-    expect(script).toContain("Configured Pi to use global Plannotator skills and skip bundled package skills.");
+    expect(script).toContain("Leaving Pi bundled skills enabled (global shuvplan agent skills not found).");
+    expect(script).toContain("Configured Pi to use global shuvplan skills and skip bundled package skills.");
     expect(script).toContain("if (Test-PlannotatorSharedAgentSkillsAvailable) {\n            Configure-PiPlannotatorPackageFilter");
 
     const skillsInstallIndex = script.indexOf("# Install skills (requires git)");
@@ -299,6 +315,12 @@ describe("install.cmd", () => {
   test("uses full exe path in hooks.json", () => {
     expect(script).toContain("EXE_PATH");
     expect(script).toContain('!INSTALL_PATH:\\=/!');
+  });
+
+  test("installs shuvplan primary exe and plannotator compatibility alias", () => {
+    expect(script).toContain('set "INSTALL_PATH=!INSTALL_DIR!\\shuvplan.exe"');
+    expect(script).toContain('set "LEGACY_INSTALL_PATH=!INSTALL_DIR!\\plannotator.exe"');
+    expect(script).toContain('copy /y "!INSTALL_PATH!" "!LEGACY_INSTALL_PATH!"');
   });
 
   test("verifies checksums with certutil", () => {
@@ -374,6 +396,8 @@ describe("install.cmd", () => {
     expect(script).toContain("plannotator-last.md");
     expect(script).toContain("plannotator-setup-goal.md");
     expect(script).toContain("plannotator-visual-explainer.md");
+    expect(script).toContain("SHUV_FILE");
+    expect(script).toContain("shuvplan-");
   });
 
   test("Gemini settings merge uses || idiom (issue #506 regression)", () => {
@@ -396,8 +420,8 @@ describe("install.cmd", () => {
     expect(script).toContain("New-Object System.Text.UTF8Encoding -ArgumentList $false");
     expect(script).toContain("[System.IO.File]::WriteAllText($tmp,$json,$utf8NoBom)");
     expect(script).not.toContain("Set-Content -Path $tmp -Encoding UTF8");
-    expect(script).toContain("Leaving Pi bundled skills enabled ^(global Plannotator agent skills not found^).");
-    expect(script).toContain("Configured Pi to use global Plannotator skills and skip bundled package skills.");
+    expect(script).toContain("Leaving Pi bundled skills enabled ^(global shuvplan agent skills not found^).");
+    expect(script).toContain("Configured Pi to use global shuvplan skills and skip bundled package skills.");
     expect(script).toContain('set "PI_SHARED_SKILLS_AVAILABLE=0"');
     expect(script).toContain('if exist "!PI_SHARED_SKILLS_DIR!\\plannotator-compound\\SKILL.md" if exist "!PI_SHARED_SKILLS_DIR!\\plannotator-setup-goal\\SKILL.md" if exist "!PI_SHARED_SKILLS_DIR!\\plannotator-visual-explainer\\SKILL.md" set "PI_SHARED_SKILLS_AVAILABLE=1"');
     expect(script).toContain('if "!PI_SHARED_SKILLS_AVAILABLE!"=="1"');
@@ -412,11 +436,13 @@ describe("install.cmd", () => {
     // Layer 3: config file read (verifyAttestation appears inside a
     // findstr pattern with escaped quotes; assert the key + findstr
     // separately rather than the quoted form)
+    expect(script).toContain("%USERPROFILE%\\.shuvplan\\config.json");
     expect(script).toContain("%USERPROFILE%\\.plannotator\\config.json");
     expect(script).toContain("verifyAttestation");
     expect(script).toContain("findstr");
     // Layer 2: env var
     expect(script).toContain("PLANNOTATOR_VERIFY_ATTESTATION");
+    expect(script).toContain("SHUVPLAN_VERIFY_ATTESTATION");
     // Layer 1: CLI flags
     expect(script).toContain("--verify-attestation");
     expect(script).toContain("--skip-attestation");
@@ -446,10 +472,12 @@ describe("install shared behavior", () => {
 
   test("install.sh has three-layer opt-in resolution", () => {
     // Layer 3: config file via grep against the flat JSON boolean
+    expect(sh).toContain("$HOME/.shuvplan/config.json");
     expect(sh).toContain("$HOME/.plannotator/config.json");
     expect(sh).toContain('"verifyAttestation"');
     // Layer 2: env var parsing
     expect(sh).toContain("PLANNOTATOR_VERIFY_ATTESTATION");
+    expect(sh).toContain("SHUVPLAN_VERIFY_ATTESTATION");
     // Layer 1: CLI flags with sentinel
     expect(sh).toContain("--verify-attestation");
     expect(sh).toContain("--skip-attestation");
@@ -460,11 +488,13 @@ describe("install shared behavior", () => {
 
   test("install.ps1 has three-layer opt-in resolution", () => {
     // Layer 3: config file via ConvertFrom-Json
+    expect(ps).toContain("$env:USERPROFILE\\.shuvplan\\config.json");
     expect(ps).toContain("$env:USERPROFILE\\.plannotator\\config.json");
     expect(ps).toContain("ConvertFrom-Json");
     expect(ps).toContain("$cfg.verifyAttestation");
     // Layer 2: env var
     expect(ps).toContain("PLANNOTATOR_VERIFY_ATTESTATION");
+    expect(ps).toContain("SHUVPLAN_VERIFY_ATTESTATION");
     // Layer 1: CLI flags
     expect(ps).toContain("[switch]$VerifyAttestation");
     expect(ps).toContain("[switch]$SkipAttestation");

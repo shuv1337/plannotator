@@ -4,7 +4,7 @@ import type { Origin } from '@plannotator/shared/agents';
 import type { DiffLineBgIntensity } from '@plannotator/shared/config';
 import { configStore, useConfigValue } from '../config';
 import { loadDiffFont } from '../utils/diffFonts';
-import { TaterSpritePullup } from './TaterSpritePullup';
+import { ShuvplanBrand } from './ShuvplanBrand';
 import { getIdentity, regenerateIdentity, setCustomIdentity } from '../utils/identity';
 import { GitUser } from '../icons/GitUser';
 import {
@@ -856,9 +856,11 @@ export const Settings: React.FC<SettingsProps> = ({ taterMode, onTaterModeChange
             className="bg-card border border-border rounded-xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl relative overflow-hidden"
             onClick={e => e.stopPropagation()}
           >
-            {taterMode && <TaterSpritePullup />}
             <div className="flex items-center justify-between p-4 border-b border-border">
-              <h3 className="font-semibold text-sm">Settings</h3>
+              <div className="flex items-center gap-3">
+                <ShuvplanBrand compact href="" />
+                <h3 className="font-semibold text-sm">Settings</h3>
+              </div>
               <button
                 onClick={() => setShowDialog(false)}
                 className="p-1.5 rounded-md bg-muted hover:bg-muted/80 text-foreground transition-colors"
@@ -1294,9 +1296,12 @@ export const Settings: React.FC<SettingsProps> = ({ taterMode, onTaterModeChange
 
                     <div className="border-t border-border" />
 
-                    {/* Tater Mode */}
+                    {/* Mascot Mode */}
                     <div className="flex items-center justify-between">
-                      <div className="text-sm font-medium">Tater Mode</div>
+                      <div>
+                        <div className="text-sm font-medium">Mascot Mode</div>
+                        <div className="text-xs text-muted-foreground">Show the optional document-view mascot animation</div>
+                      </div>
                       <button
                         role="switch"
                         aria-checked={taterMode}
@@ -1324,7 +1329,7 @@ export const Settings: React.FC<SettingsProps> = ({ taterMode, onTaterModeChange
                         <div>
                           <div className="text-sm font-medium">Save Plans</div>
                           <div className="text-xs text-muted-foreground">
-                            Auto-save plans to ~/.plannotator/plans/
+                            Auto-save plans to ~/.shuvplan/plans/
                           </div>
                         </div>
                         <button
@@ -1350,7 +1355,7 @@ export const Settings: React.FC<SettingsProps> = ({ taterMode, onTaterModeChange
                             type="text"
                             value={planSave.customPath || ''}
                             onChange={(e) => handlePlanSaveChange({ customPath: e.target.value || null })}
-                            placeholder="~/.plannotator/plans/"
+                            placeholder="~/.shuvplan/plans/"
                             className="w-full px-3 py-2 bg-muted rounded-lg text-xs font-mono placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
                           />
                           <div className="text-[10px] text-muted-foreground/70">

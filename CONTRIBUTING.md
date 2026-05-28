@@ -1,4 +1,4 @@
-# Contributing to Plannotator
+# Contributing to shuvplan
 
 We welcome contributions!
 

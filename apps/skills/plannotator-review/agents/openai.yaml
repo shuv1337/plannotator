@@ -1,5 +1,5 @@
 interface:
-  display_name: "Plannotator Review"
-  short_description: "Open Plannotator code review for local changes or a PR."
+  display_name: "shuvplan Review"
+  short_description: "Open shuvplan code review for local changes or a PR."
 policy:
   allow_implicit_invocation: false

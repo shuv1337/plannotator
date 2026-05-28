@@ -1,30 +1,30 @@
 ---
 title: "External Annotations API"
-description: "Push annotations from external tools into a live Plannotator session via HTTP."
+description: "Push annotations from external tools into a live shuvplan session via HTTP."
 sidebar:
   order: 40
 section: "Integrations"
 ---
 
-External programs (linters, AI tools, security scanners, custom scripts) can push annotations into a live Plannotator session over HTTP. Annotations appear in the browser in real-time, tagged with their source, alongside any user-created annotations.
+External programs (linters, AI tools, security scanners, custom scripts) can push annotations into a live shuvplan session over HTTP. Annotations appear in the browser in real-time, tagged with their source, alongside any user-created annotations.
 
 ## How it works
 
 ```
 External tool (eslint, AI agent, etc.)
         ↓ POST /api/external-annotations
-Local Plannotator server (in-memory store)
+Local shuvplan server (in-memory store)
         ↓ SSE broadcast
 Browser UI - annotation appears in real-time
 ```
 
-Annotations are stored in an in-memory store on the local Plannotator server. Connected browsers receive updates instantly via Server-Sent Events. If SSE isn't available (e.g., proxy environments), the client automatically falls back to polling. Annotations persist for the session lifetime.
+Annotations are stored in an in-memory store on the local shuvplan server. Connected browsers receive updates instantly via Server-Sent Events. If SSE isn't available (e.g., proxy environments), the client automatically falls back to polling. Annotations persist for the session lifetime.
 
 When the user submits feedback (approve, deny, or send), external annotations are included in the exported feedback alongside user-created ones.
 
 ## Quick start
 
-Find the port number in your terminal output when Plannotator starts (e.g., `Server running on http://localhost:54321`).
+Find the port number in your terminal output when shuvplan starts (e.g., `Server running on http://localhost:54321`).
 
 **Plan review** - annotate a text selection:
 

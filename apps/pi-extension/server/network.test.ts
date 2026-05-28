@@ -2,7 +2,14 @@ import { afterEach, describe, expect, test } from "bun:test";
 import { getServerHostname, getServerPort, isRemoteSession } from "./network";
 
 const savedEnv: Record<string, string | undefined> = {};
-const envKeys = ["PLANNOTATOR_REMOTE", "PLANNOTATOR_PORT", "SSH_TTY", "SSH_CONNECTION"];
+const envKeys = [
+	"SHUVPLAN_REMOTE",
+	"PLANNOTATOR_REMOTE",
+	"SHUVPLAN_PORT",
+	"PLANNOTATOR_PORT",
+	"SSH_TTY",
+	"SSH_CONNECTION",
+];
 
 function clearEnv() {
 	for (const key of envKeys) {
@@ -30,6 +37,13 @@ describe("pi remote detection", () => {
 	test("true when PLANNOTATOR_REMOTE=1", () => {
 		clearEnv();
 		process.env.PLANNOTATOR_REMOTE = "1";
+		expect(isRemoteSession()).toBe(true);
+	});
+
+	test("SHUVPLAN_REMOTE wins over PLANNOTATOR_REMOTE", () => {
+		clearEnv();
+		process.env.SHUVPLAN_REMOTE = "1";
+		process.env.PLANNOTATOR_REMOTE = "0";
 		expect(isRemoteSession()).toBe(true);
 	});
 
@@ -92,6 +106,13 @@ describe("pi port selection", () => {
 		process.env.SSH_TTY = "/dev/pts/0";
 		process.env.PLANNOTATOR_PORT = "9999";
 		expect(getServerPort()).toEqual({ port: 9999, portSource: "env" });
+	});
+
+	test("SHUVPLAN_PORT wins over PLANNOTATOR_PORT", () => {
+		clearEnv();
+		process.env.SHUVPLAN_PORT = "10000";
+		process.env.PLANNOTATOR_PORT = "9999";
+		expect(getServerPort()).toEqual({ port: 10000, portSource: "env" });
 	});
 });
 

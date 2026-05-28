@@ -14,12 +14,14 @@ import { tmpdir } from "os";
 // a test harness that sets HOME to a temp directory.
 
 const TEST_HOME = join(tmpdir(), `improvement-hooks-test-${Date.now()}`);
-const NEW_BASE = join(TEST_HOME, ".plannotator", "hooks");
+const NEW_BASE = join(TEST_HOME, ".shuvplan", "hooks");
+const LEGACY_HOOKS_BASE = join(TEST_HOME, ".plannotator", "hooks");
 const LEGACY_BASE = join(TEST_HOME, ".plannotator");
 const HOOK_RELATIVE = "compound/enterplanmode-improve-hook.txt";
 
 function setupTestHome() {
   mkdirSync(join(NEW_BASE, "compound"), { recursive: true });
+  mkdirSync(join(LEGACY_HOOKS_BASE, "compound"), { recursive: true });
   mkdirSync(join(LEGACY_BASE, "compound"), { recursive: true });
 }
 
@@ -35,17 +37,22 @@ function cleanTestHome() {
 async function runScenario(setup: {
   newPathContent?: string | null;
   legacyPathContent?: string | null;
+  oldLegacyPathContent?: string | null;
 }): Promise<{ content: string; filePath: string } | null> {
   setupTestHome();
 
   const newPath = join(NEW_BASE, HOOK_RELATIVE);
-  const legacyPath = join(LEGACY_BASE, HOOK_RELATIVE);
+  const legacyPath = join(LEGACY_HOOKS_BASE, HOOK_RELATIVE);
+  const oldLegacyPath = join(LEGACY_BASE, HOOK_RELATIVE);
 
   if (setup.newPathContent !== undefined && setup.newPathContent !== null) {
     writeFileSync(newPath, setup.newPathContent);
   }
   if (setup.legacyPathContent !== undefined && setup.legacyPathContent !== null) {
     writeFileSync(legacyPath, setup.legacyPathContent);
+  }
+  if (setup.oldLegacyPathContent !== undefined && setup.oldLegacyPathContent !== null) {
+    writeFileSync(oldLegacyPath, setup.oldLegacyPathContent);
   }
 
   // Run in a subprocess with HOME overridden so homedir() returns TEST_HOME
@@ -89,7 +96,7 @@ describe("readImprovementHook", () => {
     });
     expect(result).not.toBeNull();
     expect(result!.content).toBe("Focus on error handling");
-    expect(result!.filePath).toContain(".plannotator/hooks/compound/");
+    expect(result!.filePath).toContain(".shuvplan/hooks/compound/");
   });
 
   test("new path wins over legacy path", async () => {
@@ -99,15 +106,24 @@ describe("readImprovementHook", () => {
     });
     expect(result).not.toBeNull();
     expect(result!.content).toBe("New instructions");
-    expect(result!.filePath).toContain(".plannotator/hooks/compound/");
+    expect(result!.filePath).toContain(".shuvplan/hooks/compound/");
   });
 
-  test("falls back to legacy path when new path is absent", async () => {
+  test("falls back to legacy hooks path when new path is absent", async () => {
     const result = await runScenario({
       legacyPathContent: "Legacy instructions",
     });
     expect(result).not.toBeNull();
     expect(result!.content).toBe("Legacy instructions");
+    expect(result!.filePath).toContain(".plannotator/hooks/compound/");
+  });
+
+  test("falls back to oldest legacy path when new and legacy hooks paths are absent", async () => {
+    const result = await runScenario({
+      oldLegacyPathContent: "Old legacy instructions",
+    });
+    expect(result).not.toBeNull();
+    expect(result!.content).toBe("Old legacy instructions");
     expect(result!.filePath).toContain(".plannotator/compound/");
     expect(result!.filePath).not.toContain(".plannotator/hooks/");
   });

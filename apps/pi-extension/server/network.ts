@@ -6,16 +6,17 @@
 import { spawn } from "node:child_process";
 import type { Server } from "node:http";
 import { release } from "node:os";
+import { getPublicEnvValue, publicEnvNames } from "./env.js";
 
 const DEFAULT_REMOTE_PORT = 19432;
 const LOOPBACK_HOST = "127.0.0.1";
 
 /**
  * Check if running in a remote session (SSH, devcontainer, etc.)
- * Honors PLANNOTATOR_REMOTE as a tri-state override, or detects SSH_TTY/SSH_CONNECTION.
+ * Honors SHUVPLAN_REMOTE/PLANNOTATOR_REMOTE as a tri-state override, or detects SSH_TTY/SSH_CONNECTION.
  */
 function getRemoteOverride(): boolean | null {
-	const remote = process.env.PLANNOTATOR_REMOTE;
+	const remote = getPublicEnvValue("REMOTE");
 	if (remote === undefined) {
 		return null;
 	}
@@ -45,7 +46,7 @@ export function isRemoteSession(): boolean {
 
 /**
  * Get the server port to use.
- * - PLANNOTATOR_PORT env var takes precedence
+ * - SHUVPLAN_PORT/PLANNOTATOR_PORT env var takes precedence
  * - Remote sessions default to 19432 (for port forwarding)
  * - Local sessions use random port
  * Returns { port, portSource } so caller can notify user if needed.
@@ -54,7 +55,7 @@ export function getServerPort(): {
 	port: number;
 	portSource: "env" | "remote-default" | "random";
 } {
-	const envPort = process.env.PLANNOTATOR_PORT;
+	const envPort = getPublicEnvValue("PORT");
 	if (envPort) {
 		const parsed = parseInt(envPort, 10);
 		if (!Number.isNaN(parsed) && parsed >= 0 && parsed < 65536) {
@@ -104,7 +105,7 @@ export async function listenOnPort(
 			}
 			if (isAddressInUse) {
 				const hint = isRemoteSession()
-					? " (set PLANNOTATOR_PORT to use a different port)"
+					? ` (set ${publicEnvNames("PORT")} to use a different port)`
 					: "";
 				throw new Error(
 					`Port ${result.port} in use after ${MAX_RETRIES} retries${hint}`,
@@ -120,7 +121,7 @@ export async function listenOnPort(
 
 /**
  * Open URL in system browser (Node-compatible, no Bun $ dependency).
- * Honors PLANNOTATOR_BROWSER and BROWSER env vars.
+ * Honors SHUVPLAN_BROWSER/PLANNOTATOR_BROWSER and BROWSER env vars.
  * Returns { opened: true } if browser was opened, { opened: false, isRemote: true, url } if remote session.
  */
 export function openBrowser(url: string): {
@@ -128,7 +129,8 @@ export function openBrowser(url: string): {
 	isRemote?: boolean;
 	url?: string;
 } {
-	const browser = process.env.PLANNOTATOR_BROWSER || process.env.BROWSER;
+	const configuredBrowser = getPublicEnvValue("BROWSER");
+	const browser = configuredBrowser || process.env.BROWSER;
 	if (isRemoteSession() && !browser) {
 		return { opened: false, isRemote: true, url };
 	}
@@ -142,7 +144,7 @@ export function openBrowser(url: string): {
 		let args: string[];
 
 		if (browser) {
-			if (process.env.PLANNOTATOR_BROWSER && platform === "darwin") {
+			if (configuredBrowser && platform === "darwin") {
 				cmd = "open";
 				args = ["-a", browser, url];
 			} else if (platform === "win32" || wsl) {

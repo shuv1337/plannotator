@@ -16,7 +16,7 @@ export class PanelManager {
 
     const panel = vscode.window.createWebviewPanel(
       "plannotator",
-      "Plannotator",
+      "shuvplan",
       vscode.ViewColumn.One,
       { enableScripts: true, retainContextWhenHidden: true },
     );

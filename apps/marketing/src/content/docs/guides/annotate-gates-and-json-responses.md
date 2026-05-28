@@ -1,12 +1,12 @@
 ---
 title: "Annotate Gates and JSON Responses"
-description: "The --gate, --json, and --hook flags extend plannotator annotate from a feedback tool into a structured review gate with machine-readable decisions. Use them to wire Plannotator into spec-driven workflows, Stop hooks, and agent pipelines."
+description: "The --gate, --json, and --hook flags extend shuvplan annotate from a feedback tool into a structured review gate with machine-readable decisions. Use them to wire shuvplan into spec-driven workflows, Stop hooks, and agent pipelines."
 sidebar:
   order: 28
 section: "Guides"
 ---
 
-`plannotator annotate` and `plannotator annotate-last` accept three flags that turn markdown annotation into a full review gate with structured output.
+`shuvplan annotate` and `shuvplan annotate-last` accept three flags that turn markdown annotation into a full review gate with structured output.
 
 ## Capabilities
 
@@ -51,7 +51,7 @@ section: "Guides"
 {"decision":"dismissed"}
 ```
 
-**Annotated** (reviewer sent annotations, `--json` or `--gate --json`). The `feedback` field is the same markdown Plannotator emits in plaintext mode:
+**Annotated** (reviewer sent annotations, `--json` or `--gate --json`). The `feedback` field is the same markdown shuvplan emits in plaintext mode:
 
 ```json
 {
@@ -98,13 +98,13 @@ The flag is accepted silently on OpenCode and Pi for the same reason `--json` is
 
 ### Spec-driven development frameworks
 
-Spec-driven development frameworks like spec-kit, kiro, and openspec generate multiple markdown artifacts per feature: `spec.md`, `plan.md`, `tasks.md`, `research.md`, `data-model.md`. Each goes through clarify, review, and approve cycles. Plannotator's annotation UI is a first-class fit for reviewing these artifacts: inline, targeted feedback on markdown is exactly what these workflows need.
+Spec-driven development frameworks like spec-kit, kiro, and openspec generate multiple markdown artifacts per feature: `spec.md`, `plan.md`, `tasks.md`, `research.md`, `data-model.md`. Each goes through clarify, review, and approve cycles. shuvplan's annotation UI is a first-class fit for reviewing these artifacts: inline, targeted feedback on markdown is exactly what these workflows need.
 
 With `--gate`, a PostToolUse hook on Write triggers a full review gate every time the agent produces a spec artifact. The reviewer approves, annotates, or dismisses. The agent proceeds, revises, or skips accordingly.
 
 ### Turn-by-turn review
 
-`plannotator annotate-last --gate` wired into a Claude Code Stop hook pauses every agent turn for human review. Approve closes the turn cleanly. Send Annotations re-prompts the agent with the reviewer's feedback. Close ends the turn without injecting anything.
+`shuvplan annotate-last --gate` wired into a Claude Code Stop hook pauses every agent turn for human review. Approve closes the turn cleanly. Send Annotations re-prompts the agent with the reviewer's feedback. Close ends the turn without injecting anything.
 
 ### Programmatic decision routing
 
@@ -116,4 +116,4 @@ See [Hook Integration](/docs/guides/hook-integration/) for copy-paste recipes th
 
 ## Exit codes
 
-Every decision exits `0`. Signals live on stdout. This keeps Plannotator composable with harnesses that use exit codes for their own purposes.
+Every decision exits `0`. Signals live on stdout. This keeps shuvplan composable with harnesses that use exit codes for their own purposes.

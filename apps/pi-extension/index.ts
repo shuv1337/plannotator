@@ -1,5 +1,5 @@
 /**
- * Plannotator Pi Extension — File-based plan mode with visual browser review.
+ * shuvplan Pi Extension — File-based plan mode with visual browser review.
  *
  * During planning the agent writes any markdown file anywhere inside cwd and
  * calls plannotator_submit_plan with the path. The user reviews in the
@@ -107,12 +107,12 @@ function getPlanReviewAvailabilityWarning(options: { hasUI: boolean; hasPlanHtml
 	const { hasUI, hasPlanHtml } = options;
 	if (hasUI && hasPlanHtml) return null;
 	if (!hasUI && !hasPlanHtml) {
-		return "Plannotator: interactive plan review is unavailable in this session (no UI support and missing built assets). Plans will auto-approve on exit_plan_mode.";
+		return "shuvplan: interactive plan review is unavailable in this session (no UI support and missing built assets). Plans will auto-approve on exit_plan_mode.";
 	}
 	if (!hasUI) {
-		return "Plannotator: interactive plan review is unavailable in this session (no UI support). Plans will auto-approve on exit_plan_mode.";
+		return "shuvplan: interactive plan review is unavailable in this session (no UI support). Plans will auto-approve on exit_plan_mode.";
 	}
-	return "Plannotator: interactive plan review assets are missing. Rebuild the extension to restore the browser UI. Plans will auto-approve on exit_plan_mode.";
+	return "shuvplan: interactive plan review assets are missing. Rebuild the extension to restore the browser UI. Plans will auto-approve on exit_plan_mode.";
 }
 
 function safeNotify(
@@ -125,7 +125,7 @@ function safeNotify(
 		ctx.ui.notify(message, type);
 	} catch (err) {
 		if (notifyCurrentPiSession(message, type, origin)) return;
-		console.error(`Plannotator notification failed: ${err instanceof Error ? err.message : String(err)}`);
+		console.error(`shuvplan notification failed: ${err instanceof Error ? err.message : String(err)}`);
 	}
 }
 
@@ -216,7 +216,7 @@ function sendSkillPrompt(pi: ExtensionAPI, ctx: ExtensionCommandContext, message
 	}
 
 	pi.sendUserMessage(message, { deliverAs: "followUp" });
-	ctx.ui.notify("Plannotator skill request queued.", "info");
+	ctx.ui.notify("shuvplan skill request queued.", "info");
 }
 
 function buildSkillPrompt(skillName: string, action: string, args: string): string {
@@ -318,13 +318,13 @@ export default function plannotator(pi: ExtensionAPI): void {
 	): Promise<void> {
 		const model = ctx.modelRegistry.find(ref.provider, ref.id);
 		if (!model) {
-			ctx.ui.notify(`Plannotator: ${reason} model ${ref.provider}/${ref.id} not found.`, "warning");
+			ctx.ui.notify(`shuvplan: ${reason} model ${ref.provider}/${ref.id} not found.`, "warning");
 			return;
 		}
 
 		const success = await pi.setModel(model);
 		if (!success) {
-			ctx.ui.notify(`Plannotator: no API key for ${ref.provider}/${ref.id}.`, "warning");
+			ctx.ui.notify(`shuvplan: no API key for ${ref.provider}/${ref.id}.`, "warning");
 		}
 	}
 
@@ -374,7 +374,7 @@ export default function plannotator(pi: ExtensionAPI): void {
 		await applyPhaseConfig(ctx, { restoreSavedState: false });
 		persistState();
 		ctx.ui.notify(
-			"Plannotator: planning mode enabled.",
+			"shuvplan: planning mode enabled.",
 		);
 		const warning = getPlanReviewAvailabilityWarning({ hasUI: ctx.hasUI, hasPlanHtml: hasPlanBrowserHtml() });
 		if (warning) {
@@ -392,7 +392,7 @@ export default function plannotator(pi: ExtensionAPI): void {
 		updateStatus(ctx);
 		updateWidget(ctx);
 		persistState();
-		ctx.ui.notify("Plannotator: disabled. Full access restored.");
+		ctx.ui.notify("shuvplan: disabled. Full access restored.");
 	}
 
 	async function togglePlanMode(ctx: ExtensionContext): Promise<void> {
@@ -405,15 +405,18 @@ export default function plannotator(pi: ExtensionAPI): void {
 
 	// ── Commands & Shortcuts ─────────────────────────────────────────────
 
-	pi.registerCommand("plannotator", {
-		description: "Toggle plannotator planning mode",
+	for (const commandName of ["shuvplan", "plannotator"]) {
+	pi.registerCommand(commandName, {
+		description: "Toggle shuvplan planning mode",
 		handler: async (_args, ctx) => {
 			await togglePlanMode(ctx);
 		},
 	});
+	}
 
-	pi.registerCommand("plannotator-status", {
-		description: "Show plannotator status",
+	for (const commandName of ["shuvplan-status", "plannotator-status"]) {
+	pi.registerCommand(commandName, {
+		description: "Show shuvplan status",
 		handler: async (_args, ctx) => {
 			const parts = [`Phase: ${phase}`];
 			if (lastSubmittedPath) {
@@ -426,8 +429,10 @@ export default function plannotator(pi: ExtensionAPI): void {
 			ctx.ui.notify(parts.join("\n"), "info");
 		},
 	});
+	}
 
-	pi.registerCommand("plannotator-setup-goal", {
+	for (const commandName of ["shuvplan-setup-goal", "plannotator-setup-goal"]) {
+	pi.registerCommand(commandName, {
 		description: "Turn an idea or objective into a goal package for /goal",
 		handler: async (args, ctx) => {
 			sendSkillPrompt(
@@ -441,23 +446,27 @@ export default function plannotator(pi: ExtensionAPI): void {
 			);
 		},
 	});
+	}
 
-	pi.registerCommand("plannotator-visual-explainer", {
-		description: "Generate a Plannotator-themed self-contained HTML visual explainer",
+	for (const commandName of ["shuvplan-visual-explainer", "plannotator-visual-explainer"]) {
+	pi.registerCommand(commandName, {
+		description: "Generate a shuvplan-themed self-contained HTML visual explainer",
 		handler: async (args, ctx) => {
 			sendSkillPrompt(
 				pi,
 				ctx,
 				buildSkillPrompt(
 					"plannotator-visual-explainer",
-					"generate a self-contained HTML visualization with Plannotator theming",
+					"generate a self-contained HTML visualization with shuvplan theming",
 					args ?? "",
 				),
 			);
 		},
 	});
+	}
 
-	pi.registerCommand("plannotator-review", {
+	for (const commandName of ["shuvplan-review", "plannotator-review"]) {
+	pi.registerCommand(commandName, {
 		description: "Open interactive code review for current changes or a PR URL; pass --git to force Git in JJ workspaces",
 		handler: async (args, ctx) => {
 			if (!hasReviewBrowserHtml()) {
@@ -493,7 +502,7 @@ export default function plannotator(pi: ExtensionAPI): void {
 									pi,
 									getReviewApprovedPrompt("pi", loadConfig()),
 									{ deliverAs: "followUp" },
-									"Plannotator code review feedback could not be sent",
+									"shuvplan code review feedback could not be sent",
 									origin,
 								);
 								return;
@@ -509,7 +518,7 @@ export default function plannotator(pi: ExtensionAPI): void {
 									pi,
 									result.feedback,
 									{ deliverAs: "followUp" },
-									"Plannotator code review feedback could not be sent",
+									"shuvplan code review feedback could not be sent",
 									origin,
 								);
 								return;
@@ -518,15 +527,15 @@ export default function plannotator(pi: ExtensionAPI): void {
 								pi,
 								`${result.feedback}${getReviewDeniedSuffix("pi", loadConfig())}`,
 								{ deliverAs: "followUp" },
-								"Plannotator code review feedback could not be sent",
+								"shuvplan code review feedback could not be sent",
 								origin,
 							);
 						} catch (err) {
-							reportBackgroundError(ctx, "Plannotator code review feedback could not be sent", err, origin);
+							reportBackgroundError(ctx, "shuvplan code review feedback could not be sent", err, origin);
 						}
 					})
 					.catch((err) => {
-						reportBackgroundError(ctx, "Plannotator code review session failed", err, origin);
+						reportBackgroundError(ctx, "shuvplan code review session failed", err, origin);
 					});
 			} catch (err) {
 				ctx.ui.notify(
@@ -536,8 +545,10 @@ export default function plannotator(pi: ExtensionAPI): void {
 			}
 		},
 	});
+	}
 
-	pi.registerCommand("plannotator-annotate", {
+	for (const commandName of ["shuvplan-annotate", "plannotator-annotate"]) {
+	pi.registerCommand(commandName, {
 		description: "Open markdown file or folder in annotation UI",
 		handler: async (args, ctx) => {
 			// #570: split --gate / --json from the path. --json is silently
@@ -678,15 +689,15 @@ export default function plannotator(pi: ExtensionAPI): void {
 									feedback: result.feedback,
 								}),
 								{ deliverAs: "followUp" },
-								"Plannotator annotation feedback could not be sent",
+								"shuvplan annotation feedback could not be sent",
 								origin,
 							);
 						} catch (err) {
-							reportBackgroundError(ctx, "Plannotator annotation feedback could not be sent", err, origin);
+							reportBackgroundError(ctx, "shuvplan annotation feedback could not be sent", err, origin);
 						}
 					})
 					.catch((err) => {
-						reportBackgroundError(ctx, "Plannotator annotation session failed", err, origin);
+						reportBackgroundError(ctx, "shuvplan annotation session failed", err, origin);
 					});
 			} catch (err) {
 				ctx.ui.notify(
@@ -696,8 +707,10 @@ export default function plannotator(pi: ExtensionAPI): void {
 			}
 		},
 	});
+	}
 
-	pi.registerCommand("plannotator-last", {
+	for (const commandName of ["shuvplan-last", "plannotator-last"]) {
+	pi.registerCommand(commandName, {
 		description: "Annotate the last assistant message",
 		handler: async (args, ctx) => {
 			// #570: support --gate on /plannotator-last for Stop-hook review gate.
@@ -750,15 +763,15 @@ export default function plannotator(pi: ExtensionAPI): void {
 									feedback,
 								}),
 								{ deliverAs: "followUp" },
-								"Plannotator message annotation feedback could not be sent",
+								"shuvplan message annotation feedback could not be sent",
 								origin,
 							);
 						} catch (err) {
-							reportBackgroundError(ctx, "Plannotator message annotation feedback could not be sent", err, origin);
+							reportBackgroundError(ctx, "shuvplan message annotation feedback could not be sent", err, origin);
 						}
 					})
 					.catch((err) => {
-						reportBackgroundError(ctx, "Plannotator message annotation session failed", err, origin);
+						reportBackgroundError(ctx, "shuvplan message annotation session failed", err, origin);
 					});
 			} catch (err) {
 				ctx.ui.notify(
@@ -768,8 +781,10 @@ export default function plannotator(pi: ExtensionAPI): void {
 			}
 		},
 	});
+	}
 
-	pi.registerCommand("plannotator-archive", {
+	for (const commandName of ["shuvplan-archive", "plannotator-archive"]) {
+	pi.registerCommand(commandName, {
 		description: "Browse saved plan decisions",
 		handler: async (_args, ctx) => {
 			if (!hasPlanBrowserHtml()) {
@@ -793,6 +808,7 @@ export default function plannotator(pi: ExtensionAPI): void {
 			}
 		},
 	});
+	}
 
 	pi.registerShortcut(Key.ctrlAlt("p"), {
 		description: "Toggle plannotator",
@@ -807,8 +823,8 @@ export default function plannotator(pi: ExtensionAPI): void {
 		name: PLAN_SUBMIT_TOOL,
 		label: "Submit Plan",
 		description:
-			"Submit your Plannotator plan for user review. " +
-			"Call this only while Plannotator planning mode is active, after writing your plan as a markdown file anywhere inside the working directory. " +
+			"Submit your shuvplan plan for user review. " +
+			"Call this only while shuvplan planning mode is active, after writing your plan as a markdown file anywhere inside the working directory. " +
 			"Pass the path to the plan file (e.g. PLAN.md or plans/auth.md). " +
 			"The user will review the plan in a visual browser UI and can approve, deny with feedback, or annotate it. " +
 			"If denied, edit the same file in place, then call this again with the same path.",
@@ -1020,7 +1036,7 @@ export default function plannotator(pi: ExtensionAPI): void {
 			const verb = event.toolName === "write" ? "writes" : "edits";
 			return {
 				block: true,
-				reason: `Plannotator: during planning, ${verb} are limited to markdown files (.md, .mdx) inside the working directory. Blocked: ${inputPath}`,
+				reason: `shuvplan: during planning, ${verb} are limited to markdown files (.md, .mdx) inside the working directory. Blocked: ${inputPath}`,
 			};
 		}
 	});
@@ -1067,7 +1083,7 @@ export default function plannotator(pi: ExtensionAPI): void {
 			);
 			if (rendered.unknownVariables.length > 0) {
 				ctx.ui.notify(
-					"Plannotator: unknown template variables in " + phase + " prompt: " + rendered.unknownVariables.join(", "),
+					"shuvplan: unknown template variables in " + phase + " prompt: " + rendered.unknownVariables.join(", "),
 					"warning",
 				);
 			}
@@ -1253,7 +1269,7 @@ Execute each step in order. After completing a step, include [DONE:n] in your re
 		const loadedConfig = loadPlannotatorConfig(ctx.cwd);
 		plannotatorConfig = loadedConfig.config;
 		for (const warning of loadedConfig.warnings) {
-			ctx.ui.notify(`Plannotator config: ${warning}`, "warning");
+			ctx.ui.notify(`shuvplan config: ${warning}`, "warning");
 		}
 
 		// Check --plan flag

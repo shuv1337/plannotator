@@ -15,6 +15,7 @@ import {
 	type VcsSelection,
 } from "./server.js";
 import { openBrowser, isRemoteSession } from "./server/network.js";
+import { getPublicEnvValue } from "./server/env.js";
 import { parsePRUrl, checkPRAuth, fetchPR } from "./server/pr.js";
 import {
 	getMRLabel,
@@ -83,7 +84,7 @@ export function getStartupErrorMessage(err: unknown): string {
 function openBrowserForServer(serverUrl: string, ctx: ExtensionContext): void {
 	const browserResult = openBrowser(serverUrl);
 	if (isRemoteSession()) {
-		ctx.ui.notify(`[Plannotator] ${serverUrl}`, "info");
+		ctx.ui.notify(`[shuvplan] ${serverUrl}`, "info");
 	} else if (!browserResult.opened) {
 		ctx.ui.notify(`Open this URL to review: ${serverUrl}`, "info");
 	}
@@ -120,7 +121,7 @@ function startBrowserDecisionSession<T>(
 	let stopped = false;
 	let stopReject: ((err: Error) => void) | undefined;
 	let decisionPromise: Promise<T> | undefined;
-	const createStoppedError = () => new Error("Plannotator browser session was stopped.");
+	const createStoppedError = () => new Error("shuvplan browser session was stopped.");
 	const stop = () => {
 		if (stopped) return;
 		stopped = true;
@@ -158,16 +159,16 @@ export async function startPlanReviewBrowserSession(
 	planContent: string,
 ): Promise<PlanReviewBrowserSession> {
 	if (!ctx.hasUI || !planHtmlContent) {
-		throw new Error("Plannotator browser review is unavailable in this session.");
+		throw new Error("shuvplan browser review is unavailable in this session.");
 	}
 
 	const server = await startPlanReviewServer({
 		plan: planContent,
 		htmlContent: planHtmlContent,
 		origin: "pi",
-		sharingEnabled: process.env.PLANNOTATOR_SHARE !== "disabled",
-		shareBaseUrl: process.env.PLANNOTATOR_SHARE_URL || undefined,
-		pasteApiUrl: process.env.PLANNOTATOR_PASTE_URL || undefined,
+		sharingEnabled: getPublicEnvValue("SHARE") !== "disabled",
+		shareBaseUrl: getPublicEnvValue("SHARE_URL") || undefined,
+		pasteApiUrl: getPublicEnvValue("PASTE_URL") || undefined,
 	});
 
 	const session = startBrowserDecisionSession(server, ctx, server.waitForDecision);
@@ -215,7 +216,7 @@ export async function startCodeReviewBrowserSession(
 	}>
 > {
 	if (!ctx.hasUI || !reviewHtmlContent) {
-		throw new Error("Plannotator code review browser is unavailable in this session.");
+		throw new Error("shuvplan code review browser is unavailable in this session.");
 	}
 
 	const urlArg = options.prUrl;
@@ -430,9 +431,9 @@ export async function startCodeReviewBrowserSession(
 		agentCwd,
 		worktreePool,
 		htmlContent: reviewHtmlContent,
-		sharingEnabled: process.env.PLANNOTATOR_SHARE !== "disabled",
-		shareBaseUrl: process.env.PLANNOTATOR_SHARE_URL || undefined,
-		pasteApiUrl: process.env.PLANNOTATOR_PASTE_URL || undefined,
+		sharingEnabled: getPublicEnvValue("SHARE") !== "disabled",
+		shareBaseUrl: getPublicEnvValue("SHARE_URL") || undefined,
+		pasteApiUrl: getPublicEnvValue("PASTE_URL") || undefined,
 		onCleanup: worktreeCleanup,
 	});
 
@@ -475,7 +476,7 @@ export async function startMarkdownAnnotationSession(
 	renderHtml?: boolean,
 ): Promise<BrowserDecisionSession<{ feedback: string; exit?: boolean; approved?: boolean }>> {
 	if (!ctx.hasUI || !planHtmlContent) {
-		throw new Error("Plannotator annotation browser is unavailable in this session.");
+		throw new Error("shuvplan annotation browser is unavailable in this session.");
 	}
 
 	let resolvedMarkdown = markdown;
@@ -502,9 +503,9 @@ export async function startMarkdownAnnotationSession(
 		rawHtml,
 		renderHtml,
 		htmlContent: planHtmlContent,
-		sharingEnabled: process.env.PLANNOTATOR_SHARE !== "disabled",
-		shareBaseUrl: process.env.PLANNOTATOR_SHARE_URL || undefined,
-		pasteApiUrl: process.env.PLANNOTATOR_PASTE_URL || undefined,
+		sharingEnabled: getPublicEnvValue("SHARE") !== "disabled",
+		shareBaseUrl: getPublicEnvValue("SHARE_URL") || undefined,
+		pasteApiUrl: getPublicEnvValue("PASTE_URL") || undefined,
 	});
 
 	return startBrowserDecisionSession(server, ctx, server.waitForDecision);
@@ -540,7 +541,7 @@ export async function openArchiveBrowserAction(
 	customPlanPath?: string,
 ): Promise<{ opened: boolean }> {
 	if (!ctx.hasUI || !planHtmlContent) {
-		throw new Error("Plannotator archive browser is unavailable in this session.");
+		throw new Error("shuvplan archive browser is unavailable in this session.");
 	}
 
 	const server = await startPlanReviewServer({
@@ -549,9 +550,9 @@ export async function openArchiveBrowserAction(
 		origin: "pi",
 		mode: "archive",
 		customPlanPath,
-		sharingEnabled: process.env.PLANNOTATOR_SHARE !== "disabled",
-		shareBaseUrl: process.env.PLANNOTATOR_SHARE_URL || undefined,
-		pasteApiUrl: process.env.PLANNOTATOR_PASTE_URL || undefined,
+		sharingEnabled: getPublicEnvValue("SHARE") !== "disabled",
+		shareBaseUrl: getPublicEnvValue("SHARE_URL") || undefined,
+		pasteApiUrl: getPublicEnvValue("PASTE_URL") || undefined,
 	});
 
 	return openBrowserAndWait(server, ctx, async () => {

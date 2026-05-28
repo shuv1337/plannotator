@@ -1,0 +1,131 @@
+/* shuvplan — warm operational light mode + Night Owl-inspired dark mode */
+.theme-shuvplan {
+  --background: #011627;
+  --foreground: #d6deeb;
+  --card: #0b253a;
+  --card-foreground: #d6deeb;
+  --popover: #0f2d44;
+  --popover-foreground: #d6deeb;
+  --primary: #f3b042;
+  --primary-foreground: #011627;
+  --secondary: #0b253a;
+  --secondary-foreground: #d6deeb;
+  --muted: #0b253a;
+  --muted-foreground: #8badc1;
+  --accent: #7fdbca;
+  --accent-foreground: #011627;
+  --destructive: #ef5350;
+  --destructive-foreground: #011627;
+  --border: #5f7e97;
+  --input: #0f2d44;
+  --ring: #f3b042;
+  --success: #c5e478;
+  --success-foreground: #011627;
+  --warning: #ecc48d;
+  --warning-foreground: #011627;
+
+  --font-sans: Manrope, Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: Montserrat, Manrope, Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-serif: Lora, Georgia, "Times New Roman", serif;
+  --font-mono: "Geist Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --radius: 0.625rem;
+
+  --surface-2: #0f2d44;
+  --line-2: #173b56;
+  --line-strong: #5f7e97;
+  --brand-navy: #011627;
+  --brand-gold: #f3b042;
+  --brand-cyan: #7fdbca;
+
+  --code-bg: #081f35;
+  --focus-highlight: #f3b042;
+}
+
+.theme-shuvplan.light {
+  --background: #faf9f6;
+  --foreground: #0e1726;
+  --card: #ffffff;
+  --card-foreground: #0e1726;
+  --popover: #ffffff;
+  --popover-foreground: #0e1726;
+  --primary: #1e3a5f;
+  --primary-foreground: #ffffff;
+  --secondary: #f1eee6;
+  --secondary-foreground: #0e1726;
+  --muted: #f1eee6;
+  --muted-foreground: #6c7385;
+  --accent: #f5a623;
+  --accent-foreground: #122844;
+  --destructive: oklch(0.55 0.18 25);
+  --destructive-foreground: #ffffff;
+  --border: #e6e3d6;
+  --input: #fbfaf6;
+  --ring: #f5a623;
+  --success: oklch(0.55 0.10 155);
+  --success-foreground: #ffffff;
+  --warning: oklch(0.68 0.13 75);
+  --warning-foreground: #122844;
+
+  --font-sans: Manrope, Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: Montserrat, Manrope, Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-serif: Lora, Georgia, "Times New Roman", serif;
+  --font-mono: "Geist Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --radius: 0.625rem;
+
+  --surface-2: #fbfaf6;
+  --line-2: #eeece1;
+  --line-strong: #cfcaba;
+  --brand-navy: #1e3a5f;
+  --brand-gold: #f5a623;
+  --brand-cyan: #2a8278;
+
+  --code-bg: #f1eee6;
+  --focus-highlight: #f5a623;
+}
+
+.sp-pagehead {
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line-2);
+}
+
+.sp-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 24px oklch(from var(--foreground) l c h / 0.06);
+}
+
+.sp-btn {
+  border-radius: 0.375rem;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.sp-chip,
+.sp-tag {
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-family: var(--font-sans);
+}
+
+.sp-hero {
+  background:
+    linear-gradient(135deg, var(--brand-navy), #0f2d44 72%),
+    var(--brand-navy);
+  color: #d6deeb;
+  border-bottom: 4px solid var(--brand-gold);
+}
+
+.sp-brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  background: var(--brand-navy);
+  color: var(--brand-gold);
+}

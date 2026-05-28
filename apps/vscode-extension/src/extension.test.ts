@@ -21,12 +21,13 @@ describe("activate", () => {
   it("starts IPC server and injects port env var when config enabled", async () => {
     await activate(context as unknown as vscode.ExtensionContext);
 
-    const port = context.environmentVariableCollection.get("PLANNOTATOR_VSCODE_PORT");
+    const port = context.environmentVariableCollection.get("SHUVPLAN_VSCODE_PORT");
     expect(port).toBeDefined();
     expect(Number(port)).toBeGreaterThan(0);
+    expect(context.environmentVariableCollection.get("PLANNOTATOR_VSCODE_PORT")).toBe(port);
   });
 
-  it("injects PLANNOTATOR_BROWSER env var when config is enabled", async () => {
+  it("injects SHUVPLAN_BROWSER and legacy PLANNOTATOR_BROWSER env vars when config is enabled", async () => {
     const spy = spyOn(vscode.workspace, "getConfiguration");
     spy.mockReturnValue({
       get(key: string, defaultValue?: unknown) {
@@ -38,6 +39,9 @@ describe("activate", () => {
 
     await activate(context as unknown as vscode.ExtensionContext);
 
+    expect(context.environmentVariableCollection.get("SHUVPLAN_BROWSER")).toBe(
+      "/test/extension/path/bin/open-in-vscode",
+    );
     expect(context.environmentVariableCollection.get("PLANNOTATOR_BROWSER")).toBe(
       "/test/extension/path/bin/open-in-vscode",
     );
@@ -88,6 +92,8 @@ describe("activate", () => {
 
     expect(context.environmentVariableCollection.get("PLANNOTATOR_BROWSER")).toBeUndefined();
     expect(context.environmentVariableCollection.get("PLANNOTATOR_VSCODE_PORT")).toBeUndefined();
+    expect(context.environmentVariableCollection.get("SHUVPLAN_BROWSER")).toBeUndefined();
+    expect(context.environmentVariableCollection.get("SHUVPLAN_VSCODE_PORT")).toBeUndefined();
   });
 
   it("registers the openUrl command", async () => {

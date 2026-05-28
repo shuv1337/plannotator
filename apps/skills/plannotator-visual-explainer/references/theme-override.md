@@ -1,10 +1,10 @@
-# Plannotator Theme Override
+# shuvplan Theme Override
 
-When visual-explainer's workflow says to pick a palette and font pairing, use these Plannotator tokens instead. Everything else — layout, structure, components, anti-slop rules — stays as visual-explainer prescribes.
+When visual-explainer's workflow says to pick a palette and font pairing, use these shuvplan tokens instead. Everything else — layout, structure, components, anti-slop rules — stays as visual-explainer prescribes.
 
 ## CSS Custom Properties
 
-Replace visual-explainer's `--bg`, `--surface`, `--border`, `--text`, `--accent` variables with Plannotator's semantic tokens. Include these as `:root` defaults so the file works standalone. When embedded in the Plannotator UI via `--render-html`, these get overridden by the active theme.
+Replace visual-explainer's `--bg`, `--surface`, `--border`, `--text`, `--accent` variables with shuvplan's semantic tokens. Include these as `:root` defaults so the file works standalone. When embedded in the shuvplan UI via `--render-html`, these get overridden by the active theme.
 
 ```css
 :root {
@@ -41,11 +41,11 @@ Replace visual-explainer's `--bg`, `--surface`, `--border`, `--text`, `--accent`
 }
 ```
 
-## Mapping visual-explainer variables to Plannotator tokens
+## Mapping visual-explainer variables to shuvplan tokens
 
 When visual-explainer references or templates use these variables, substitute:
 
-| visual-explainer | Plannotator | Notes |
+| visual-explainer | shuvplan | Notes |
 |-----------------|-------------|-------|
 | `--bg` | `var(--background)` | Page background |
 | `--surface` | `var(--card)` | Card/panel surfaces |
@@ -65,13 +65,13 @@ When visual-explainer references or templates use these variables, substitute:
 
 ## Typography exception
 
-Visual-explainer forbids Inter as `--font-body`. Plannotator uses Inter as its default sans-serif. This is intentional — Plannotator's identity is defined by its theme tokens, not font novelty. When using this skill, Inter is permitted as the body font because the output is meant to look like part of Plannotator, not like an independent design piece.
+Visual-explainer forbids Inter as `--font-body`. shuvplan uses Inter as its default sans-serif. This is intentional — shuvplan's identity is defined by its theme tokens, not font novelty. When using this skill, Inter is permitted as the body font because the output is meant to look like part of shuvplan, not like an independent design piece.
 
 The `--font-display` (serif) is still used for headings to create visual contrast, matching the visual-explainer's emphasis on distinctive typography.
 
 ## Mermaid theming
 
-When visual-explainer instructs you to set `themeVariables` in Mermaid config, use Plannotator tokens:
+When visual-explainer instructs you to set `themeVariables` in Mermaid config, use shuvplan tokens:
 
 ```javascript
 mermaid.initialize({
@@ -91,9 +91,9 @@ mermaid.initialize({
 
 ## Dark mode
 
-Plannotator handles dark/light via theme classes, not `prefers-color-scheme`. The standalone defaults above are the light theme. When embedded via `--render-html`, the active theme's tokens override automatically — no media query needed in the generated HTML.
+shuvplan handles dark/light via theme classes, not `prefers-color-scheme`. The standalone defaults above are the light theme. When embedded via `--render-html`, the active theme's tokens override automatically — no media query needed in the generated HTML.
 
-For standalone viewing, you may optionally add a `prefers-color-scheme: dark` block with the Plannotator dark theme values:
+For standalone viewing, you may optionally add a `prefers-color-scheme: dark` block with the shuvplan dark theme values:
 
 ```css
 @media (prefers-color-scheme: dark) {
@@ -118,7 +118,7 @@ For standalone viewing, you may optionally add a `prefers-color-scheme: dark` bl
 
 ## Depth tiers
 
-Visual-explainer defines depth tiers (hero, elevated, default, recessed). Map them using Plannotator tokens:
+Visual-explainer defines depth tiers (hero, elevated, default, recessed). Map them using shuvplan tokens:
 
 ```css
 /* Hero — elevated, accent-tinted */

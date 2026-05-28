@@ -1,11 +1,11 @@
 {
   "name": "plannotator-webview",
-  "displayName": "Plannotator",
-  "description": "Opens Plannotator plan reviews inside VS Code tabs instead of an external browser",
+  "displayName": "shuvplan",
+  "description": "Opens shuvplan plan reviews inside VS Code tabs instead of an external browser",
   "version": "0.16.5",
   "publisher": "backnotprop",
   "license": "MIT",
-  "homepage": "https://plannotator.ai",
+  "homepage": "https://plan.shuv.dev",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/backnotprop/plannotator.git",
@@ -20,7 +20,7 @@
     "theme": "dark"
   },
   "categories": ["AI"],
-  "keywords": ["plannotator", "plan review", "claude", "ai", "webview"],
+  "keywords": ["shuvplan", "plannotator", "plan review", "claude", "ai", "webview"],
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -33,11 +33,11 @@
     "commands": [
       {
         "command": "plannotator-webview.openUrl",
-        "title": "Plannotator: Open URL in Editor"
+        "title": "shuvplan: Open URL in Editor"
       },
       {
         "command": "plannotator-webview.addEditorAnnotation",
-        "title": "Plannotator: Add Annotation"
+        "title": "shuvplan: Add Annotation"
       },
       {
         "command": "plannotator-webview.submitComment",
@@ -82,12 +82,12 @@
       ]
     },
     "configuration": {
-      "title": "Plannotator",
+      "title": "shuvplan",
       "properties": {
         "plannotatorWebview.injectBrowser": {
           "type": "boolean",
           "default": true,
-          "description": "Inject PLANNOTATOR_BROWSER env var into integrated terminals to redirect plannotator to VS Code."
+          "description": "Inject SHUVPLAN_BROWSER env var into integrated terminals to redirect shuvplan to VS Code. PLANNOTATOR_BROWSER remains supported as a compatibility alias."
         }
       }
     }

@@ -3,6 +3,8 @@ import { storage } from '../utils/storage';
 import { BUILT_IN_THEMES, type ThemeInfo } from '../utils/themeRegistry';
 
 export type Mode = 'dark' | 'light' | 'system';
+export const DEFAULT_THEME_MODE: Mode = 'system';
+export const DEFAULT_COLOR_THEME = 'shuvplan';
 
 type ThemeProviderState = {
   // Mode (dark/light/system) — backward-compatible with old "theme" API
@@ -18,18 +20,18 @@ type ThemeProviderState = {
 };
 
 const ThemeProviderContext = createContext<ThemeProviderState>({
-  theme: 'dark',
+  theme: DEFAULT_THEME_MODE,
   setTheme: () => null,
-  mode: 'dark',
+  mode: DEFAULT_THEME_MODE,
   setMode: () => null,
   resolvedMode: 'dark',
-  colorTheme: 'plannotator',
+  colorTheme: DEFAULT_COLOR_THEME,
   setColorTheme: () => null,
   availableThemes: BUILT_IN_THEMES,
 });
 
 /** Resolve the class string for a theme + mode combination */
-function resolveThemeClasses(themeId: string, effectiveMode: 'dark' | 'light'): string {
+export function resolveThemeClasses(themeId: string, effectiveMode: 'dark' | 'light'): string {
   const themeInfo = BUILT_IN_THEMES.find(t => t.id === themeId);
   const modeSupport = themeInfo?.modeSupport ?? 'both';
 
@@ -72,8 +74,8 @@ interface ThemeProviderProps {
 
 export function ThemeProvider({
   children,
-  defaultTheme = 'dark',
-  defaultColorTheme = 'plannotator',
+  defaultTheme = DEFAULT_THEME_MODE,
+  defaultColorTheme = DEFAULT_COLOR_THEME,
   storageKey = 'plannotator-theme',
   colorThemeStorageKey = 'plannotator-color-theme',
 }: ThemeProviderProps) {

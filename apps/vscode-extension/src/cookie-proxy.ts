@@ -145,9 +145,9 @@ export function createCookieProxy(
 
 function buildSetCookieHeaders(savedCookies: string): string[] {
   if (!savedCookies) return [];
-  return savedCookies
-    .split("; ")
-    .filter((c) => c.startsWith("plannotator-"))
+  return Object.entries(migrateCookieStore(parseCookieString(savedCookies)))
+    .filter(([name]) => name.startsWith("shuvplan-") || name.startsWith("plannotator-"))
+    .map(([name, value]) => `${name}=${value}`)
     .map((c) => `${c}; Path=/; Max-Age=31536000; SameSite=Lax`);
 }
 
@@ -161,14 +161,26 @@ function parseCookieString(str: string): Record<string, string> {
   return store;
 }
 
+function migrateCookieStore(store: Record<string, string>): Record<string, string> {
+  const migrated = { ...store };
+  for (const [name, value] of Object.entries(store)) {
+    if (!name.startsWith("plannotator-")) continue;
+    const shuvplanName = `shuvplan-${name.slice("plannotator-".length)}`;
+    if (migrated[shuvplanName] === undefined) {
+      migrated[shuvplanName] = value;
+    }
+  }
+  return migrated;
+}
+
 function injectScript(html: string, savedCookies: string): string {
-  const initial = JSON.stringify(parseCookieString(savedCookies));
+  const initial = JSON.stringify(migrateCookieStore(parseCookieString(savedCookies)));
   const themeListener = buildThemeListenerScript();
 
   // Virtual cookie jar: overrides document.cookie so plannotator works even
   // when the browser blocks third-party cookies inside the iframe.
   const script = themeListener + `<script>(function(){
-      var S=${initial};S["plannotator-auto-close"]="true";
+      var S=${initial};S["shuvplan-auto-close"]="true";
       Object.defineProperty(document,"cookie",{configurable:true,
         get:function(){return Object.keys(S).map(function(k){return k+"="+S[k]}).join("; ");},
         set:function(v){

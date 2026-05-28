@@ -9,7 +9,7 @@ const posts = (await getCollection('blog'))
   .filter((post) => !post.data.draft)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 ---
-<Base title="Blog - Plannotator" description="News and updates from Plannotator">
+<Base title="Blog - shuvplan" description="News and updates from shuvplan">
   <div class="min-h-screen bg-background text-foreground">
     <Nav />
     <div class="max-w-3xl mx-auto px-8 pt-20 pb-16">

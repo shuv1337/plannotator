@@ -1,22 +1,22 @@
 ---
-title: "Plannotator Meets Pi"
-description: "Plannotator now supports Pi, the minimal terminal coding agent. File-based plan mode, bash safety gating, progress tracking — all with the same browser review UI."
+title: "shuvplan Meets Pi"
+description: "shuvplan now supports Pi, the minimal terminal coding agent. File-based plan mode, bash safety gating, progress tracking — all with the same browser review UI."
 date: 2026-02-21
 author: "backnotprop"
 tags: ["pi", "integration", "plan-mode"]
 ---
 
-**Plannotator now supports [Pi](https://github.com/earendil-works/pi), the minimal terminal coding agent originally created by Mario Zechner (now part of Earendil Works).** Install it as a Pi extension and you get file-based plan mode, visual plan review, code review, and markdown annotation — all through the same browser UI that Claude Code and OpenCode users already know.
+**shuvplan now supports [Pi](https://github.com/earendil-works/pi), the minimal terminal coding agent originally created by Mario Zechner (now part of Earendil Works).** Install it as a Pi extension and you get file-based plan mode, visual plan review, code review, and markdown annotation — all through the same browser UI that Claude Code and OpenCode users already know.
 
 ## Watch the Demo
 
-<iframe width="100%" style="aspect-ratio: 16/9;" src="https://www.youtube.com/embed/XqFun9XCXPw?si=BbjywvxWPONkLRij" title="Plannotator for Pi" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="100%" style="aspect-ratio: 16/9;" src="https://www.youtube.com/embed/XqFun9XCXPw?si=BbjywvxWPONkLRij" title="shuvplan for Pi" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## Why Pi
 
 Pi ships with four tools — `read`, `write`, `edit`, and `bash` — and nothing else. No sub-agents, no plan mode, no built-in review system. That's by design. Pi's philosophy is: extend it with what you need, don't carry what you don't. Features that other tools bake in are built as extensions, skills, or third-party packages.
 
-This is a good fit for Plannotator. Instead of being a hook that intercepts a built-in plan mode (like the Claude Code integration), the Pi extension *is* the plan mode. It registers the tools, manages the state machine, gates the permissions, and handles the browser UI — all as a single extension.
+This is a good fit for shuvplan. Instead of being a hook that intercepts a built-in plan mode (like the Claude Code integration), the Pi extension *is* the plan mode. It registers the tools, manages the state machine, gates the permissions, and handles the browser UI — all as a single extension.
 
 ## Install
 
@@ -49,7 +49,7 @@ Because the plan lives on disk as a regular file, you can open it in your editor
 
 ### Review phase
 
-When the agent calls `plannotator_submit_plan`, the extension reads `PLAN.md` from disk, starts a local HTTP server, and opens the Plannotator browser UI. You see the rendered plan with all the annotation tools — comments, deletions, global comments, quick labels, and "looks good" approvals.
+When the agent calls `plannotator_submit_plan`, the extension reads `PLAN.md` from disk, starts a local HTTP server, and opens the shuvplan browser UI. You see the rendered plan with all the annotation tools — comments, deletions, global comments, quick labels, and "looks good" approvals.
 
 Three outcomes:
 
@@ -79,7 +79,7 @@ The phase and plan file path persist across session restarts via Pi's `appendEnt
 
 ## The Node.js constraint
 
-Pi loads extensions via [jiti](https://github.com/unjs/jiti), which runs in Node.js — not Bun. The shared Plannotator server code in `packages/server/` uses `Bun.serve()`, which doesn't work here.
+Pi loads extensions via [jiti](https://github.com/unjs/jiti), which runs in Node.js — not Bun. The shared shuvplan server code in `packages/server/` uses `Bun.serve()`, which doesn't work here.
 
 The Pi extension includes its own server implementation using `node:http`. It's a stripped-down version of the shared server — same API endpoints, same HTML payloads, same behavior — but built on `createServer` instead of Bun's API. The plan review server exposes `/api/plan`, `/api/approve`, and `/api/deny`. The code review server exposes `/api/diff`, `/api/diff/switch`, and `/api/feedback`. The annotate server exposes `/api/plan` (in annotate mode) and `/api/feedback`.
 
@@ -97,7 +97,7 @@ Both commands reuse the same pre-built HTML as the plan review UI. The only diff
 
 ## Third agent, same UI
 
-Plannotator now supports three coding agents — Claude Code, OpenCode, and Pi — each with a different integration model:
+shuvplan now supports three coding agents — Claude Code, OpenCode, and Pi — each with a different integration model:
 
 | | Claude Code | OpenCode | Pi |
 |---|---|---|---|

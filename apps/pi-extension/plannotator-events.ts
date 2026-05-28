@@ -202,7 +202,7 @@ function createActiveSessionContext() {
 export function registerPlannotatorEventListeners(pi: ExtensionAPI): void {
 	const activeSessionContext = createActiveSessionContext();
 
-	// Plannotator event requests are handled against the latest active session.
+	// shuvplan event requests are handled against the latest active session.
 	// The active context is intentionally session-scoped and replaced on each session_start.
 	pi.on("session_start", async (_event, ctx) => {
 		activeSessionContext.set(ctx);
@@ -227,7 +227,7 @@ export function registerPlannotatorEventListeners(pi: ExtensionAPI): void {
 			}
 
 			if (!ctx) {
-				request.respond({ status: "unavailable", error: "Plannotator context is not ready yet." });
+				request.respond({ status: "unavailable", error: "shuvplan context is not ready yet." });
 				return;
 			}
 

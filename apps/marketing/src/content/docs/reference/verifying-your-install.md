@@ -1,6 +1,6 @@
 ---
 title: "Verifying Your Install"
-description: "SHA256 checksums and SLSA build provenance verification for Plannotator binaries."
+description: "SHA256 checksums and SLSA build provenance verification for shuvplan binaries."
 sidebar:
   order: 4
 section: "Reference"
@@ -48,7 +48,7 @@ Provenance verification is **off by default** — the same default every major `
 **1. Per-install flag** (one-shot):
 
 ```bash
-curl -fsSL https://plannotator.ai/install.sh | bash -s -- --verify-attestation
+curl -fsSL https://plan.shuv.dev/install.sh | bash -s -- --verify-attestation
 ```
 
 PowerShell: `... -VerifyAttestation`. Windows CMD: `install.cmd --verify-attestation`.
@@ -56,14 +56,14 @@ PowerShell: `... -VerifyAttestation`. Windows CMD: `install.cmd --verify-attesta
 **2. Environment variable** (persist in your shell RC):
 
 ```bash
-export PLANNOTATOR_VERIFY_ATTESTATION=1
+export SHUVPLAN_VERIFY_ATTESTATION=1
 ```
 
 **3. Config file** (persist shell-agnostic):
 
 ```bash
-mkdir -p ~/.plannotator
-echo '{ "verifyAttestation": true }' > ~/.plannotator/config.json
+mkdir -p ~/.shuvplan
+echo '{ "verifyAttestation": true }' > ~/.shuvplan/config.json
 ```
 
 When enabled, the installer requires `gh` CLI installed and authenticated (`gh auth login`). If `gh` is missing or the check fails, the install hard-fails so you don't silently skip verification. To force-skip for a single install, pass `--skip-attestation` (bash/cmd) or `-SkipAttestation` (PowerShell).

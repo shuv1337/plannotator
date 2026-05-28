@@ -5,8 +5,8 @@
  * Follows the same patterns as the plan server.
  *
  * Environment variables:
- *   PLANNOTATOR_REMOTE - Set to "1"/"true" for remote, "0"/"false" for local
- *   PLANNOTATOR_PORT   - Fixed port to use (default: random locally, 19432 for remote)
+ *   SHUVPLAN_REMOTE / PLANNOTATOR_REMOTE - Set to "1"/"true" for remote, "0"/"false" for local
+ *   SHUVPLAN_PORT / PLANNOTATOR_PORT     - Fixed port to use (default: random locally, 19432 for remote)
  */
 
 import { isRemoteSession, getServerHostname, getServerPort } from "./remote";
@@ -1100,7 +1100,7 @@ export async function startReviewServer(
       }
 
       if (isAddressInUse) {
-        const hint = isRemote ? " (set PLANNOTATOR_PORT to use different port)" : "";
+        const hint = isRemote ? " (set SHUVPLAN_PORT or PLANNOTATOR_PORT to use different port)" : "";
         throw new Error(`Port ${configuredPort} in use after ${MAX_RETRIES} retries${hint}`);
       }
 

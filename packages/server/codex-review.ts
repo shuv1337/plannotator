@@ -5,23 +5,24 @@
  * The review server (review.ts) calls into this module via the agent-jobs callbacks.
  */
 
-import { join } from "node:path";
-import { homedir, tmpdir } from "node:os";
+import { dirname, join } from "node:path";
+import { tmpdir } from "node:os";
 import { appendFile, mkdir, unlink, writeFile, readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { toRelativePath } from "./path-utils";
+import { getDataPathForWrite } from "@plannotator/shared/data-dir";
 
 // ---------------------------------------------------------------------------
 // Debug log — only active when PLANNOTATOR_DEBUG is set
 // ---------------------------------------------------------------------------
 
 const DEBUG_ENABLED = !!process.env.PLANNOTATOR_DEBUG;
-const DEBUG_LOG_PATH = join(homedir(), ".plannotator", "codex-review-debug.log");
+const DEBUG_LOG_PATH = getDataPathForWrite("codex-review-debug.log");
 
 async function debugLog(label: string, data?: unknown): Promise<void> {
   if (!DEBUG_ENABLED) return;
   try {
-    await mkdir(join(homedir(), ".plannotator"), { recursive: true });
+    await mkdir(dirname(DEBUG_LOG_PATH), { recursive: true });
     const timestamp = new Date().toISOString();
     const line = data !== undefined
       ? `[${timestamp}] ${label}: ${typeof data === "string" ? data : JSON.stringify(data, null, 2)}\n`
@@ -78,14 +79,12 @@ const CODEX_REVIEW_SCHEMA = JSON.stringify({
   additionalProperties: false,
 });
 
-const SCHEMA_DIR = join(homedir(), ".plannotator");
-const SCHEMA_FILE = join(SCHEMA_DIR, "codex-review-schema.json");
+const SCHEMA_FILE = getDataPathForWrite("codex-review-schema.json");
 let schemaMaterialized = false;
 
 /** Ensure the schema file exists on disk and return its path. */
 async function ensureSchemaFile(): Promise<string> {
   if (!schemaMaterialized) {
-    await mkdir(SCHEMA_DIR, { recursive: true });
     await writeFile(SCHEMA_FILE, CODEX_REVIEW_SCHEMA);
     schemaMaterialized = true;
   }

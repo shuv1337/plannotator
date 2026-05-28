@@ -1,5 +1,5 @@
 /**
- * Plannotator CLI for Claude Code, Droid, Codex, Gemini CLI, and Copilot CLI
+ * shuvplan CLI for Claude Code, Droid, Codex, Gemini CLI, and Copilot CLI
  *
  * Supports nine modes:
  *
@@ -24,7 +24,7 @@
  *    - Done button closes the browser
  *
  * 5. Sessions (`plannotator sessions`):
- *    - Lists active Plannotator server sessions
+ *    - Lists active shuvplan server sessions
  *    - `--open [N]` reopens a session in the browser
  *    - `--clean` removes stale session files
  *
@@ -99,6 +99,7 @@ import {
 } from "@plannotator/shared/prompts";
 import { registerSession, unregisterSession, listSessions } from "@plannotator/server/sessions";
 import { openBrowser } from "@plannotator/server/browser";
+import { getPublicEnvValue } from "@plannotator/server/env";
 import { detectProjectName } from "@plannotator/server/project";
 import { hostnameOrFallback } from "@plannotator/shared/project";
 import { readImprovementHook } from "@plannotator/shared/improvement-hooks";
@@ -125,6 +126,13 @@ import {
   isTopLevelHelpInvocation,
   isVersionInvocation,
 } from "./cli";
+import {
+  formatSubmissionForCli,
+  formatSubmissionList,
+  getLatestSubmission,
+  listSubmissions,
+  recordSubmission,
+} from "./submissions";
 import path from "path";
 import { tmpdir } from "os";
 
@@ -143,7 +151,7 @@ const args = process.argv.slice(2);
 // Global flag: --browser <name>
 const browserIdx = args.indexOf("--browser");
 if (browserIdx !== -1 && args[browserIdx + 1]) {
-  process.env.PLANNOTATOR_BROWSER = args[browserIdx + 1];
+  process.env.SHUVPLAN_BROWSER = args[browserIdx + 1];
   args.splice(browserIdx, 2);
 }
 
@@ -250,18 +258,28 @@ if (isInteractiveNoArgInvocation(args, process.stdin.isTTY)) {
 process.on("exit", () => unregisterSession());
 
 // Check if URL sharing is enabled (default: true)
-const sharingEnabled = process.env.PLANNOTATOR_SHARE !== "disabled";
+const sharingEnabled = getPublicEnvValue("SHARE") !== "disabled";
 
 // Custom share portal URL for self-hosting
-const shareBaseUrl = process.env.PLANNOTATOR_SHARE_URL || undefined;
+const shareBaseUrl = getPublicEnvValue("SHARE_URL") || undefined;
 
 // Paste service URL for short URL sharing
-const pasteApiUrl = process.env.PLANNOTATOR_PASTE_URL || undefined;
+const pasteApiUrl = getPublicEnvValue("PASTE_URL") || undefined;
+
+function recordSubmissionSafely(input: Parameters<typeof recordSubmission>[0]): void {
+  try {
+    recordSubmission(input);
+  } catch (err) {
+    console.error(
+      `[submissions] save failed: ${err instanceof Error ? err.message : String(err)}`,
+    );
+  }
+}
 
 // Detect calling agent from environment variables set by agent runtimes.
 // Priority:
-//   PLANNOTATOR_ORIGIN (explicit override, validated against AGENT_CONFIG)
-//   > Droid command wrappers (PLANNOTATOR_ORIGIN=droid)
+//   SHUVPLAN_ORIGIN / PLANNOTATOR_ORIGIN (explicit override, validated against AGENT_CONFIG)
+//   > Droid command wrappers
 //   > Codex (CODEX_THREAD_ID)
 //   > Copilot CLI (COPILOT_CLI)
 //   > OpenCode (OPENCODE)
@@ -271,7 +289,7 @@ const pasteApiUrl = process.env.PLANNOTATOR_PASTE_URL || undefined;
 //
 // To add a new agent, also add an entry to AGENT_CONFIG in
 // packages/shared/agents.ts (see header comment there).
-const originOverride = process.env.PLANNOTATOR_ORIGIN as Origin | undefined;
+const originOverride = getPublicEnvValue("ORIGIN") as Origin | undefined;
 const detectedOrigin: Origin =
   (originOverride && originOverride in AGENT_CONFIG) ? originOverride :
   process.env.CODEX_THREAD_ID ? "codex" :
@@ -296,7 +314,7 @@ if (args[0] === "sessions") {
   const sessions = listSessions();
 
   if (sessions.length === 0) {
-    console.error("No active Plannotator sessions.");
+    console.error("No active shuvplan sessions.");
     process.exit(0);
   }
 
@@ -316,7 +334,7 @@ if (args[0] === "sessions") {
   }
 
   // List sessions as a table
-  console.error("Active Plannotator sessions:\n");
+  console.error("Active shuvplan sessions:\n");
   for (let i = 0; i < sessions.length; i++) {
     const s = sessions[i];
     const age = Math.round((Date.now() - new Date(s.startedAt).getTime()) / 60000);
@@ -324,6 +342,29 @@ if (args[0] === "sessions") {
     console.error(`  #${i + 1}  ${s.mode.padEnd(9)} ${s.project.padEnd(20)} ${s.url.padEnd(28)} ${ageStr} ago`);
   }
   console.error(`\nReopen with: plannotator sessions --open [N]`);
+  process.exit(0);
+
+} else if (args[0] === "submissions") {
+  // ============================================
+  // SUBMISSION RECOVERY MODE
+  // ============================================
+
+  if (args.includes("--last")) {
+    const latest = getLatestSubmission();
+    if (!latest) {
+      console.error("No shuvplan submissions found.");
+      process.exit(1);
+    }
+    console.log(formatSubmissionForCli(latest));
+    process.exit(0);
+  }
+
+  const limitIdx = args.indexOf("--limit");
+  const limit =
+    limitIdx !== -1 && args[limitIdx + 1]
+      ? Math.max(1, parseInt(args[limitIdx + 1], 10) || 10)
+      : 10;
+  console.log(formatSubmissionList(listSubmissions(limit)));
   process.exit(0);
 
 } else if (args[0] === "setup-goal") {
@@ -377,6 +418,14 @@ if (args[0] === "sessions") {
   server.stop();
 
   if (result.exit) {
+    recordSubmissionSafely({
+      mode: "goal-setup",
+      origin: detectedOrigin,
+      project: goalProject,
+      label: `goal-setup-${bundle.stage}-dismissed`,
+      decision: "dismissed",
+      payload: { stage: bundle.stage },
+    });
     console.log(JSON.stringify({ decision: "dismissed", stage: bundle.stage }));
   } else if (result.result) {
     const output = {
@@ -384,6 +433,15 @@ if (args[0] === "sessions") {
       stage: result.result.stage,
       result: result.result,
     };
+    recordSubmissionSafely({
+      mode: "goal-setup",
+      origin: detectedOrigin,
+      project: goalProject,
+      label: `goal-setup-${result.result.stage}`,
+      decision: "submitted",
+      feedback: JSON.stringify(output, null, 2),
+      payload: output,
+    });
     console.log(jsonFlag ? JSON.stringify(output) : JSON.stringify(output, null, 2));
   }
   process.exit(0);
@@ -654,6 +712,22 @@ if (args[0] === "sessions") {
   // Cleanup
   server.stop();
 
+  recordSubmissionSafely({
+    mode: "review",
+    origin: detectedOrigin,
+    project: reviewProject,
+    label: isPRMode
+      ? `${getMRLabel(prMetadata!).toLowerCase()}-review-${getDisplayRepo(prMetadata!)}${getMRNumberLabel(prMetadata!)}`
+      : `review-${reviewProject}`,
+    decision: result.exit ? "dismissed" : result.approved ? "approved" : "feedback",
+    feedback: result.exit
+      ? "Review session closed without feedback."
+      : result.approved
+        ? getReviewApprovedPrompt(detectedOrigin)
+        : result.feedback,
+    payload: { annotations: result.annotations },
+  });
+
   // Output feedback (captured by slash command)
   if (result.exit) {
     console.log("Review session closed without feedback.");
@@ -837,6 +911,22 @@ if (args[0] === "sessions") {
   // Cleanup
   server.stop();
 
+  recordSubmissionSafely({
+    mode: "annotate",
+    origin: detectedOrigin,
+    project: annotateProject,
+    label: folderPath
+      ? `annotate-${path.basename(folderPath)}`
+      : `annotate-${isUrl ? hostnameOrFallback(absolutePath) : path.basename(absolutePath)}`,
+    decision: result.exit ? "dismissed" : result.approved ? "approved" : "feedback",
+    feedback: result.exit
+      ? "Annotation session closed without feedback."
+      : result.approved
+        ? APPROVED_PLAINTEXT_MARKER
+        : result.feedback,
+    payload: { annotations: result.annotations, filePath: absolutePath },
+  });
+
   // Output feedback (captured by slash command)
   emitAnnotateOutcome(result);
   process.exit(0);
@@ -995,6 +1085,20 @@ if (args[0] === "sessions") {
 
   server.stop();
 
+  recordSubmissionSafely({
+    mode: "annotate",
+    origin: detectedOrigin,
+    project: annotateProject,
+    label: "annotate-last",
+    decision: result.exit ? "dismissed" : result.approved ? "approved" : "feedback",
+    feedback: result.exit
+      ? "Annotation session closed without feedback."
+      : result.approved
+        ? APPROVED_PLAINTEXT_MARKER
+        : result.feedback,
+    payload: { annotations: result.annotations, filePath: "last-message" },
+  });
+
   emitAnnotateOutcome(result);
   process.exit(0);
 
@@ -1097,6 +1201,16 @@ if (args[0] === "sessions") {
   await Bun.sleep(1500);
   server.stop();
 
+  recordSubmissionSafely({
+    mode: "plan",
+    origin: "copilot-cli",
+    project: planProject,
+    label: `plan-${planProject}`,
+    decision: result.approved ? "approved" : "denied",
+    feedback: result.feedback,
+    savedPath: result.savedPath,
+  });
+
   // Output Copilot CLI permission decision format
   if (result.approved) {
     console.log(JSON.stringify({
@@ -1181,6 +1295,20 @@ if (args[0] === "sessions") {
   const result = await server.waitForDecision();
   await Bun.sleep(1500);
   server.stop();
+
+  recordSubmissionSafely({
+    mode: "annotate",
+    origin: "copilot-cli",
+    project: annotateProject,
+    label: "annotate-last",
+    decision: result.exit ? "dismissed" : result.approved ? "approved" : "feedback",
+    feedback: result.exit
+      ? "Annotation session closed without feedback."
+      : result.approved
+        ? APPROVED_PLAINTEXT_MARKER
+        : result.feedback,
+    payload: { annotations: result.annotations, filePath: "last-message" },
+  });
 
   emitAnnotateOutcome(result);
   process.exit(0);
@@ -1286,6 +1414,17 @@ if (args[0] === "sessions") {
     await Bun.sleep(1500);
     server.stop();
 
+    recordSubmissionSafely({
+      mode: "plan",
+      origin: "codex",
+      project: planProject,
+      label: `plan-${planProject}`,
+      decision: result.approved ? "approved" : "denied",
+      feedback: result.feedback,
+      savedPath: result.savedPath,
+      payload: { source: latestPlan.source },
+    });
+
     if (result.approved) {
       console.log("{}");
     } else {
@@ -1369,6 +1508,16 @@ if (args[0] === "sessions") {
 
   // Cleanup
   server.stop();
+
+  recordSubmissionSafely({
+    mode: "plan",
+    origin: isGemini ? "gemini-cli" : detectedOrigin,
+    project: planProject,
+    label: `plan-${planProject}`,
+    decision: result.approved ? "approved" : "denied",
+    feedback: result.feedback,
+    savedPath: result.savedPath,
+  });
 
   // Output decision in the appropriate format for the harness
   if (isGemini) {

@@ -36,6 +36,7 @@ import {
 	saveToOctarine,
 } from "./integrations.js";
 import { listenOnPort } from "./network.js";
+import { getPublicEnvValue } from "./env.js";
 
 import { loadConfig, saveConfig, detectGitUser, getServerConfig } from "../generated/config.js";
 import { readImprovementHook, getImprovementHookExpectedPath } from "../generated/improvement-hooks.js";
@@ -85,11 +86,11 @@ export async function startPlanReviewServer(options: {
 	void warmFileListCache(process.cwd(), "code");
 	const gitUser = detectGitUser();
 	const sharingEnabled =
-		options.sharingEnabled ?? process.env.PLANNOTATOR_SHARE !== "disabled";
+		options.sharingEnabled ?? getPublicEnvValue("SHARE") !== "disabled";
 	const shareBaseUrl =
-		(options.shareBaseUrl ?? process.env.PLANNOTATOR_SHARE_URL) || undefined;
+		(options.shareBaseUrl ?? getPublicEnvValue("SHARE_URL")) || undefined;
 	const pasteApiUrl =
-		(options.pasteApiUrl ?? process.env.PLANNOTATOR_PASTE_URL) || undefined;
+		(options.pasteApiUrl ?? getPublicEnvValue("PASTE_URL")) || undefined;
 
 	// --- Archive mode setup ---
 	let archivePlans: ArchivedPlan[] = [];

@@ -4,17 +4,18 @@
 
 import { $ } from "bun";
 import os from "node:os";
-import path from "node:path";
 import fs from "node:fs";
+import { getPublicEnvValue } from "./env";
+import { getDataPathForRead } from "@plannotator/shared/data-dir";
 
-const IPC_REGISTRY = path.join(os.homedir(), ".plannotator", "vscode-ipc.json");
+const IPC_REGISTRY = getDataPathForRead("vscode-ipc.json");
 
 /**
  * Common "no-op" values for $BROWSER used by headless/background environments
  * (e.g. Claude Code's agent view sets BROWSER=true) to signal "do not actually
  * launch a browser". Treating these as if the variable were unset prevents
  * silently shelling out to e.g. `true <url>`, which exits 0 without opening
- * anything and leaves the Plannotator server hanging on waitForDecision().
+ * anything and leaves the shuvplan server hanging on waitForDecision().
  */
 const NOOP_BROWSER_VALUES = new Set(["true", "false", "none", ":", "0", "1"]);
 
@@ -25,7 +26,7 @@ export function isNoOpBrowserSentinel(value: string | undefined): boolean {
 
 /**
  * Try opening URL via VS Code extension IPC registry.
- * Falls back when env vars (PLANNOTATOR_BROWSER) aren't available to the process.
+ * Falls back when env vars (SHUVPLAN_BROWSER/PLANNOTATOR_BROWSER) aren't available to the process.
  */
 async function tryVscodeIpc(url: string): Promise<boolean> {
   try {
@@ -83,7 +84,7 @@ export async function isWSL(): Promise<boolean> {
 /**
  * Open a URL in the browser
  *
- * Uses PLANNOTATOR_BROWSER env var if set, otherwise uses system default.
+ * Uses SHUVPLAN_BROWSER or PLANNOTATOR_BROWSER env var if set, otherwise uses system default.
  * - macOS: Set to app name ("Google Chrome") or path ("/Applications/Firefox.app")
  * - Linux/Windows/WSL: Set to executable path ("/usr/bin/firefox")
  *
@@ -91,12 +92,12 @@ export async function isWSL(): Promise<boolean> {
  */
 export function shouldTryRemoteBrowserFallback(isRemote: boolean): boolean {
   if (!isRemote) return false;
-  const plannotatorBrowser = process.env.PLANNOTATOR_BROWSER;
+  const configuredBrowser = getPublicEnvValue("BROWSER");
   const browser = process.env.BROWSER;
   // Treat headless sentinels (e.g. BROWSER=true from Claude Code's agent view)
   // as if no real browser handler were configured, so the IPC fallback still runs.
   const hasRealHandler =
-    (plannotatorBrowser && !isNoOpBrowserSentinel(plannotatorBrowser)) ||
+    (configuredBrowser && !isNoOpBrowserSentinel(configuredBrowser)) ||
     (browser && !isNoOpBrowserSentinel(browser));
   return !hasRealHandler;
 }
@@ -106,13 +107,13 @@ export async function openBrowser(
   options?: { isRemote?: boolean }
 ): Promise<boolean> {
   try {
-    const rawPlannotatorBrowser = process.env.PLANNOTATOR_BROWSER;
+    const rawConfiguredBrowser = getPublicEnvValue("BROWSER");
     const rawBrowser = process.env.BROWSER;
-    const plannotatorBrowser = isNoOpBrowserSentinel(rawPlannotatorBrowser)
+    const configuredBrowser = isNoOpBrowserSentinel(rawConfiguredBrowser)
       ? undefined
-      : rawPlannotatorBrowser;
+      : rawConfiguredBrowser;
     const envBrowser = isNoOpBrowserSentinel(rawBrowser) ? undefined : rawBrowser;
-    const browser = plannotatorBrowser || envBrowser;
+    const browser = configuredBrowser || envBrowser;
     if (shouldTryRemoteBrowserFallback(options?.isRemote ?? false)) {
       const openedViaIpc = await tryVscodeIpc(url);
       if (openedViaIpc) {
@@ -124,14 +125,14 @@ export async function openBrowser(
     const wsl = await isWSL();
 
     if (browser) {
-      if (plannotatorBrowser && platform === "darwin") {
-        if (plannotatorBrowser.includes("/") && !plannotatorBrowser.endsWith(".app")) {
-          await $`${plannotatorBrowser} ${url}`.quiet();
+      if (configuredBrowser && platform === "darwin") {
+        if (configuredBrowser.includes("/") && !configuredBrowser.endsWith(".app")) {
+          await $`${configuredBrowser} ${url}`.quiet();
         } else {
-          await $`open -a ${plannotatorBrowser} ${url}`.quiet();
+          await $`open -a ${configuredBrowser} ${url}`.quiet();
         }
-      } else if ((platform === "win32" || wsl) && plannotatorBrowser) {
-        await $`cmd.exe /c start "" ${plannotatorBrowser} ${url}`.quiet();
+      } else if ((platform === "win32" || wsl) && configuredBrowser) {
+        await $`cmd.exe /c start "" ${configuredBrowser} ${url}`.quiet();
       } else {
         await $`${browser} ${url}`.quiet();
       }

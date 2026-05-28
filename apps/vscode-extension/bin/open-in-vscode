@@ -1,5 +1,5 @@
 #!/bin/sh
-# Plannotator WebView Router
+# shuvplan WebView Router
 # Invoked via PLANNOTATOR_BROWSER env var
 # Sends URL to the extension's local IPC server
 

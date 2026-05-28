@@ -1,5 +1,5 @@
 /**
- * Context builders — translate Plannotator review state into system prompts
+ * Context builders — translate shuvplan review state into system prompts
  * that give the AI session the right background for answering questions.
  *
  * These are provider-agnostic: any AIProvider implementation can use them
@@ -19,7 +19,7 @@ import type { AIContext } from "./types.ts";
  * - What role it plays (plan reviewer, code reviewer, etc.)
  * - The content it should reference (plan markdown, diff patch, file)
  * - Any annotations the user has already made
- * - That it's operating inside Plannotator (not a general coding session)
+ * - That it's operating inside shuvplan (not a general coding session)
  */
 export function buildSystemPrompt(ctx: AIContext): string {
   switch (ctx.mode) {
@@ -37,11 +37,11 @@ export function buildSystemPrompt(ctx: AIContext): string {
  *
  * When forking from a parent session, we don't need a full system prompt
  * (the parent's history already provides context). Instead, we inject a
- * short "you are now in Plannotator" preamble with the relevant content.
+ * short "you are now in shuvplan" preamble with the relevant content.
  */
 export function buildForkPreamble(ctx: AIContext): string {
   const lines: string[] = [
-    "The user is now reviewing your work in Plannotator and has a question.",
+    "The user is now reviewing your work in shuvplan and has a question.",
     "Answer concisely based on the conversation history and the context below.",
     "",
   ];
@@ -149,7 +149,7 @@ function buildPlanReviewPrompt(
   ctx: Extract<AIContext, { mode: "plan-review" }>
 ): string {
   const sections: string[] = [
-    "The user is reviewing an implementation plan in Plannotator.",
+    "The user is reviewing an implementation plan in shuvplan.",
     "",
     "## Plan Under Review",
   ];
@@ -185,7 +185,7 @@ function buildCodeReviewPrompt(
   ctx: Extract<AIContext, { mode: "code-review" }>
 ): string {
   const sections: string[] = [
-    "The user is reviewing a code diff in Plannotator.",
+    "The user is reviewing a code diff in shuvplan.",
   ];
 
   if (ctx.review.filePath) {
@@ -220,7 +220,7 @@ function buildAnnotatePrompt(
   ctx: Extract<AIContext, { mode: "annotate" }>
 ): string {
   const sections: string[] = [
-    "The user is annotating a markdown document in Plannotator.",
+    "The user is annotating a markdown document in shuvplan.",
     "",
     `## Document: ${ctx.annotate.filePath}`,
   ];

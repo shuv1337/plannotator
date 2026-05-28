@@ -1,20 +1,19 @@
 /**
  * Session Registry
  *
- * Tracks active Plannotator server sessions in ~/.plannotator/sessions/
+ * Tracks active shuvplan server sessions in ~/.shuvplan/sessions/
  * so users can discover and reopen closed browser tabs.
  */
 
-import { homedir } from "os";
 import { join } from "path";
 import {
-  mkdirSync,
   writeFileSync,
   readFileSync,
   readdirSync,
   unlinkSync,
   existsSync,
 } from "fs";
+import { getDataDirForRead, getDataDirForWrite } from "@plannotator/shared/data-dir";
 
 export interface SessionInfo {
   pid: number;
@@ -27,9 +26,11 @@ export interface SessionInfo {
 }
 
 function getSessionsDir(): string {
-  const dir = join(homedir(), ".plannotator", "sessions");
-  mkdirSync(dir, { recursive: true });
-  return dir;
+  return getDataDirForWrite("sessions");
+}
+
+function getSessionsReadDir(): string {
+  return getDataDirForRead("sessions");
 }
 
 function sessionPath(pid: number): string {
@@ -59,7 +60,7 @@ export function registerSession(info: SessionInfo): void {
  * Unregister the current process's session. No-op if not found.
  */
 export function unregisterSession(pid: number = process.pid): void {
-  const filePath = sessionPath(pid);
+  const filePath = join(getSessionsReadDir(), `${pid}.json`);
   try {
     if (existsSync(filePath)) unlinkSync(filePath);
   } catch {
@@ -71,7 +72,7 @@ export function unregisterSession(pid: number = process.pid): void {
  * List all active sessions. Automatically removes stale entries.
  */
 export function listSessions(): SessionInfo[] {
-  const dir = getSessionsDir();
+  const dir = getSessionsReadDir();
   const active: SessionInfo[] = [];
 
   let entries: string[];

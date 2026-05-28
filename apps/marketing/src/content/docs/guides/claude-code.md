@@ -1,16 +1,16 @@
 ---
 title: "Claude Code"
-description: "How Plannotator works with Claude Code — hooks, permission modes, and the plan review lifecycle."
+description: "How shuvplan works with Claude Code — hooks, permission modes, and the plan review lifecycle."
 sidebar:
   order: 4
 section: "Getting Started"
 ---
 
-Plannotator integrates with Claude Code through the hooks system. When Claude calls `ExitPlanMode`, a `PermissionRequest` hook intercepts the call and opens the Plannotator UI.
+shuvplan integrates with Claude Code through the hooks system. When Claude calls `ExitPlanMode`, a `PermissionRequest` hook intercepts the call and opens the shuvplan UI.
 
 ## How the hook works
 
-Claude Code's hook system lets external commands intercept tool calls. Plannotator registers a `PermissionRequest` hook that matches the `ExitPlanMode` tool:
+Claude Code's hook system lets external commands intercept tool calls. shuvplan registers a `PermissionRequest` hook that matches the `ExitPlanMode` tool:
 
 ```json
 {
@@ -51,7 +51,7 @@ When matched, the hook:
 
 ## Permission mode
 
-On first use, Plannotator asks you to choose a permission mode. This controls what Claude Code does after you approve a plan:
+On first use, shuvplan asks you to choose a permission mode. This controls what Claude Code does after you approve a plan:
 
 - **Bypass permissions** — Claude proceeds with implementation without further permission prompts for the approved plan
 - **Default** — Normal Claude Code permission behavior applies (you may see additional permission prompts)
@@ -71,31 +71,31 @@ If you want to approve with minor notes, use "Send Feedback" — Claude will see
 
 The plugin registers slash commands that work inside your Claude Code session:
 
-### `/plannotator-review`
+### `/shuvplan-review`
 
 Opens a code review UI for your uncommitted `git diff`. Also supports reviewing GitHub pull requests:
 
 ```
-/plannotator-review https://github.com/owner/repo/pull/123
+/shuvplan-review https://github.com/owner/repo/pull/123
 ```
 
 See the [code review docs](/docs/commands/code-review/) for details.
 
-### `/plannotator-annotate <file.md>`
+### `/shuvplan-annotate <file.md>`
 
 Opens any markdown file in the annotation UI. See the [annotate docs](/docs/commands/annotate/) for details.
 
-### `/plannotator-last`
+### `/shuvplan-last`
 
 Annotates the agent's most recent message. See the [annotate last docs](/docs/commands/annotate-last/) for details.
 
-### `/plannotator-setup-goal`
+### `/shuvplan-setup-goal`
 
 Turns an idea or objective into a reviewed `/goal` package.
 
-### `/plannotator-visual-explainer`
+### `/shuvplan-visual-explainer`
 
-Generates a self-contained Plannotator-themed HTML explainer.
+Generates a self-contained shuvplan-themed HTML explainer.
 
 ## Plugin installation
 

@@ -1,4 +1,4 @@
-# Self-Hosting the Plannotator Share Portal
+# Self-Hosting the shuvplan Share Portal
 
 The share portal is a static single-page application. It has no backend,
 no database, and makes no network requests. All plan data is encoded in
@@ -42,7 +42,7 @@ Configure the CloudFront distribution to return `/index.html` for 404s
 Point to the repository root. Build command: `bun run build:portal`.
 Output directory: `apps/portal/dist`.
 
-## Configure Plannotator
+## Configure shuvplan
 
 Set the `PLANNOTATOR_SHARE_URL` environment variable to your portal's URL:
 

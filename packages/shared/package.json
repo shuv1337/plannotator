@@ -28,6 +28,8 @@
     "./extract-code-paths": "./extract-code-paths.ts",
     "./external-annotation": "./external-annotation.ts",
     "./agent-jobs": "./agent-jobs.ts",
+    "./data-dir": "./data-dir.ts",
+    "./env": "./env.ts",
     "./config": "./config.ts",
     "./prompts": "./prompts.ts",
     "./improvement-hooks": "./improvement-hooks.ts",

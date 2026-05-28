@@ -137,7 +137,7 @@ export async function saveToObsidian(
 		const filePath = join(targetFolder, filename);
 		const tags = await extractTags(plan);
 		const frontmatter = generateFrontmatter(tags);
-		const content = `${frontmatter}\n\n[[Plannotator Plans]]\n\n${plan}`;
+		const content = `${frontmatter}\n\n[[shuvplan Plans]]\n\n${plan}`;
 		writeFileSync(filePath, content);
 		return { success: true, path: filePath };
 	} catch (err) {

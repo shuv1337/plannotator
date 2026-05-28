@@ -1,6 +1,6 @@
 {
   "name": "plannotator",
-  "description": "Plannotator slash commands for Droid.",
+  "description": "shuvplan slash commands for Droid, with Plannotator compatibility aliases.",
   "owner": {
     "name": "backnotprop"
   },
@@ -8,7 +8,7 @@
     {
       "name": "plannotator",
       "source": "./apps/droid-plugin",
-      "description": "Interactive code review and annotation slash commands for Droid. No plan-mode integration."
+      "description": "shuvplan code review and annotation slash commands for Droid. No plan-mode integration."
     }
   ]
 }

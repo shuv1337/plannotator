@@ -1,7 +1,7 @@
 /**
  * Goal Setup Server
  *
- * Serves the Plannotator shell in a goal-setup mode for the setup-goal skill.
+ * Serves the shuvplan shell in a goal-setup mode for the setup-goal skill.
  * The interview and facts phases use the same endpoint surface so agents can
  * launch a browser session, wait, and receive a structured JSON result.
  */
@@ -219,7 +219,7 @@ export async function startGoalSetupServer(
 
       if (isAddressInUse) {
         const hint = isRemote
-          ? " (set PLANNOTATOR_PORT to use different port)"
+          ? " (set SHUVPLAN_PORT or PLANNOTATOR_PORT to use different port)"
           : "";
         throw new Error(
           `Port ${configuredPort} in use after ${MAX_RETRIES} retries${hint}`

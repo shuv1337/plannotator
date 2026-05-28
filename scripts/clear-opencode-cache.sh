@@ -6,7 +6,7 @@ usage() {
 Usage: clear-opencode-cache.sh [--dry-run] [--help]
 
 Clears OpenCode cache directories and related Bun package caches so OpenCode
-and the Plannotator OpenCode plugin are reloaded from a clean state.
+and the shuvplan OpenCode plugin are reloaded from a clean state.
 
 Options:
   --dry-run   Show which paths would be removed without deleting them

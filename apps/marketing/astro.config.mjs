@@ -5,7 +5,7 @@ import mdx from '@astrojs/mdx';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  site: 'https://plannotator.ai',
+  site: 'https://plan.shuv.dev',
   output: 'static',
   integrations: [react(), sitemap(), mdx()],
   markdown: {

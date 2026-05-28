@@ -1,6 +1,7 @@
 import { join } from "node:path";
-import { homedir, tmpdir } from "node:os";
-import { mkdir, writeFile, readFile, unlink } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { writeFile, readFile, unlink } from "node:fs/promises";
+import { getDataPathForWrite } from "@plannotator/shared/data-dir";
 import type { DiffType } from "../vcs";
 import type { PRMetadata } from "../pr";
 import { getLocalDiffInstruction } from "../agent-review-message";
@@ -383,13 +384,11 @@ export function buildTourClaudeCommand(prompt: string, model: string = "sonnet",
   };
 }
 
-const TOUR_SCHEMA_DIR = join(homedir(), ".plannotator");
-const TOUR_SCHEMA_FILE = join(TOUR_SCHEMA_DIR, "tour-schema.json");
+const TOUR_SCHEMA_FILE = getDataPathForWrite("tour-schema.json");
 let tourSchemaMaterialized = false;
 
 async function ensureTourSchemaFile(): Promise<string> {
   if (!tourSchemaMaterialized) {
-    await mkdir(TOUR_SCHEMA_DIR, { recursive: true });
     await writeFile(TOUR_SCHEMA_FILE, TOUR_SCHEMA_JSON);
     tourSchemaMaterialized = true;
   }

@@ -1,26 +1,26 @@
 ---
 title: "Prompts"
-description: "How Plannotator's review agents structure their prompts, what we control, what the CLI harness owns, and how the pieces fit together."
+description: "How shuvplan's review agents structure their prompts, what we control, what the CLI harness owns, and how the pieces fit together."
 sidebar:
   order: 33
 section: "Reference"
 ---
 
-Plannotator's review agents (Claude, Codex, and Code Tour) all shell out to an external CLI. This page maps what those CLIs receive on every invocation: which parts Plannotator controls, and which parts are owned by the CLI's own agent harness.
+shuvplan's review agents (Claude, Codex, and Code Tour) all shell out to an external CLI. This page maps what those CLIs receive on every invocation: which parts shuvplan controls, and which parts are owned by the CLI's own agent harness.
 
-Importantly, **we don't invent our own review prompts**. The Claude review prompt is derived from Claude Code's published open-source review prompt, and the Codex review prompt is copied verbatim from [`codex-rs/core/review_prompt.md`](https://github.com/openai/codex). You get the same review behavior those tools ship with. Code Tour is the one exception: it's a Plannotator-original workflow, so its prompt is ours.
+Importantly, **we don't invent our own review prompts**. The Claude review prompt is derived from Claude Code's published open-source review prompt, and the Codex review prompt is copied verbatim from [`codex-rs/core/review_prompt.md`](https://github.com/openai/codex). You get the same review behavior those tools ship with. Code Tour is the one exception: it's a shuvplan-original workflow, so its prompt is ours.
 
 ## The three layers
 
 Every review call is shaped by three layers:
 
-1. **System prompt.** Owned by the CLI (Claude Code or codex-rs). Plannotator never sets or touches this.
-2. **User message.** What Plannotator sends. Always a single concatenated string of two parts: a static **review prompt** plus a dynamic **user prompt**.
+1. **System prompt.** Owned by the CLI (Claude Code or codex-rs). shuvplan never sets or touches this.
+2. **User message.** What shuvplan sends. Always a single concatenated string of two parts: a static **review prompt** plus a dynamic **user prompt**.
 3. **Output schema.** A JSON schema passed to the CLI as a flag, forcing the final assistant message to match a known shape.
 
 ## What's in the user message
 
-The user message Plannotator sends is always:
+The user message shuvplan sends is always:
 
 ```
 <review prompt>

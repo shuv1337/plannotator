@@ -18,13 +18,14 @@ describe("CLI top-level help", () => {
   test("renders concise top-level usage", () => {
     const output = formatTopLevelHelp();
 
-    expect(output).toContain("plannotator --help");
-    expect(output).toContain("plannotator --version, -v");
-    expect(output).toContain("plannotator [--browser <name>]");
-    expect(output).toContain("plannotator review [--git] [PR_URL]");
-    expect(output).toContain("plannotator annotate <file.md | file.html | https://... | folder/>");
-    expect(output).toContain("plannotator setup-goal <interview|facts>");
-    expect(output).toContain("running 'plannotator' without arguments is for hook integration");
+    expect(output).toContain("shuvplan --help");
+    expect(output).toContain("shuvplan --version, -v");
+    expect(output).toContain("shuvplan [--browser <name>]");
+    expect(output).toContain("shuvplan review [--git] [PR_URL]");
+    expect(output).toContain("shuvplan annotate <file.md | file.html | https://... | folder/>");
+    expect(output).toContain("shuvplan setup-goal <interview|facts>");
+    expect(output).toContain("shuvplan submissions [--last] [--limit N]");
+    expect(output).toContain("legacy 'plannotator' commands remain available");
   });
 });
 
@@ -38,7 +39,7 @@ describe("CLI --version", () => {
 
   test("formats version string", () => {
     const output = formatVersion();
-    expect(output).toStartWith("plannotator ");
+    expect(output).toStartWith("shuvplan ");
   });
 });
 
@@ -53,11 +54,12 @@ describe("interactive no-arg invocation", () => {
   test("renders clarification for interactive users", () => {
     const output = formatInteractiveNoArgClarification();
 
-    expect(output).toContain("usually launched automatically by Claude Code hooks");
+    expect(output).toContain("usually launched automatically by agent hooks");
     expect(output).toContain("It expects hook JSON on stdin.");
-    expect(output).toContain("plannotator review");
-    expect(output).toContain("plannotator setup-goal interview bundle.json --json");
-    expect(output).toContain("plannotator sessions");
-    expect(output).toContain("Run 'plannotator --help' for top-level usage.");
+    expect(output).toContain("shuvplan review");
+    expect(output).toContain("shuvplan setup-goal interview bundle.json --json");
+    expect(output).toContain("shuvplan sessions");
+    expect(output).toContain("shuvplan submissions --last");
+    expect(output).toContain("Run 'shuvplan --help' for top-level usage.");
   });
 });

@@ -1,24 +1,24 @@
 ---
 title: "Hook Integration"
-description: "Wire Plannotator into agent hooks for human-in-the-loop review gates on spec artifacts, code output, and agent turns. Works with Claude Code, Codex, OpenCode, and any agent that supports PostToolUse or Stop hooks."
+description: "Wire shuvplan into agent hooks for human-in-the-loop review gates on spec artifacts, code output, and agent turns. Works with Claude Code, Codex, OpenCode, and any agent that supports PostToolUse or Stop hooks."
 sidebar:
   order: 27
 section: "Guides"
 ---
 
-Plannotator can run as a hook command inside any agent that supports lifecycle hooks. The agent writes a file or finishes a turn, the hook fires, and Plannotator opens a review UI in the browser. The reviewer approves, sends annotations, or dismisses. The hook blocks until a decision is made, then returns the result in the hook protocol's native format.
+shuvplan can run as a hook command inside any agent that supports lifecycle hooks. The agent writes a file or finishes a turn, the hook fires, and shuvplan opens a review UI in the browser. The reviewer approves, sends annotations, or dismisses. The hook blocks until a decision is made, then returns the result in the hook protocol's native format.
 
 One flag does everything:
 
 ```
-plannotator annotate <file> --hook
+shuvplan annotate <file> --hook
 ```
 
 `--hook` implies `--gate` (three-button UX) and emits hook-native JSON. Approve and Close produce empty stdout (hook passes). Send Annotations produces `{"decision":"block","reason":"<feedback>"}` (hook blocks with feedback). This format is the native protocol for Claude Code, Codex, and any agent that uses `{"decision":"block"}` for hook signaling.
 
-## How hooks see Plannotator
+## How hooks see shuvplan
 
-Agent hooks communicate via stdout and exit codes. Plannotator always exits `0`. The decision lives in stdout:
+Agent hooks communicate via stdout and exit codes. shuvplan always exits `0`. The decision lives in stdout:
 
 | Decision | Stdout | Hook behavior |
 |---|---|---|
@@ -41,7 +41,7 @@ The examples below use Claude Code's variable names. Substitute your agent's equ
 
 ## Recipe 1: Review every file the agent writes
 
-A PostToolUse hook on Write triggers Plannotator every time the agent creates or modifies a file. This is the core pattern for spec-driven frameworks (spec-kit, kiro, openspec) where each artifact needs human review before the agent builds from it.
+A PostToolUse hook on Write triggers shuvplan every time the agent creates or modifies a file. This is the core pattern for spec-driven frameworks (spec-kit, kiro, openspec) where each artifact needs human review before the agent builds from it.
 
 Add to `.claude/hooks.json` (or the equivalent for your agent):
 
@@ -54,7 +54,7 @@ Add to `.claude/hooks.json` (or the equivalent for your agent):
         "hooks": [
           {
             "type": "command",
-            "command": "plannotator annotate \"$CLAUDE_TOOL_INPUT_file_path\" --hook",
+            "command": "shuvplan annotate \"$CLAUDE_TOOL_INPUT_file_path\" --hook",
             "timeout": 345600
           }
         ]
@@ -69,14 +69,14 @@ The `timeout` is 4 days in seconds. The hook blocks while the reviewer works in 
 What happens:
 
 1. Agent writes `spec.md`.
-2. PostToolUse hook fires, opens Plannotator in the browser.
+2. PostToolUse hook fires, opens shuvplan in the browser.
 3. Reviewer reads the spec, adds inline annotations, clicks **Send Annotations**.
 4. Hook emits `{"decision":"block","reason":"<feedback>"}`. Agent sees the feedback and revises.
 5. Or reviewer clicks **Approve**. Hook emits nothing. Agent proceeds to the next task.
 
 ## Recipe 2: Review every agent turn
 
-A Stop hook pauses the agent after every response for human review. Use `annotate-last` to open the agent's last message in Plannotator.
+A Stop hook pauses the agent after every response for human review. Use `annotate-last` to open the agent's last message in shuvplan.
 
 ```json
 {
@@ -87,7 +87,7 @@ A Stop hook pauses the agent after every response for human review. Use `annotat
         "hooks": [
           {
             "type": "command",
-            "command": "plannotator annotate-last --hook",
+            "command": "shuvplan annotate-last --hook",
             "timeout": 345600
           }
         ]
@@ -120,10 +120,10 @@ See [Annotate Flags](/docs/commands/annotate/#flags) for the full stdout matrix.
 
 ## Agents with built-in plugins
 
-OpenCode and Pi have native Plannotator plugins with slash commands:
+OpenCode and Pi have native shuvplan plugins with slash commands:
 
 ```
-/plannotator-annotate spec.md --gate
+/shuvplan-annotate spec.md --gate
 ```
 
 These harnesses don't use stdout for signaling -- the plugin writes directly to the session. Approve and Close skip injection; Send Annotations injects the feedback. `--hook` and `--json` are accepted silently so recipes stay portable across all harnesses.
@@ -132,4 +132,4 @@ These harnesses don't use stdout for signaling -- the plugin writes directly to 
 
 - Exit code is always `0`. Decisions are signaled via stdout.
 - Folder annotation with `--hook` applies one decision to the whole session. The reviewer navigates files inside the UI and submits once.
-- `--hook` and `--gate` are opt-in. Interactive users running `/plannotator-annotate README.md` still see the default two-button experience.
+- `--hook` and `--gate` are opt-in. Interactive users running `/shuvplan-annotate README.md` still see the default two-button experience.

@@ -1,16 +1,16 @@
-# Plannotator for Codex
+# shuvplan for Codex
 
 Code review, markdown annotation, and plan review are supported in Codex.
-The installer also adds Plannotator's goal setup and visual explainer skills to Codex when Codex is detected.
+The installer also adds shuvplan's goal setup and visual explainer skills to Codex when Codex is detected.
 
-Plan review uses Codex's experimental `Stop` hook. This is a post-render review flow: when a turn stops, Plannotator reads the current rollout transcript, extracts the latest plan, and opens the normal plan review UI. If you deny the plan, Plannotator returns continuation feedback so Codex revises the plan in the same turn.
+Plan review uses Codex's experimental `Stop` hook. This is a post-render review flow: when a turn stops, shuvplan reads the current rollout transcript, extracts the latest plan, and opens the normal plan review UI. If you deny the plan, shuvplan returns continuation feedback so Codex revises the plan in the same turn.
 
 ## Install
 
 **macOS / Linux / WSL:**
 
 ```bash
-curl -fsSL https://plannotator.ai/install.sh | bash
+curl -fsSL https://plan.shuv.dev/install.sh | bash
 ```
 
 The installer adds the `plannotator` binary and, when Codex is installed or `~/.codex` already exists, enables Codex
@@ -19,7 +19,7 @@ Stop hooks automatically.
 **Windows PowerShell:**
 
 ```powershell
-irm https://plannotator.ai/install.ps1 | iex
+irm https://plan.shuv.dev/install.ps1 | iex
 ```
 
 Codex hooks are currently disabled on Windows in the official Codex docs. The Windows installer does not enable them
@@ -69,7 +69,7 @@ Notes:
 
 ### Plan Review
 
-Once hooks are enabled, plan review opens automatically whenever a Codex turn ends with a plan. Approving keeps the turn completed. Sending feedback returns a `Stop` continuation reason so Codex revises the plan and Plannotator shows version history and diffs across revisions.
+Once hooks are enabled, plan review opens automatically whenever a Codex turn ends with a plan. Approving keeps the turn completed. Sending feedback returns a `Stop` continuation reason so Codex revises the plan and shuvplan shows version history and diffs across revisions.
 
 ### Local End-to-End Harness
 
@@ -80,7 +80,7 @@ From the repo root, you can run a disposable local E2E flow against a real Codex
 ```
 
 This uses a temporary `HOME`, sample git repo, repo-local Codex CLI, and repo-local `plannotator` wrapper so it
-doesn't modify your installed Codex or Plannotator state. If you want to automate the opened review UI with Playwright,
+doesn't modify your installed Codex or shuvplan state. If you want to automate the opened review UI with Playwright,
 set `PLANNOTATOR_BROWSER=/usr/bin/true` before running the script.
 
 ### Code Review
@@ -117,7 +117,7 @@ Use `$plannotator-setup-goal` to turn an idea or objective into a reviewed `/goa
 
 ### Visual Explainer
 
-Use `$plannotator-visual-explainer` to generate self-contained HTML visualizations with Plannotator theming.
+Use `$plannotator-visual-explainer` to generate self-contained HTML visualizations with shuvplan theming.
 
 ## Environment Variables
 
@@ -129,6 +129,6 @@ Use `$plannotator-visual-explainer` to generate self-contained HTML visualizatio
 
 ## Links
 
-- [Website](https://plannotator.ai)
+- [Website](https://plan.shuv.dev)
 - [GitHub](https://github.com/backnotprop/plannotator)
-- [Docs](https://plannotator.ai/docs/getting-started/installation/)
+- [Docs](https://plan.shuv.dev/docs/getting-started/installation/)

@@ -9,7 +9,7 @@ interface Props {
 const {
   title,
   description = 'Interactive Plan Review: Mark up and refine coding-agent plans in a browser UI, share with your team, and integrate with Claude Code, Codex, OpenCode, and more.',
-  ogImage = 'https://plannotator.ai/og-image.webp',
+  ogImage = 'https://plan.shuv.dev/og-image.webp',
   canonicalUrl,
 } = Astro.props;
 
@@ -39,7 +39,7 @@ import '../styles/global.css';
 
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href={canonical} />
-    <link rel="alternate" type="application/rss+xml" title="Plannotator Blog" href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title="shuvplan Blog" href="/rss.xml" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -54,12 +54,14 @@ import '../styles/global.css';
       (function() {
         var root = document.documentElement;
         // Color theme (palette) — marketing uses whatever the user set in the app
-        var colorMatch = document.cookie.match(/(?:^|; )plannotator-color-theme=([^;]*)/);
-        var colorTheme = colorMatch ? decodeURIComponent(colorMatch[1]) : 'plannotator';
+        var colorMatch = document.cookie.match(/(?:^|; )shuvplan-color-theme=([^;]*)/)
+          || document.cookie.match(/(?:^|; )plannotator-color-theme=([^;]*)/);
+        var colorTheme = colorMatch ? decodeURIComponent(colorMatch[1]) : 'shuvplan';
         root.classList.add('theme-' + colorTheme);
         // Mode (dark/light/system)
-        var modeMatch = document.cookie.match(/(?:^|; )plannotator-theme=([^;]*)/);
-        var mode = modeMatch ? decodeURIComponent(modeMatch[1]) : 'dark';
+        var modeMatch = document.cookie.match(/(?:^|; )shuvplan-theme=([^;]*)/)
+          || document.cookie.match(/(?:^|; )plannotator-theme=([^;]*)/);
+        var mode = modeMatch ? decodeURIComponent(modeMatch[1]) : 'system';
         if (mode === 'light') {
           root.classList.add('light');
         } else if (mode === 'system') {
@@ -110,12 +112,12 @@ import '../styles/global.css';
       // How it works toggle (plan review / code review)
       (function() {
         var planSteps = [
-          'Work with your coding agent exactly as you do today. When it proposes a plan, Plannotator intercepts the approval step automatically.',
+          'Work with your coding agent exactly as you do today. When it proposes a plan, shuvplan intercepts the approval step automatically.',
           'Instead of squinting at terminal text, you get a proper review workspace. Annotate inline, mark what needs to change, then approve or deny with structured feedback. You own the specification.',
           'Your annotations are sent directly to the agent as structured feedback. No copy-pasting, no retyping. The agent revises based on exactly what you said.'
         ];
         var codeSteps = [
-          'Your agent writes code. Run the review command and Plannotator opens a full diff viewer in your browser with every uncommitted change.',
+          'Your agent writes code. Run the review command and shuvplan opens a full diff viewer in your browser with every uncommitted change.',
           'Browse the file tree, expand context, and leave line-level comments or code suggestions. Stage the files you want, send back the ones that need work.',
           'Your feedback goes straight to the agent. It sees exactly which lines you commented on and what you want changed. No ambiguity.'
         ];
@@ -137,8 +139,8 @@ import '../styles/global.css';
             }
             if (barTitle) {
               barTitle.innerHTML = mode === 'plan'
-                ? 'Plannotator · Plan Review'
-                : 'Plannotator · Code Review';
+                ? 'shuvplan · Plan Review'
+                : 'shuvplan · Code Review';
             }
 
             var steps = mode === 'plan' ? planSteps : codeSteps;
@@ -394,7 +396,7 @@ import '../styles/global.css';
             if (ascii) ascii.style.opacity = '0.4';
             delay(function() {
               if (!active) return;
-              typeText(typed, '/plannotator-review', 60, function() {
+              typeText(typed, '/shuvplan-review', 60, function() {
                 delay(function() {
                   if (!active) return;
                   caret.classList.add('hidden');

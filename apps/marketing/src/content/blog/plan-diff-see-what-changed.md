@@ -1,12 +1,12 @@
 ---
 title: "Plan Diff: See What Changed Between Iterations"
-description: "When your coding agent revises a plan, Plannotator now shows exactly what changed. Visual diffs, raw markdown diffs, and version history — across Claude Code, Codex, OpenCode, and Pi."
+description: "When your coding agent revises a plan, shuvplan now shows exactly what changed. Visual diffs, raw markdown diffs, and version history — across Claude Code, Codex, OpenCode, and Pi."
 date: 2026-02-22
 author: "backnotprop"
 tags: ["plan-diff", "plan-mode", "version-history"]
 ---
 
-**Plannotator is an open-source review UI for AI coding agents.** The latest release adds Plan Diff — a way to see exactly what changed when your agent revises a plan after feedback. Plan Diff works natively with coding agents via hooks — you use plan mode the same way you always do. When the agent updates the plan, you can provide annotations as usual and now see exactly what was added, removed, or changed.
+**shuvplan is an open-source review UI for AI coding agents.** The latest release adds Plan Diff — a way to see exactly what changed when your agent revises a plan after feedback. Plan Diff works natively with coding agents via hooks — you use plan mode the same way you always do. When the agent updates the plan, you can provide annotations as usual and now see exactly what was added, removed, or changed.
 
 ## Watch the Demo
 
@@ -30,7 +30,7 @@ Toggle between the two with a single click. Both views work from the same underl
 
 ### Version history
 
-Every time a plan arrives, Plannotator automatically saves it to disk. Plans are versioned sequentially: first submission is version 1, the revision after your feedback is version 2, and so on. Same plan heading on the same day means same plan being iterated on.
+Every time a plan arrives, shuvplan automatically saves it to disk. Plans are versioned sequentially: first submission is version 1, the revision after your feedback is version 2, and so on. Same plan heading on the same day means same plan being iterated on.
 
 From the sidebar, you can open the Version Browser and select any previous version to diff against. The default comparison is always against the immediately prior version, but you can jump back further if the plan has gone through several rounds.
 
@@ -51,11 +51,11 @@ This is the first release of Plan Diff. The version matching relies on plan head
 Update to the latest version:
 
 ```bash
-curl -fsSL https://plannotator.ai/install.sh | bash
+curl -fsSL https://plan.shuv.dev/install.sh | bash
 ```
 
 Start a planning session, deny a plan with some annotations, and let the agent resubmit. The diff badge will appear automatically.
 
-## Plannotator: plan review for coding agents
+## shuvplan: plan review for coding agents
 
-Plannotator is a free, open-source plan review UI for AI coding agents. Annotate plans visually, review code diffs, share with your team, and now see exactly what changed between iterations with Plan Diff. Coding agents like Claude Code and Codex don't show you how a plan changed after revision — Plannotator does. Works with Claude Code, Codex, OpenCode, and Pi. Install it in under a minute and start reviewing plans in your browser instead of the terminal.
+shuvplan is a free, open-source plan review UI for AI coding agents. Annotate plans visually, review code diffs, share with your team, and now see exactly what changed between iterations with Plan Diff. Coding agents like Claude Code and Codex don't show you how a plan changed after revision — shuvplan does. Works with Claude Code, Codex, OpenCode, and Pi. Install it in under a minute and start reviewing plans in your browser instead of the terminal.

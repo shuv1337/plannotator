@@ -20,8 +20,31 @@ export interface ThemeInfo {
 
 export const BUILT_IN_THEMES: ThemeInfo[] = [
   {
+    id: 'shuvplan',
+    name: 'shuvplan',
+    builtIn: true,
+    modeSupport: 'both',
+    syntaxHighlighting: true,
+    colors: {
+      dark: {
+        primary: '#f3b042',
+        secondary: '#0b253a',
+        accent: '#7fdbca',
+        background: '#011627',
+        foreground: '#d6deeb',
+      },
+      light: {
+        primary: '#1e3a5f',
+        secondary: '#f1eee6',
+        accent: '#f5a623',
+        background: '#faf9f6',
+        foreground: '#0e1726',
+      },
+    },
+  },
+  {
     id: 'plannotator',
-    name: 'Plannotator',
+    name: 'Plannotator Classic',
     builtIn: true,
     modeSupport: 'both',
     colors: {

@@ -2,7 +2,7 @@
   "name": "@plannotator/pi-extension",
   "version": "0.19.23",
   "type": "module",
-  "description": "Plannotator Pi extension - interactive plan review with annotations, annotate agent messages, and review code/PRs",
+  "description": "shuvplan Pi extension - interactive plan review with annotations, annotate agent messages, and review code/PRs",
   "author": "backnotprop",
   "license": "MIT OR Apache-2.0",
   "repository": {

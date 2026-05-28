@@ -1,25 +1,23 @@
 /**
  * Draft Storage
  *
- * Persists annotation drafts to ~/.plannotator/drafts/ so they survive
+ * Persists annotation drafts to ~/.shuvplan/drafts/ so they survive
  * server crashes. Each draft is keyed by a content hash of the plan/diff
  * it was created against.
  *
  * Runtime-agnostic: uses only node:fs, node:path, node:os, node:crypto.
  */
 
-import { homedir } from "os";
 import { join } from "path";
-import { mkdirSync, writeFileSync, readFileSync, unlinkSync, existsSync } from "fs";
+import { writeFileSync, readFileSync, unlinkSync, existsSync } from "fs";
 import { createHash } from "crypto";
+import { getDataDirForRead, getDataDirForWrite } from "./data-dir";
 
 /**
  * Get the drafts directory, creating it if needed.
  */
 export function getDraftDir(): string {
-  const dir = join(homedir(), ".plannotator", "drafts");
-  mkdirSync(dir, { recursive: true });
-  return dir;
+  return getDataDirForWrite("drafts");
 }
 
 /**
@@ -42,7 +40,7 @@ export function saveDraft(key: string, data: object): void {
  * Load a draft from disk. Returns null if not found.
  */
 export function loadDraft(key: string): object | null {
-  const filePath = join(getDraftDir(), `${key}.json`);
+  const filePath = join(getDataDirForRead("drafts"), `${key}.json`);
   try {
     if (!existsSync(filePath)) return null;
     return JSON.parse(readFileSync(filePath, "utf-8"));
@@ -55,7 +53,7 @@ export function loadDraft(key: string): object | null {
  * Delete a draft from disk. No-op if not found.
  */
 export function deleteDraft(key: string): void {
-  const filePath = join(getDraftDir(), `${key}.json`);
+  const filePath = join(getDataDirForRead("drafts"), `${key}.json`);
   try {
     if (existsSync(filePath)) unlinkSync(filePath);
   } catch {

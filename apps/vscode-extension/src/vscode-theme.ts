@@ -1,12 +1,12 @@
 /**
  * VS Code Theme Bridge
  *
- * Maps VS Code CSS custom properties to Plannotator's CSS variable system.
+ * Maps VS Code CSS custom properties to shuvplan's CSS variable system.
  * Used by the cookie proxy to inject a theme listener into the webview iframe,
  * and by the panel manager to read+send theme tokens from the wrapper page.
  */
 
-// Each VS Code CSS variable can map to multiple Plannotator variables
+// Each VS Code CSS variable can map to multiple shuvplan variables
 // (e.g., editor foreground → foreground, card-foreground, popover-foreground).
 const TOKEN_PAIRS: [string, string][] = [
   ["--vscode-editor-background", "--background"],

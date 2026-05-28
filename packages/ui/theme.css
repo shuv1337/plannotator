@@ -1,6 +1,7 @@
-/* Plannotator Theme System — imports all themes, provides Tailwind bridge + base styles */
+/* shuvplan Theme System — imports all themes, provides Tailwind bridge + base styles */
 
 /* Theme files — each defines .theme-{name} (dark) and .theme-{name}.light */
+@import "./themes/shuvplan.css";
 @import "./themes/plannotator.css";
 @import "./themes/claude-plus.css";
 @import "./themes/soft-pop.css";
@@ -78,6 +79,8 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+  --font-serif: var(--font-serif);
   --font-mono: var(--font-mono);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -97,6 +100,11 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-feature-settings: "ss01", "ss02", "cv01";
+}
+
+:where(:root) {
+  --font-display: var(--font-sans);
+  --font-serif: Georgia, serif;
 }
 
 /* Subtle grid background */

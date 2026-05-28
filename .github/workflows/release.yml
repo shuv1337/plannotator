@@ -118,12 +118,24 @@ jobs:
           bun build apps/paste-service/targets/bun.ts --compile --target=bun-windows-arm64 --outfile plannotator-paste-win32-arm64.exe
           sha256sum plannotator-paste-win32-arm64.exe > plannotator-paste-win32-arm64.exe.sha256
 
+          # shuvplan is the primary visible release name. Keep plannotator
+          # artifacts as compatibility aliases for existing install scripts and links.
+          for artifact in plannotator-*; do
+            if [[ "$artifact" == *.sha256 ]]; then
+              continue
+            fi
+            shuvplan_artifact="shuvplan${artifact#plannotator}"
+            cp "$artifact" "$shuvplan_artifact"
+            sha256sum "$shuvplan_artifact" > "$shuvplan_artifact.sha256"
+          done
+
       - name: Upload artifacts
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: binaries
           path: |
             plannotator-*
+            shuvplan-*
             !*.ts
 
   smoke-binaries:
@@ -136,9 +148,9 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            binary: plannotator-linux-x64
+            binary: shuvplan-linux-x64
           - os: windows-latest
-            binary: plannotator-win32-x64.exe
+            binary: shuvplan-win32-x64.exe
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -165,7 +177,7 @@ jobs:
             local label="$1" port="$2" endpoint="$3"
             shift 3
 
-            PLANNOTATOR_PORT="$port" "$@" &
+            SHUVPLAN_PORT="$port" "$@" &
             local pid=$!
             local ok=0
 
@@ -189,11 +201,11 @@ jobs:
           }
 
           # 2. review: exercises server startup, bundled HTML, git diff, and HTTP.
-          smoke_test_server "plannotator review" 19500 "/api/diff" \
+          smoke_test_server "shuvplan review" 19500 "/api/diff" \
             "$BINARY" review
 
           # 3. annotate: exercises annotate server startup with a real file.
-          smoke_test_server "plannotator annotate" 19501 "/api/plan" \
+          smoke_test_server "shuvplan annotate" 19501 "/api/plan" \
             "$BINARY" annotate README.md
 
       - name: Smoke-test binary
@@ -217,7 +229,7 @@ jobs:
               [string[]] $Arguments
             )
 
-            $env:PLANNOTATOR_PORT = $Port
+            $env:SHUVPLAN_PORT = $Port
             $stdout = New-TemporaryFile
             $stderr = New-TemporaryFile
             $process = Start-Process `
@@ -247,7 +259,7 @@ jobs:
                 Stop-Process -Id $process.Id -Force
                 Wait-Process -Id $process.Id -ErrorAction SilentlyContinue
               }
-              Remove-Item Env:\PLANNOTATOR_PORT -ErrorAction SilentlyContinue
+              Remove-Item Env:\SHUVPLAN_PORT -ErrorAction SilentlyContinue
             }
 
             if (-not $ok) {
@@ -262,10 +274,10 @@ jobs:
           }
 
           # 2. review: exercises server startup, bundled HTML, git diff, and HTTP.
-          Test-PlannotatorServer "plannotator review" "19500" "/api/diff" @("review")
+          Test-PlannotatorServer "shuvplan review" "19500" "/api/diff" @("review")
 
           # 3. annotate: exercises annotate server startup with a real file.
-          Test-PlannotatorServer "plannotator annotate" "19501" "/api/plan" @("annotate", "README.md")
+          Test-PlannotatorServer "shuvplan annotate" "19501" "/api/plan" @("annotate", "README.md")
 
   pi-extension-ai-runtime-windows:
     needs: test
@@ -308,7 +320,7 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            artifact: plannotator-linux-x64
+            artifact: shuvplan-linux-x64
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -385,6 +397,7 @@ jobs:
 
           run_installer
 
+          test -x "$tmp_home/.local/bin/shuvplan"
           test -x "$tmp_home/.local/bin/plannotator"
           grep -q 'hooks = true' "$tmp_home/.codex/config.toml"
 
@@ -396,7 +409,7 @@ jobs:
           const hooks = JSON.parse(fs.readFileSync(hooksPath, "utf8"));
           const command = hooks?.hooks?.Stop?.[0]?.hooks?.[0]?.command;
           const timeout = hooks?.hooks?.Stop?.[0]?.hooks?.[0]?.timeout;
-          const expected = path.join(home, ".local", "bin", "plannotator");
+          const expected = path.join(home, ".local", "bin", "shuvplan");
 
           if (command !== expected) {
             throw new Error(`Expected Stop hook command ${expected}, got ${command}`);
@@ -473,18 +486,8 @@ jobs:
         uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # v4.1.0
         with:
           subject-path: |
-            plannotator-darwin-arm64
-            plannotator-darwin-x64
-            plannotator-linux-x64
-            plannotator-linux-arm64
-            plannotator-win32-x64.exe
-            plannotator-win32-arm64.exe
-            plannotator-paste-darwin-arm64
-            plannotator-paste-darwin-x64
-            plannotator-paste-linux-x64
-            plannotator-paste-linux-arm64
-            plannotator-paste-win32-x64.exe
-            plannotator-paste-win32-arm64.exe
+            plannotator-*
+            shuvplan-*
 
   release:
     # Depends on `attest` so the signed provenance exists before the

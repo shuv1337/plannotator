@@ -1,12 +1,12 @@
 ---
 title: "OpenCode"
-description: "How Plannotator works with OpenCode — plugin setup, submit_plan tool, and agent switching."
+description: "How shuvplan works with OpenCode — plugin setup, submit_plan tool, and agent switching."
 sidebar:
   order: 5
 section: "Getting Started"
 ---
 
-Plannotator integrates with OpenCode as an npm plugin. By default it makes `submit_plan` available to OpenCode's `plan` agent only, so OpenCode plan mode can use Plannotator without exposing the tool to `build`.
+shuvplan integrates with OpenCode as an npm plugin. By default it makes `submit_plan` available to OpenCode's `plan` agent only, so OpenCode plan mode can use shuvplan without exposing the tool to `build`.
 
 If you are upgrading from an older OpenCode setup, read the [0.19.1 migration guide](/docs/guides/opencode-migration-0-19-1/) first.
 
@@ -15,7 +15,7 @@ If you are upgrading from an older OpenCode setup, read the [0.19.1 migration gu
 The OpenCode plugin (`@plannotator/opencode`) hooks into OpenCode's plugin system:
 
 1. The plugin registers a `submit_plan` tool for OpenCode's built-in `plan` agent and any extra planning agents you configure
-2. When `submit_plan` is called, Plannotator starts a local server and opens the browser
+2. When `submit_plan` is called, shuvplan starts a local server and opens the browser
 3. The user reviews and annotates the plan
 4. On approval, the plugin returns a success response to the agent
 5. On denial, the plugin returns feedback with the current plan state, and the agent applies targeted edits
@@ -25,7 +25,7 @@ The OpenCode plugin (`@plannotator/opencode`) hooks into OpenCode's plugin syste
 OpenCode support has four explicit modes:
 
 - **`plan-agent`** (default): `submit_plan` is available to OpenCode's built-in `plan` agent plus any extra agents listed in `planningAgents`.
-- **`manual`**: `submit_plan` is not registered. Use `/plannotator-last`, `/plannotator-annotate`, `/plannotator-review`, `/plannotator-archive`, `/plannotator-setup-goal`, and `/plannotator-visual-explainer` when you want Plannotator.
+- **`manual`**: `submit_plan` is not registered. Use `/shuvplan-last`, `/shuvplan-annotate`, `/shuvplan-review`, `/shuvplan-archive`, `/shuvplan-setup-goal`, and `/shuvplan-visual-explainer` when you want shuvplan.
 - **`user-managed`**: `submit_plan` is registered but no prompts or agent permissions are modified. You configure which agents can call `submit_plan` via OpenCode's agent configuration.
 - **`all-agents`**: legacy broad behavior. Primary agents can see and call `submit_plan`.
 
@@ -43,7 +43,7 @@ Default config:
 }
 ```
 
-If you use other OpenCode plugins, keep everything in the same `plugin` array and attach Plannotator's options directly to the Plannotator entry:
+If you use other OpenCode plugins, keep everything in the same `plugin` array and attach shuvplan's options directly to the shuvplan entry:
 
 ```json
 {
@@ -117,7 +117,7 @@ OpenCode's built-in `plan` agent is always included in `plan-agent` mode. If you
 }
 ```
 
-With other plugins, the same rule applies. Only the Plannotator entry becomes a tuple with options:
+With other plugins, the same rule applies. Only the shuvplan entry becomes a tuple with options:
 
 ```json
 {
@@ -145,48 +145,48 @@ This makes it possible to approve a plan while leaving minor suggestions that th
 
 ## Agent switching
 
-OpenCode supports multiple agents. Plannotator lets you choose which agent handles the approved plan:
+OpenCode supports multiple agents. shuvplan lets you choose which agent handles the approved plan:
 
 1. Open **Settings** (gear icon)
 2. Under "Agent Switch", select from available agents or enter a custom agent name
 3. On approval, the selected agent receives the plan
 
-If the configured agent isn't found in the current OpenCode session, Plannotator shows a warning before approval. You can approve anyway (the default agent will be used) or go back and change the setting.
+If the configured agent isn't found in the current OpenCode session, shuvplan shows a warning before approval. You can approve anyway (the default agent will be used) or go back and change the setting.
 
 ## Slash commands
 
 The plugin registers slash commands that work in every workflow mode:
 
-### `/plannotator-review`
+### `/shuvplan-review`
 
 Opens a code review UI for uncommitted changes. Also supports reviewing GitHub pull requests:
 
 ```
-/plannotator-review https://github.com/owner/repo/pull/123
+/shuvplan-review https://github.com/owner/repo/pull/123
 ```
 
-Requires the CLI to be installed (the slash command runs `plannotator review` under the hood).
+Requires the CLI to be installed (the slash command runs `shuvplan review` under the hood).
 
-### `/plannotator-annotate <file.md>`
+### `/shuvplan-annotate <file.md>`
 
 Opens a markdown file, directory, or URL in the annotation UI. Also requires the CLI.
 
-### `/plannotator-last`
+### `/shuvplan-last`
 
 Annotates the agent's most recent message. See the [annotate last docs](/docs/commands/annotate-last/) for details.
 
-### `/plannotator-setup-goal`
+### `/shuvplan-setup-goal`
 
 Prompts the agent to use the `plannotator-setup-goal` skill and turn an idea or objective into a reviewed `/goal` package.
 
-### `/plannotator-visual-explainer`
+### `/shuvplan-visual-explainer`
 
-Prompts the agent to use the `plannotator-visual-explainer` skill and generate a self-contained Plannotator-themed HTML explainer.
+Prompts the agent to use the `plannotator-visual-explainer` skill and generate a self-contained shuvplan-themed HTML explainer.
 
 Install the CLI for slash command support:
 
 ```bash
-curl -fsSL https://plannotator.ai/install.sh | bash
+curl -fsSL https://plan.shuv.dev/install.sh | bash
 ```
 
 This also clears any cached plugin versions.
@@ -211,8 +211,8 @@ OpenCode in a container works with the same remote mode environment variables:
 ```json
 {
   "containerEnv": {
-    "PLANNOTATOR_REMOTE": "1",
-    "PLANNOTATOR_PORT": "9999"
+    "SHUVPLAN_REMOTE": "1",
+    "SHUVPLAN_PORT": "9999"
   },
   "forwardPorts": [9999]
 }

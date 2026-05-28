@@ -1,12 +1,12 @@
 ---
 title: "UI Settings"
-description: "In-browser settings for Plannotator — theme, identity, permission mode, auto-close, plan saving, and integrations."
+description: "In-browser settings for shuvplan — theme, identity, permission mode, auto-close, plan saving, and integrations."
 sidebar:
   order: 6
 section: "Getting Started"
 ---
 
-Plannotator stores all settings in **cookies** rather than localStorage. This is because each hook invocation starts a server on a random port, and localStorage is scoped by origin (including port). Cookies persist across ports, so your preferences carry over between sessions.
+shuvplan stores all settings in **cookies** rather than localStorage. This is because each hook invocation starts a server on a random port, and localStorage is scoped by origin (including port). Cookies persist across ports, so your preferences carry over between sessions.
 
 Open settings with the **gear icon** in the header. The dialog has three tabs: **General**, **Display**, and **Saving**. The code review UI shows only the General tab.
 
@@ -32,7 +32,7 @@ Controls what happens with tool permissions after you approve a plan. This deter
 | **Bypass Permissions** | Auto-approve all tool calls (equivalent to `--dangerously-skip-permissions`) |
 | **Manual Approval** | Manually approve each tool call |
 
-On first launch, Plannotator shows a one-time setup dialog for this setting. You can change it at any time in Settings.
+On first launch, shuvplan shows a one-time setup dialog for this setting. You can change it at any time in Settings.
 
 ### Agent switching
 
@@ -61,7 +61,7 @@ Controls whether the browser tab closes automatically after you approve or deny 
 
 > Plan review only. These settings do not appear in the code review UI.
 
-On first launch, Plannotator shows a one-time setup dialog for these display options.
+On first launch, shuvplan shows a one-time setup dialog for these display options.
 
 ### Table of Contents
 
@@ -81,7 +81,7 @@ Enables animated Tater sprite characters that run across the screen. Off by defa
 
 ### Save plans
 
-Auto-save approved and denied plans to disk. Enabled by default. Plans are saved to `~/.plannotator/plans/` unless you specify a custom path.
+Auto-save approved and denied plans to disk. Enabled by default. Plans are saved to `~/.shuvplan/plans/` unless you specify a custom path.
 
 When enabled, an optional **Custom Path** input lets you override the default directory. Leave it empty to use the default location.
 
@@ -101,7 +101,7 @@ Controls what the **Cmd/Ctrl+S** keyboard shortcut does.
 Auto-save approved plans to an Obsidian vault. Disabled by default. When enabled, the following options appear:
 
 - **Vault** — dropdown of auto-detected vaults, or choose "Custom path..." to enter a vault path manually
-- **Folder** — subfolder within the vault (defaults to `plannotator`)
+- **Folder** — subfolder within the vault (defaults to `shuvplan`)
 - **Frontmatter preview** — read-only preview of the YAML frontmatter that will be added to saved plans, including timestamps, tags extracted from the plan, and source metadata
 
 Plans are saved as Markdown files to `{vault}/{folder}/`. See the [Obsidian integration guide](/docs/guides/obsidian-integration/) for detailed setup instructions.

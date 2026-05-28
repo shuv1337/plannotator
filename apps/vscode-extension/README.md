@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="https://d17ygohy796f9l.cloudfront.net/vscode/icon.png" alt="Plannotator for VS Code" width="128" />
+  <img src="https://d17ygohy796f9l.cloudfront.net/vscode/icon.png" alt="shuvplan for VS Code" width="128" />
 </p>
 
-<h1 align="center">Plannotator</h1>
+<h1 align="center">shuvplan</h1>
 
 <p align="center">
   Interactive plan review and code review for AI coding agents — inside VS Code.
@@ -14,9 +14,9 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" /></a>
 </p>
 
-Opens [Plannotator](https://plannotator.ai) plan reviews and code reviews inside VS Code tabs instead of an external browser. Works with Claude Code, OpenCode, and other AI agents running in the integrated terminal.
+Opens [shuvplan](https://plan.shuv.dev) plan reviews and code reviews inside VS Code tabs instead of an external browser. Works with Claude Code, OpenCode, and other AI agents running in the integrated terminal.
 
-![Plannotator in VS Code](https://d17ygohy796f9l.cloudfront.net/vscode/plannotator-vscode.gif)
+![shuvplan in VS Code](https://d17ygohy796f9l.cloudfront.net/vscode/plannotator-vscode.gif)
 
 ## Plan Review
 
@@ -36,22 +36,22 @@ Review code changes with a full diff viewer, file tree, inline annotations, and 
 
 - **In-editor plan review** — approve or deny plans with annotated feedback, directly in a VS Code tab
 - **In-editor code review** — review git diffs and PR changes with inline comments and suggestions
-- **Editor annotations** — select code directly in your editor and annotate it with `Cmd+Shift+.` — annotations appear in the Plannotator review UI alongside inline comments
-- **Theme sync** — Plannotator adapts to your VS Code color theme automatically
+- **Editor annotations** — select code directly in your editor and annotate it with `Cmd+Shift+.` — annotations appear in the shuvplan review UI alongside inline comments
+- **Theme sync** — shuvplan adapts to your VS Code color theme automatically
 - **Cookie persistence** — your identity, settings, and preferences persist across sessions
 - **Auto-close** — panels close automatically when you approve or send feedback
 
 ## How It Works
 
-1. The extension injects a `PLANNOTATOR_BROWSER` env var into integrated terminals
-2. When Plannotator opens a URL, a bundled router script sends it to the extension via a local IPC server
+1. The extension injects a `SHUVPLAN_BROWSER` env var into integrated terminals
+2. When shuvplan opens a URL, a bundled router script sends it to the extension via a local IPC server
 3. The extension opens the URL in a WebviewPanel with an embedded iframe
 4. A reverse proxy handles cookie persistence transparently (VS Code webview iframes don't support cookies natively)
 
 ## Getting Started
 
 1. Install this extension from the VS Code Marketplace
-2. Install the [Plannotator Claude Code plugin](https://github.com/backnotprop/plannotator):
+2. Install the [shuvplan Claude Code plugin](https://github.com/backnotprop/plannotator):
    ```
    /install-plugin backnotprop/plannotator
    ```
@@ -63,14 +63,14 @@ Review code changes with a full diff viewer, file tree, inline annotations, and 
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `plannotatorWebview.injectBrowser` | `true` | Redirect Plannotator to open in VS Code instead of an external browser |
+| `plannotatorWebview.injectBrowser` | `true` | Redirect shuvplan to open in VS Code instead of an external browser |
 
 ## Commands
 
 | Command | Keybinding | Description |
 |---------|------------|-------------|
-| **Plannotator: Open URL** | — | Manually open a Plannotator URL in a panel |
-| **Plannotator: Add Annotation** | `Cmd+Shift+.` | Annotate selected code in the editor |
+| **shuvplan: Open URL** | — | Manually open a shuvplan URL in a panel |
+| **shuvplan: Add Annotation** | `Cmd+Shift+.` | Annotate selected code in the editor |
 
 ## Troubleshooting
 
@@ -79,12 +79,12 @@ Review code changes with a full diff viewer, file tree, inline annotations, and 
 - Open a **new** terminal after installing the extension (existing terminals won't have the env var)
 
 ### Panel shows a blank page
-- Check if Plannotator's server is still running
+- Check if shuvplan's server is still running
 - Some network configurations may block localhost access from the webview
 
 ## Requirements
 
-- [Plannotator](https://github.com/backnotprop/plannotator) Claude Code plugin installed
+- [shuvplan](https://github.com/backnotprop/plannotator) Claude Code plugin installed
 - VS Code 1.85.0+
 
 ## License

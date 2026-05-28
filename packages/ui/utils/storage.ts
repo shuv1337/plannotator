@@ -8,14 +8,45 @@
  */
 
 const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;
+const PRIMARY_COOKIE_PREFIX = 'shuvplan-';
+const LEGACY_COOKIE_PREFIX = 'plannotator-';
+
+export function primaryCookieKey(key: string): string {
+  return key.startsWith(LEGACY_COOKIE_PREFIX)
+    ? `${PRIMARY_COOKIE_PREFIX}${key.slice(LEGACY_COOKIE_PREFIX.length)}`
+    : key;
+}
+
+export function legacyCookieKey(key: string): string | null {
+  if (key.startsWith(PRIMARY_COOKIE_PREFIX)) {
+    return `${LEGACY_COOKIE_PREFIX}${key.slice(PRIMARY_COOKIE_PREFIX.length)}`;
+  }
+  if (key.startsWith(LEGACY_COOKIE_PREFIX)) {
+    return key;
+  }
+  return null;
+}
+
+export function readCookieValue(cookie: string, key: string): string | null {
+  const match = cookie.match(new RegExp(`(?:^|; )${escapeRegex(key)}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : null;
+}
 
 /**
  * Get a value from cookie storage
  */
 export function getItem(key: string): string | null {
   try {
-    const match = document.cookie.match(new RegExp(`(?:^|; )${escapeRegex(key)}=([^;]*)`));
-    return match ? decodeURIComponent(match[1]) : null;
+    const primaryKey = primaryCookieKey(key);
+    const primary = readCookieValue(document.cookie, primaryKey);
+    if (primary !== null) return primary;
+
+    const legacyKey = legacyCookieKey(key);
+    const legacy = legacyKey ? readCookieValue(document.cookie, legacyKey) : null;
+    if (legacy !== null && primaryKey !== legacyKey) {
+      setItem(primaryKey, legacy);
+    }
+    return legacy;
   } catch (e) {
     return null;
   }
@@ -26,8 +57,9 @@ export function getItem(key: string): string | null {
  */
 export function setItem(key: string, value: string): void {
   try {
+    const primaryKey = primaryCookieKey(key);
     const encoded = encodeURIComponent(value);
-    document.cookie = `${key}=${encoded}; path=/; max-age=${ONE_YEAR_SECONDS}; SameSite=Lax`;
+    document.cookie = `${primaryKey}=${encoded}; path=/; max-age=${ONE_YEAR_SECONDS}; SameSite=Lax`;
   } catch (e) {
     // Cookie not available
   }
@@ -38,7 +70,7 @@ export function setItem(key: string, value: string): void {
  */
 export function removeItem(key: string): void {
   try {
-    document.cookie = `${key}=; path=/; max-age=0`;
+    document.cookie = `${primaryCookieKey(key)}=; path=/; max-age=0`;
   } catch (e) {
     // Cookie not available
   }

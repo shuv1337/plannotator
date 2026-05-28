@@ -1,4 +1,4 @@
--- Plannotator Workspaces waitlist
+-- shuvplan Workspaces waitlist
 --
 -- Authoritative schema for from-scratch deploys. The current production
 -- schema is this file PLUS the migrations under `migrations/` (already

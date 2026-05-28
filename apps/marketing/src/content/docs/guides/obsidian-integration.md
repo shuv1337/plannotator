@@ -6,16 +6,16 @@ sidebar:
 section: "Guides"
 ---
 
-Plannotator can automatically save plans to Obsidian or Bear when you approve or deny them.
+shuvplan can automatically save plans to Obsidian or Bear when you approve or deny them.
 
 ## Obsidian setup
 
-1. Open **Settings** (gear icon) in the Plannotator header
+1. Open **Settings** (gear icon) in the shuvplan header
 2. Enable **Obsidian Integration**
 3. Select your vault from the dropdown (auto-detected from Obsidian's config) or enter the path manually
-4. Set a folder name (default: `plannotator`)
+4. Set a folder name (default: `shuvplan`)
 
-Plannotator detects vaults by reading Obsidian's configuration file:
+shuvplan detects vaults by reading Obsidian's configuration file:
 - **macOS**: `~/Library/Application Support/obsidian/obsidian.json`
 - **Linux**: `~/.config/obsidian/obsidian.json`
 - **Windows**: `%APPDATA%/obsidian/obsidian.json`
@@ -26,7 +26,7 @@ Each plan is saved as a markdown file with:
 
 - **Human-readable filename**: `Title - Jan 2, 2026 2-30pm.md`
 - **YAML frontmatter** with `created` timestamp, `source: plannotator`, and auto-extracted `tags`
-- **Backlink** to `[[Plannotator Plans]]` for graph view connectivity
+- **Backlink** to `[[shuvplan Plans]]` for graph view connectivity
 - **Full plan content** as markdown
 
 ### Tag extraction
@@ -35,7 +35,7 @@ Tags are automatically extracted from:
 - The plan title (first H1 heading) — meaningful words become tags
 - Code fence languages (e.g., ` ```typescript ` adds a `typescript` tag)
 - The git project name (repository or directory name)
-- A `plannotator` tag is always included
+- A `shuvplan` tag is always included
 
 Up to 7 tags are extracted per plan.
 
@@ -48,7 +48,7 @@ source: plannotator
 tags: [plannotator, my-project, authentication, typescript, sql]
 ---
 
-[[Plannotator Plans]]
+[[shuvplan Plans]]
 
 # Implementation Plan: User Authentication
 ...
@@ -56,13 +56,13 @@ tags: [plannotator, my-project, authentication, typescript, sql]
 
 ## Custom folder
 
-By default, plans save to a `plannotator` folder within your vault. You can change this to any folder name in Settings. The folder is created automatically if it doesn't exist.
+By default, plans save to a `shuvplan` folder within your vault. You can change this to any folder name in Settings. The folder is created automatically if it doesn't exist.
 
 ## Bear integration
 
 Bear works similarly to Obsidian but uses Bear's `x-callback-url` scheme:
 
-1. Open **Settings** in Plannotator
+1. Open **Settings** in shuvplan
 2. Enable **Bear Integration**
 3. Plans are sent to Bear via URL scheme on approval
 

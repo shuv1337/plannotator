@@ -1,4 +1,4 @@
-# Plannotator Windows Installer
+# shuvplan Windows Installer
 param(
     [string]$Version = "latest",
     [switch]$VerifyAttestation,
@@ -16,7 +16,7 @@ if ($VerifyAttestation -and $SkipAttestation) {
 }
 
 $repo = "backnotprop/plannotator"
-$installDir = "$env:LOCALAPPDATA\plannotator"
+$installDir = "$env:LOCALAPPDATA\shuvplan"
 
 # First plannotator release that carries SLSA build-provenance attestations.
 # See scripts/install.sh for the full explanation — this constant is bumped
@@ -58,7 +58,9 @@ $binaryName = "plannotator-$platform.exe"
 # Clean up old install locations that may take precedence in PATH
 $oldLocations = @(
     "$env:USERPROFILE\.local\bin\plannotator.exe",
-    "$env:USERPROFILE\.local\bin\plannotator"
+    "$env:USERPROFILE\.local\bin\plannotator",
+    "$env:LOCALAPPDATA\plannotator\plannotator.exe",
+    "$env:LOCALAPPDATA\plannotator\shuvplan.exe"
 )
 
 foreach ($oldPath in $oldLocations) {
@@ -89,11 +91,15 @@ Write-Host "Installing plannotator $latestTag..."
 
 # Resolve SLSA build-provenance verification opt-in BEFORE the download so we
 # can fail fast without wasting bandwidth if the requested tag predates
-# provenance support. Precedence: CLI flag > env var > config file > default.
+# provenance support. Precedence: CLI flag > env var > new config file > legacy config file > default.
 $verifyAttestationResolved = $false
 
 # Layer 3: config file (lowest precedence of the opt-in sources).
-$configPath = "$env:USERPROFILE\.plannotator\config.json"
+$configPath = "$env:USERPROFILE\.shuvplan\config.json"
+$legacyConfigPath = "$env:USERPROFILE\.plannotator\config.json"
+if (-not (Test-Path $configPath) -and (Test-Path $legacyConfigPath)) {
+    $configPath = $legacyConfigPath
+}
 if (Test-Path $configPath) {
     try {
         $cfg = Get-Content $configPath -Raw -ErrorAction Stop | ConvertFrom-Json -ErrorAction Stop
@@ -108,8 +114,16 @@ if (Test-Path $configPath) {
     }
 }
 
-# Layer 2: env var (overrides config file).
+# Layer 2: env vars (override config file; SHUVPLAN_* wins over legacy PLANNOTATOR_*).
 $envVerify = $env:PLANNOTATOR_VERIFY_ATTESTATION
+if ($envVerify) {
+    if ($envVerify -match '^(1|true|yes)$') {
+        $verifyAttestationResolved = $true
+    } elseif ($envVerify -match '^(0|false|no)$') {
+        $verifyAttestationResolved = $false
+    }
+}
+$envVerify = $env:SHUVPLAN_VERIFY_ATTESTATION
 if ($envVerify) {
     if ($envVerify -match '^(1|true|yes)$') {
         $verifyAttestationResolved = $true
@@ -154,7 +168,7 @@ if ($verifyAttestationResolved) {
         [Console]::Error.WriteLine("The first release carrying signed build provenance is $minAttestedVersion. Options:")
         [Console]::Error.WriteLine("  - Pin to $minAttestedVersion or later: -Version $minAttestedVersion")
         [Console]::Error.WriteLine("  - Install without provenance verification: -SkipAttestation")
-        [Console]::Error.WriteLine("  - Or unset PLANNOTATOR_VERIFY_ATTESTATION / remove verifyAttestation from $configPath")
+        [Console]::Error.WriteLine("  - Or unset SHUVPLAN_VERIFY_ATTESTATION / remove verifyAttestation from $configPath")
         exit 1
     }
 }
@@ -217,17 +231,19 @@ if ($verifyAttestationResolved) {
         }
     } else {
         Remove-Item $tmpFile -Force
-        Write-Error "verifyAttestation is enabled but gh CLI was not found. Install https://cli.github.com (and run 'gh auth login'), or unset PLANNOTATOR_VERIFY_ATTESTATION / remove verifyAttestation from $configPath / pass -SkipAttestation."
+        Write-Error "verifyAttestation is enabled but gh CLI was not found. Install https://cli.github.com (and run 'gh auth login'), or unset SHUVPLAN_VERIFY_ATTESTATION / remove verifyAttestation from $configPath / pass -SkipAttestation."
     }
 } else {
     Write-Host "SHA256 verified. For build provenance verification, see"
-    Write-Host "https://plannotator.ai/docs/getting-started/installation/#verifying-your-install"
+    Write-Host "https://plan.shuv.dev/docs/getting-started/installation/#verifying-your-install"
 }
 
-Move-Item -Force $tmpFile "$installDir\plannotator.exe"
+Move-Item -Force $tmpFile "$installDir\shuvplan.exe"
+Copy-Item -Force "$installDir\shuvplan.exe" "$installDir\plannotator.exe"
 
 Write-Host ""
-Write-Host "plannotator $latestTag installed to $installDir\plannotator.exe"
+Write-Host "shuvplan $latestTag installed to $installDir\shuvplan.exe"
+Write-Host "Compatibility alias installed to $installDir\plannotator.exe"
 
 # Add to PATH if not already there
 $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
@@ -242,7 +258,7 @@ if ($userPath -notlike "*$installDir*") {
 $pluginHooks = if ($env:CLAUDE_CONFIG_DIR) { "$env:CLAUDE_CONFIG_DIR\plugins\marketplaces\plannotator\apps\hook\hooks\hooks.json" } else { "$env:USERPROFILE\.claude\plugins\marketplaces\plannotator\apps\hook\hooks\hooks.json" }
 if (Test-Path $pluginHooks) {
     # Use full path on Windows so the hook works without PATH being set in the shell
-    $exePath = "$installDir\plannotator.exe"
+    $exePath = "$installDir\shuvplan.exe"
     # Convert backslashes to forward slashes and escape for JSON
     $exePathJson = $exePath.Replace('\', '/')
     @"
@@ -291,7 +307,7 @@ if (Test-Path $codexDir) {
 $codexAvailable = [bool](Get-Command codex -ErrorAction SilentlyContinue) -or $codexHomeHasUserConfig
 
 if ($codexAvailable) {
-    $codexExePath = "$installDir\plannotator.exe"
+    $codexExePath = "$installDir\shuvplan.exe"
     Write-Host ""
     Write-Host "Codex detected."
     Write-Host "Codex plan review hooks are experimental on Windows. To try them manually:"
@@ -386,7 +402,7 @@ function Configure-PiPlannotatorPackageFilter {
         $utf8NoBom = New-Object System.Text.UTF8Encoding -ArgumentList $false
         [System.IO.File]::WriteAllText($tmpPath, $json, $utf8NoBom)
         Move-Item -Force $tmpPath $piSettings
-        Write-Host "Configured Pi to use global Plannotator skills and skip bundled package skills."
+        Write-Host "Configured Pi to use global shuvplan skills and skip bundled package skills."
     } catch {
         Write-Host "Skipping Pi settings update (could not rewrite settings.json)"
         Remove-Item -Force $tmpPath -ErrorAction SilentlyContinue
@@ -404,7 +420,7 @@ function Update-PiExtensionIfPresent {
         if (Test-PlannotatorSharedAgentSkillsAvailable) {
             Configure-PiPlannotatorPackageFilter
         } else {
-            Write-Host "Leaving Pi bundled skills enabled (global Plannotator agent skills not found)."
+            Write-Host "Leaving Pi bundled skills enabled (global shuvplan agent skills not found)."
         }
         Write-Host "Pi extension updated."
     } else {
@@ -478,7 +494,7 @@ New-Item -ItemType Directory -Force -Path $opencodeCommandsDir | Out-Null
 description: Open interactive code review for current changes
 ---
 
-The Plannotator Code Review has been triggered. Opening the review UI...
+The shuvplan Code Review has been triggered. Opening the review UI...
 Acknowledge "Opening code review..." and wait for the user's feedback.
 "@ | Set-Content -Path "$opencodeCommandsDir\plannotator-review.md"
 
@@ -490,7 +506,7 @@ Write-Host "Installed /plannotator-review command to $opencodeCommandsDir\planno
 description: Open interactive annotation UI for a markdown file
 ---
 
-The Plannotator Annotate has been triggered. Opening the annotation UI...
+The shuvplan Annotate has been triggered. Opening the annotation UI...
 Acknowledge "Opening annotation UI..." and wait for the user's feedback.
 "@ | Set-Content -Path "$opencodeCommandsDir\plannotator-annotate.md"
 
@@ -517,13 +533,27 @@ Write-Host "Installed /plannotator-setup-goal command to $opencodeCommandsDir\pl
 
 @"
 ---
-description: Generate a Plannotator-themed self-contained HTML visual explainer
+description: Generate a shuvplan-themed self-contained HTML visual explainer
 ---
 
-Use `$plannotator-visual-explainer to generate a self-contained HTML visualization with Plannotator theming. Treat any command arguments as the visualization brief; if there are no arguments, infer the brief from the current conversation or ask the user for the missing details.
+Use `$plannotator-visual-explainer to generate a self-contained HTML visualization with shuvplan theming. Treat any command arguments as the visualization brief; if there are no arguments, infer the brief from the current conversation or ask the user for the missing details.
 "@ | Set-Content -Path "$opencodeCommandsDir\plannotator-visual-explainer.md"
 
 Write-Host "Installed /plannotator-visual-explainer command to $opencodeCommandsDir\plannotator-visual-explainer.md"
+
+foreach ($commandFile in @("plannotator-review.md", "plannotator-annotate.md", "plannotator-last.md")) {
+    $shuvplanFile = $commandFile.Replace("plannotator-", "shuvplan-")
+    $content = (Get-Content -Path "$claudeCommandsDir\$commandFile" -Raw).Replace("Plannotator", "shuvplan").Replace("plannotator", "shuvplan")
+    Set-Content -Path "$claudeCommandsDir\$shuvplanFile" -Value $content -NoNewline
+    Write-Host "Installed /$($shuvplanFile.Replace('.md', '')) command to $claudeCommandsDir\$shuvplanFile"
+}
+
+foreach ($commandFile in @("plannotator-review.md", "plannotator-annotate.md", "plannotator-last.md", "plannotator-setup-goal.md", "plannotator-visual-explainer.md")) {
+    $shuvplanFile = $commandFile.Replace("plannotator-", "shuvplan-")
+    $content = (Get-Content -Path "$opencodeCommandsDir\$commandFile" -Raw).Replace("Plannotator", "shuvplan").Replace("plannotator", "shuvplan")
+    Set-Content -Path "$opencodeCommandsDir\$shuvplanFile" -Value $content -NoNewline
+    Write-Host "Installed /$($shuvplanFile.Replace('.md', '')) command to $opencodeCommandsDir\$shuvplanFile"
+}
 
 # Remove legacy Codex-oriented skills from the older shared agent scope.
 $legacyAgentsSkillsDir = "$env:USERPROFILE\.agents\skills"
@@ -536,10 +566,10 @@ foreach ($skill in @("plannotator-review", "plannotator-annotate", "plannotator-
     }
 }
 if ($legacySkillsRemoved) {
-    Write-Host "Removed legacy Plannotator skills from $legacyAgentsSkillsDir"
+    Write-Host "Removed legacy shuvplan/plannotator skills from $legacyAgentsSkillsDir"
 }
 
-# Remove Plannotator skills that still belong only in the shared agent scope from Codex.
+# Remove shuvplan/plannotator skills that still belong only in the shared agent scope from Codex.
 $staleCodexSkillsDir = "$env:USERPROFILE\.codex\skills"
 $staleCodexSkillsRemoved = $false
 foreach ($skill in @("plannotator-compound")) {
@@ -550,7 +580,7 @@ foreach ($skill in @("plannotator-compound")) {
     }
 }
 if ($staleCodexSkillsRemoved) {
-    Write-Host "Removed shared-agent Plannotator skills from $staleCodexSkillsDir"
+    Write-Host "Removed shared-agent shuvplan/plannotator skills from $staleCodexSkillsDir"
 }
 
 # Install skills (requires git)
@@ -635,7 +665,7 @@ if (Test-Path $geminiDir) {
     $geminiPoliciesDir = "$geminiDir\policies"
     New-Item -ItemType Directory -Force -Path $geminiPoliciesDir | Out-Null
     @'
-# Plannotator policy for Gemini CLI
+# shuvplan policy for Gemini CLI
 # Allows exit_plan_mode without TUI confirmation so the browser UI is the sole gate.
 [[rule]]
 toolName = "exit_plan_mode"
@@ -728,6 +758,12 @@ Address the annotation feedback above. The user has reviewed the markdown file a
 """
 '@ | Set-Content -Path "$geminiCommandsDir\plannotator-annotate.toml"
 
+    foreach ($commandFile in @("plannotator-review.toml", "plannotator-annotate.toml")) {
+        $shuvplanFile = $commandFile.Replace("plannotator-", "shuvplan-")
+        $content = (Get-Content -Path "$geminiCommandsDir\$commandFile" -Raw).Replace("Plannotator", "shuvplan").Replace("plannotator", "shuvplan")
+        Set-Content -Path "$geminiCommandsDir\$shuvplanFile" -Value $content -NoNewline
+    }
+
     Write-Host "Installed Gemini slash commands to $geminiCommandsDir\"
 }
 
@@ -740,7 +776,8 @@ Write-Host "Add the plugin to your opencode.json:"
 Write-Host ""
 Write-Host '  "plugin": ["@plannotator/opencode@latest"]'
 Write-Host ""
-Write-Host "Then restart OpenCode. The /plannotator-review, /plannotator-annotate, /plannotator-last, /plannotator-setup-goal, and /plannotator-visual-explainer commands are ready!"
+Write-Host "Then restart OpenCode. The /shuvplan-review, /shuvplan-annotate, /shuvplan-last, /shuvplan-setup-goal, and /shuvplan-visual-explainer commands are ready!"
+Write-Host "Legacy /plannotator-* commands remain installed as compatibility aliases."
 Write-Host ""
 Write-Host "=========================================="
 Write-Host "  PI USERS"
@@ -758,7 +795,8 @@ Write-Host "Install the Claude Code plugin:"
 Write-Host "  /plugin marketplace add backnotprop/plannotator"
 Write-Host "  /plugin install plannotator@plannotator"
 Write-Host ""
-Write-Host "The /plannotator-review, /plannotator-annotate, /plannotator-last, /plannotator-setup-goal, and /plannotator-visual-explainer commands are ready to use after you restart Claude Code!"
+Write-Host "The /shuvplan-review, /shuvplan-annotate, /shuvplan-last, /shuvplan-setup-goal, and /shuvplan-visual-explainer commands are ready to use after you restart Claude Code!"
+Write-Host "Legacy /plannotator-* commands remain installed as compatibility aliases."
 
 # Warn if plannotator is configured in both settings.json hooks AND the plugin (causes double execution)
 # Only warn when the plugin is installed — manual-only users won't have overlap

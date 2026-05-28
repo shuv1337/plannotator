@@ -1,6 +1,6 @@
 # Devcontainer / Docker Setup
 
-Plannotator works in devcontainers and Docker environments with minimal configuration.
+shuvplan works in devcontainers and Docker environments with minimal configuration.
 
 ## Required Environment Variables
 
@@ -31,7 +31,7 @@ Ensure port 9999 (or your chosen port) is forwarded to your host. In VS Code dev
 
 1. Run OpenCode in your container (`opencode` or `opencode web`)
 2. Ask the agent to create a plan
-3. When `submit_plan` is called, Plannotator starts on port 9999
+3. When `submit_plan` is called, shuvplan starts on port 9999
 4. Open `http://localhost:9999` in your host browser
 5. Approve or deny the plan
 
@@ -39,7 +39,7 @@ Ensure port 9999 (or your chosen port) is forwarded to your host. In VS Code dev
 
 ## OpenCode Web
 
-`opencode web` works in devcontainers. Forward port 4096 (default) for the OpenCode UI, and port 9999 for Plannotator:
+`opencode web` works in devcontainers. Forward port 4096 (default) for the OpenCode UI, and port 9999 for shuvplan:
 
 ```json
 {
@@ -49,7 +49,7 @@ Ensure port 9999 (or your chosen port) is forwarded to your host. In VS Code dev
 
 ## Legacy Support
 
-If your environment already has `SSH_TTY` or `SSH_CONNECTION` set (common in SSH sessions), Plannotator will detect remote mode automatically when `PLANNOTATOR_REMOTE` is unset. You can also force local mode with `PLANNOTATOR_REMOTE=false` or `0`.
+If your environment already has `SSH_TTY` or `SSH_CONNECTION` set (common in SSH sessions), shuvplan will detect remote mode automatically when `PLANNOTATOR_REMOTE` is unset. You can also force local mode with `PLANNOTATOR_REMOTE=false` or `0`.
 
 ## Troubleshooting
 

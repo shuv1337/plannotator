@@ -1,5 +1,5 @@
 /**
- * Plannotator Plugin for OpenCode
+ * shuvplan Plugin for OpenCode
  *
  * POC: Edit-based submit_plan. The tool accepts line-range edits instead of
  * full plan text or file paths. A backing file is managed by the plugin;
@@ -9,8 +9,8 @@
  * Environment variables:
  *   PLANNOTATOR_REMOTE - Set to "1"/"true" for remote, "0"/"false" for local
  *   PLANNOTATOR_PORT   - Fixed port to use (default: random locally, 19432 for remote)
- *   PLANNOTATOR_PLAN_TIMEOUT_SECONDS - Max wait for approval (default: 345600, set 0 to disable)
- *   PLANNOTATOR_ALLOW_SUBAGENTS - Set to "1" to allow subagents to see submit_plan
+ *   SHUVPLAN_PLAN_TIMEOUT_SECONDS / PLANNOTATOR_PLAN_TIMEOUT_SECONDS - Max wait for approval (default: 345600, set 0 to disable)
+ *   SHUVPLAN_ALLOW_SUBAGENTS / PLANNOTATOR_ALLOW_SUBAGENTS - Set to "1" to allow subagents to see submit_plan
  *
  * @packageDocumentation
  */
@@ -48,6 +48,7 @@ import {
   startAnnotateServer,
   handleAnnotateServerReady,
 } from "@plannotator/server/annotate";
+import { getPublicEnvValue, publicEnvNames } from "@plannotator/server/env";
 import {
   handleReviewCommand,
   handleAnnotateCommand,
@@ -238,7 +239,7 @@ export function formatWithLineNumbers(content: string): string {
  * - Edit-based: all submissions use line-range edits against a backing file
  */
 function getPlanningPrompt(): string {
-  return `## Plannotator — Plan Review
+  return `## shuvplan — Plan Review
 
 You have a plan submission tool called \`submit_plan\`. It opens an interactive review UI where the user can annotate, approve, or request changes.
 
@@ -314,25 +315,25 @@ export const PlannotatorPlugin: Plugin = async (ctx, rawOptions?: PlannotatorOpe
     } catch {
       // Config read failed, fall through to env var
     }
-    return process.env.PLANNOTATOR_SHARE !== "disabled";
+    return getPublicEnvValue("SHARE") !== "disabled";
   }
 
   function getShareBaseUrl(): string | undefined {
-    return process.env.PLANNOTATOR_SHARE_URL || undefined;
+    return getPublicEnvValue("SHARE_URL") || undefined;
   }
 
   function getPasteApiUrl(): string | undefined {
-    return process.env.PLANNOTATOR_PASTE_URL || undefined;
+    return getPublicEnvValue("PASTE_URL") || undefined;
   }
 
   function getPlanTimeoutSeconds(): number | null {
-    const raw = process.env.PLANNOTATOR_PLAN_TIMEOUT_SECONDS?.trim();
+    const raw = getPublicEnvValue("PLAN_TIMEOUT_SECONDS")?.trim();
     if (!raw) return DEFAULT_PLAN_TIMEOUT_SECONDS;
 
     const parsed = Number.parseInt(raw, 10);
     if (!Number.isFinite(parsed) || parsed < 0) {
       console.error(
-        `[Plannotator] Invalid PLANNOTATOR_PLAN_TIMEOUT_SECONDS="${raw}". Using default ${DEFAULT_PLAN_TIMEOUT_SECONDS}s.`
+        `[shuvplan] Invalid ${publicEnvNames("PLAN_TIMEOUT_SECONDS")}="${raw}". Using default ${DEFAULT_PLAN_TIMEOUT_SECONDS}s.`
       );
       return DEFAULT_PLAN_TIMEOUT_SECONDS;
     }
@@ -342,7 +343,7 @@ export const PlannotatorPlugin: Plugin = async (ctx, rawOptions?: PlannotatorOpe
   }
 
   function allowSubagents(): boolean {
-    const val = process.env.PLANNOTATOR_ALLOW_SUBAGENTS?.trim();
+    const val = getPublicEnvValue("ALLOW_SUBAGENTS")?.trim();
     return val === "1" || val === "true";
   }
 
@@ -475,7 +476,7 @@ The user will review your plan in a visual UI where they can annotate, approve, 
 Do NOT proceed with implementation until your plan is approved.`);
     },
 
-    // Intercept plannotator commands before the agent sees them.
+    // Intercept shuvplan/plannotator commands before the agent sees them.
     // Clearing output.parts in place suppresses the .md body + appended
     // args so the agent never receives the command — without this, OpenCode
     // calls resolvePromptParts() on "<body> <arguments>", which auto-attaches
@@ -489,9 +490,13 @@ Do NOT proceed with implementation until your plan is approved.`);
       const cmd = input.command;
       if (
         cmd !== "plannotator-last" &&
+        cmd !== "shuvplan-last" &&
         cmd !== "plannotator-annotate" &&
+        cmd !== "shuvplan-annotate" &&
         cmd !== "plannotator-review" &&
-        cmd !== "plannotator-archive"
+        cmd !== "shuvplan-review" &&
+        cmd !== "plannotator-archive" &&
+        cmd !== "shuvplan-archive"
       ) return;
 
       output.parts.length = 0;
@@ -511,7 +516,7 @@ Do NOT proceed with implementation until your plan is approved.`);
         properties: { sessionID: input.sessionID, arguments: input.arguments },
       };
 
-      if (cmd === "plannotator-last") {
+      if (cmd === "plannotator-last" || cmd === "shuvplan-last") {
         const feedback = await handleAnnotateLastCommand(event, deps);
         if (feedback) {
           try {
@@ -531,9 +536,9 @@ Do NOT proceed with implementation until your plan is approved.`);
         return;
       }
 
-      if (cmd === "plannotator-annotate") return handleAnnotateCommand(event, deps);
-      if (cmd === "plannotator-review") return handleReviewCommand(event, deps);
-      if (cmd === "plannotator-archive") return handleArchiveCommand(event, deps);
+      if (cmd === "plannotator-annotate" || cmd === "shuvplan-annotate") return handleAnnotateCommand(event, deps);
+      if (cmd === "plannotator-review" || cmd === "shuvplan-review") return handleReviewCommand(event, deps);
+      if (cmd === "plannotator-archive" || cmd === "shuvplan-archive") return handleArchiveCommand(event, deps);
     },
   };
 
@@ -557,9 +562,9 @@ Do NOT proceed with implementation until your plan is approved.`);
         async execute(args, context) {
           const invokingAgent = (context as { agent?: string }).agent;
           if (shouldRejectSubmitPlanForAgent(invokingAgent, workflowOptions)) {
-            return `Plannotator is configured for plan-agent mode. submit_plan can only be called by: ${workflowOptions.planningAgents.join(", ")}.
+            return `shuvplan is configured for plan-agent mode. submit_plan can only be called by: ${workflowOptions.planningAgents.join(", ")}.
 
-Use /plannotator-last or /plannotator-annotate for manual review, or set workflow to all-agents to allow broader submit_plan access.`;
+Use /shuvplan-last or /shuvplan-annotate for manual review, or set workflow to all-agents to allow broader submit_plan access.`;
           }
 
           if (!args.edits || args.edits.length === 0) {
@@ -615,7 +620,7 @@ Use /plannotator-last or /plannotator-annotate for manual review, or set workflo
             onReady: async (url, isRemote, port) => {
               handleServerReady(url, isRemote, port);
               if (isRemote) {
-                ctx.client.app.log({ level: "info", message: `[Plannotator] Open in browser: ${url}` });
+                ctx.client.app.log({ level: "info", message: `[shuvplan] Open in browser: ${url}` });
               }
             },
           });
@@ -630,7 +635,7 @@ Use /plannotator-last or /plannotator-annotate for manual review, or set workflo
                   () =>
                     resolve({
                       approved: false,
-                      feedback: `[Plannotator] No response within ${timeoutSeconds} seconds. Port released automatically. Please call submit_plan again.`,
+                      feedback: `[shuvplan] No response within ${timeoutSeconds} seconds. Port released automatically. Please call submit_plan again.`,
                     }),
                   timeoutMs
                 );

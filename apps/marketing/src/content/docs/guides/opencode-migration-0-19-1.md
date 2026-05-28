@@ -1,12 +1,12 @@
 ---
 title: "OpenCode Migration (0.19.1)"
-description: "What changes for existing OpenCode users in Plannotator 0.19.1, and how to keep or change the old behavior."
+description: "What changes for existing OpenCode users in shuvplan 0.19.1, and how to keep or change the old behavior."
 sidebar:
   order: 6
 section: "Getting Started"
 ---
 
-Plannotator `0.19.1` changes the default OpenCode workflow.
+shuvplan `0.19.1` changes the default OpenCode workflow.
 
 Before `0.19.1`, OpenCode behavior was effectively broad automatic access: primary agents could see `submit_plan`, and users could run into cases where `build` or another non-planning agent reached for it.
 
@@ -20,7 +20,7 @@ If you already use `@plannotator/opencode` and upgrade to `0.19.1` without addin
 - any agents you list in `planningAgents` are added alongside `plan`
 - `build` and other non-planning primary agents stop seeing or calling `submit_plan` by default
 - the broad reminder that nudged non-plan primary agents toward `submit_plan` goes away
-- `/plannotator-last`, `/plannotator-annotate`, `/plannotator-review`, and `/plannotator-archive` still work
+- `/shuvplan-last`, `/shuvplan-annotate`, `/shuvplan-review`, and `/shuvplan-archive` still work
 
 This is the new omitted-config default:
 
@@ -40,7 +40,7 @@ This is the new omitted-config default:
 
 OpenCode feedback was consistent on two points:
 
-- users still want Plannotator integrated with OpenCode plan mode
+- users still want shuvplan integrated with OpenCode plan mode
 - users do not want `submit_plan` exposed broadly enough that `build` or other implementation agents eagerly call it
 
 `plan-agent` is the compromise default:
@@ -85,11 +85,11 @@ In `manual` mode:
 
 - `submit_plan` is not registered
 - OpenCode planning stays native
-- you use Plannotator explicitly through:
-  - `/plannotator-last`
-  - `/plannotator-annotate`
-  - `/plannotator-review`
-  - `/plannotator-archive`
+- you use shuvplan explicitly through:
+  - `/shuvplan-last`
+  - `/shuvplan-annotate`
+  - `/shuvplan-review`
+  - `/shuvplan-archive`
 
 ## Recommended upgrade path
 
@@ -99,7 +99,7 @@ Choose one of these:
 
 Do nothing if you want:
 
-- Plannotator in OpenCode plan mode
+- shuvplan in OpenCode plan mode
 - no broad `build` access to `submit_plan`
 
 ### Restore the legacy model
@@ -108,15 +108,15 @@ Set `workflow` to `all-agents` if your team already depends on broad primary-age
 
 ### Move to manual review
 
-Set `workflow` to `manual` if you prefer OpenCode's native planning flow and only want Plannotator when you invoke it yourself.
+Set `workflow` to `manual` if you prefer OpenCode's native planning flow and only want shuvplan when you invoke it yourself.
 
 ## Common questions
 
 ### Does this remove OpenCode plan integration?
 
-No. The default still keeps Plannotator integrated with OpenCode planning through the planning agent.
+No. The default still keeps shuvplan integrated with OpenCode planning through the planning agent.
 
-### Does this break `/plannotator-last` or `/plannotator-annotate`?
+### Does this break `/shuvplan-last` or `/shuvplan-annotate`?
 
 No. Manual commands continue to work across all workflow modes.
 
@@ -136,7 +136,7 @@ Add it explicitly. OpenCode's built-in `plan` agent stays enabled in `plan-agent
 }
 ```
 
-If you also use other OpenCode plugins, keep Plannotator as the two-item array entry and put the other plugins beside it:
+If you also use other OpenCode plugins, keep shuvplan as the two-item array entry and put the other plugins beside it:
 
 ```json
 {

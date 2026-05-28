@@ -6,7 +6,7 @@ sidebar:
 section: "Guides"
 ---
 
-Launch AI review agents from the Plannotator diff viewer. Agents analyze your changes in the background and produce structured findings inline.
+Launch AI review agents from the shuvplan diff viewer. Agents analyze your changes in the background and produce structured findings inline.
 
 Two providers are supported:
 
@@ -65,7 +65,7 @@ Cleaned up when the session ends. Use `--no-local` to review in remote-only mode
 
 ## Transparency
 
-Agents are read-only. They cannot modify code, access the network, or post comments. All AI communication goes directly to your provider (Anthropic or OpenAI). No code passes through Plannotator servers. Prompts and commands are visible in the review UI.
+Agents are read-only. They cannot modify code, access the network, or post comments. All AI communication goes directly to your provider (Anthropic or OpenAI). No code passes through shuvplan servers. Prompts and commands are visible in the review UI.
 
 Below are the exact prompts, commands, and schemas used.
 
@@ -257,8 +257,8 @@ At the end, output an overall correctness verdict.
 
 ```bash
 codex exec \
-  --output-schema ~/.plannotator/codex-review-schema.json \
-  -o /tmp/plannotator-codex-<uuid>.json \
+  --output-schema ~/.shuvplan/codex-review-schema.json \
+  -o /tmp/shuvplan-codex-<uuid>.json \
   --full-auto \
   --ephemeral \
   -C <working-directory> \

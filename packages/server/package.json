@@ -2,7 +2,7 @@
   "name": "@plannotator/server",
   "version": "0.19.23",
   "private": true,
-  "description": "Shared server implementation for Plannotator plugins",
+  "description": "Shared server implementation for shuvplan plugins",
   "main": "index.ts",
   "types": "index.ts",
   "exports": {
@@ -11,6 +11,7 @@
     "./annotate": "./annotate.ts",
     "./remote": "./remote.ts",
     "./browser": "./browser.ts",
+    "./env": "./env.ts",
     "./goal-setup": "./goal-setup.ts",
     "./storage": "./storage.ts",
     "./git": "./git.ts",

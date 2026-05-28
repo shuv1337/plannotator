@@ -25,7 +25,9 @@ function applyTheme(theme: Theme) {
 
 export default function ModeToggleIsland() {
   const [theme, setTheme] = useState<Theme>(() =>
-    (getCookie('plannotator-theme') as Theme) || 'dark'
+    (getCookie('shuvplan-theme') as Theme) ||
+    (getCookie('plannotator-theme') as Theme) ||
+    'system'
   );
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -53,7 +55,7 @@ export default function ModeToggleIsland() {
   }, []);
 
   const handleSelect = (t: Theme) => {
-    setCookie('plannotator-theme', t);
+    setCookie('shuvplan-theme', t);
     setTheme(t);
     setIsOpen(false);
   };

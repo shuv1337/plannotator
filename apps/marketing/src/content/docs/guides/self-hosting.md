@@ -1,12 +1,12 @@
 ---
 title: "Self-Hosting"
-description: "Deploy and self-host the full Plannotator system — hook, share portal, and paste service."
+description: "Deploy and self-host the full shuvplan system — hook, share portal, and paste service."
 sidebar:
   order: 23
 section: "Guides"
 ---
 
-Plannotator has three components. Only the hook is required.
+shuvplan has three components. Only the hook is required.
 
 ## Components
 
@@ -84,17 +84,17 @@ Download the paste service binary for your platform from [GitHub Releases](https
 
 ```bash
 chmod +x plannotator-paste-*
-./plannotator-paste-darwin-arm64   # or whichever matches your platform
+./shuvplan-paste-darwin-arm64   # or whichever matches your platform
 ```
 
-Pastes stored to `~/.plannotator/pastes/` by default.
+Pastes stored to `~/.shuvplan/pastes/` by default.
 
 ### Configuration
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `PASTE_PORT` | `19433` | Server port |
-| `PASTE_DATA_DIR` | `~/.plannotator/pastes` | Storage directory |
+| `PASTE_DATA_DIR` | `~/.shuvplan/pastes` | Storage directory |
 | `PASTE_TTL_DAYS` | `7` | Auto-delete after N days |
 | `PASTE_MAX_SIZE` | `524288` | Max payload size (512KB) |
 | `PASTE_ALLOWED_ORIGINS` | (see defaults) | CORS allowed origins |
@@ -102,8 +102,8 @@ Pastes stored to `~/.plannotator/pastes/` by default.
 ## 4. Connect the Components
 
 ```bash
-export PLANNOTATOR_SHARE_URL=https://your-portal.example.com
-export PLANNOTATOR_PASTE_URL=https://your-paste.example.com
+export SHUVPLAN_SHARE_URL=https://your-portal.example.com
+export SHUVPLAN_PASTE_URL=https://your-paste.example.com
 ```
 
 ## 5. Verify

@@ -3,7 +3,7 @@
  *
  * Uses CommentController for inline comment threads, CodeActionProvider
  * for lightbulb discoverability, and decorations for visual highlighting.
- * POSTs captured selections to the plannotator server through the cookie proxy.
+ * POSTs captured selections to the shuvplan server through the cookie proxy.
  */
 
 import * as vscode from "vscode";
@@ -43,7 +43,7 @@ function createController(): void {
 
   commentController = vscode.comments.createCommentController(
     "plannotator",
-    "Plannotator",
+    "shuvplan",
   );
 
   // No commentingRangeProvider — we don't show the + gutter icons on every line.
@@ -129,7 +129,7 @@ export function registerEditorAnnotationCommand(
       } catch (err) {
         log.error(`[editor-annotation] failed: ${err}`);
         vscode.window.showErrorMessage(
-          "Plannotator: Failed to add annotation",
+          "shuvplan: Failed to add annotation",
         );
         thread.dispose();
       }
@@ -173,7 +173,7 @@ export function registerEditorAnnotationCommand(
     async () => {
       if (activeProxyPort === null) {
         vscode.window.showInformationMessage(
-          "No active Plannotator session. Open a plan review first.",
+          "No active shuvplan session. Open a plan review first.",
         );
         return;
       }
@@ -206,12 +206,12 @@ export function registerEditorAnnotationCommand(
         if (activeProxyPort === null || range.isEmpty) return [];
 
         const action = new vscode.CodeAction(
-          "Plannotator: Annotate Selection",
+          "shuvplan: Annotate Selection",
           vscode.CodeActionKind.RefactorInline,
         );
         action.command = {
           command: "plannotator-webview.addEditorAnnotation",
-          title: "Plannotator: Annotate Selection",
+          title: "shuvplan: Annotate Selection",
         };
         return [action];
       },

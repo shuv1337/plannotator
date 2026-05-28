@@ -1,6 +1,6 @@
 import React from "react";
-import logoImage from "../plannotator.webp";
 import { ModeToggle } from "./ModeToggle";
+import { ShuvplanBrand } from "./ShuvplanBrand";
 
 interface LandingProps {
   onEnter?: () => void;
@@ -8,15 +8,13 @@ interface LandingProps {
 }
 
 export const Landing: React.FC<LandingProps> = ({ onEnter, shareBaseUrl }) => {
-  const demoUrl = shareBaseUrl || "https://share.plannotator.ai";
+  const demoUrl = shareBaseUrl || "https://plan.shuv.dev";
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 h-12 flex items-center justify-between px-6 bg-background/80 backdrop-blur-sm border-b border-border/30 z-50">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold tracking-tight">
-            Plannotator
-          </span>
+          <ShuvplanBrand href="" />
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 text-xs">
@@ -53,22 +51,20 @@ export const Landing: React.FC<LandingProps> = ({ onEnter, shareBaseUrl }) => {
             </div>
 
             <div className="flex items-center gap-6 mb-4">
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight leading-[1.1]">
+              <h1 className="text-4xl md:text-5xl font-bold tracking-normal leading-[1.1]">
+                shuvplan.
+                <br />
                 Annotate plans.
                 <br />
                 <span className="text-muted-foreground">
                   Not in the terminal.
                 </span>
               </h1>
-              <img
-                src={logoImage}
-                alt="Plannotator logo"
-                className="w-20 h-20 md:w-24 md:h-24 object-contain shrink-0 -scale-x-100"
-              />
+              <ShuvplanBrand compact href="" className="shrink-0 scale-125" />
             </div>
 
             <p className="text-lg text-muted-foreground mb-8 max-w-lg">
-              Interactive Plan Review for coding agents. Mark up and refine plans visually,
+              Interactive plan review for coding agents. Mark up and refine plans visually,
               share for team collaboration. Works with Claude Code and OpenCode.
             </p>
 
@@ -196,7 +192,7 @@ export const Landing: React.FC<LandingProps> = ({ onEnter, shareBaseUrl }) => {
               <div>
                 <h3 className="font-semibold mb-1">Runs locally.</h3>
                 <p className="text-muted-foreground text-sm">
-                  Local plugin. No network requests. Plannotator runs entirely
+                  Local plugin. No network requests. shuvplan runs entirely
                   in your browser. Plans never leave your machine.
                 </p>
               </div>
@@ -281,7 +277,7 @@ export const Landing: React.FC<LandingProps> = ({ onEnter, shareBaseUrl }) => {
               <div className="flex-1 flex justify-center">
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <div className="w-4 h-4 rounded bg-primary/20" />
-                  <span>Plannotator</span>
+                  <span>shuvplan</span>
                 </div>
               </div>
               <div className="w-16" />
@@ -380,7 +376,7 @@ export const Landing: React.FC<LandingProps> = ({ onEnter, shareBaseUrl }) => {
           <h2 className="text-xl font-semibold mb-8">How it works</h2>
 
           <div className="space-y-6 max-w-2xl">
-            <Step num={1} title="Agent triggers Plannotator">
+            <Step num={1} title="Agent triggers shuvplan">
               <span className="text-xs">
                 <strong>Claude Code:</strong> ExitPlanMode hook opens UI<br />
                 <strong>OpenCode:</strong> Agent calls submit_plan tool

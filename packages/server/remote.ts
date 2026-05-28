@@ -2,17 +2,19 @@
  * Remote session detection and port configuration
  *
  * Environment variables:
- *   PLANNOTATOR_REMOTE - Set to "1"/"true" to force remote, "0"/"false" to force local
- *   PLANNOTATOR_PORT   - Fixed port to use (default: random locally, 19432 for remote)
+ *   SHUVPLAN_REMOTE / PLANNOTATOR_REMOTE - Set to "1"/"true" to force remote, "0"/"false" to force local
+ *   SHUVPLAN_PORT / PLANNOTATOR_PORT     - Fixed port to use (default: random locally, 19432 for remote)
  *
  * Legacy (still supported): SSH_TTY, SSH_CONNECTION
  */
+
+import { getPublicEnvValue, publicEnvNames } from "./env";
 
 const DEFAULT_REMOTE_PORT = 19432;
 const LOOPBACK_HOST = "127.0.0.1";
 
 function getRemoteOverride(): boolean | null {
-  const remote = process.env.PLANNOTATOR_REMOTE;
+  const remote = getPublicEnvValue("REMOTE");
   if (remote === undefined) {
     return null;
   }
@@ -50,14 +52,14 @@ export function isRemoteSession(): boolean {
  */
 export function getServerPort(): number {
   // Explicit port from environment takes precedence
-  const envPort = process.env.PLANNOTATOR_PORT;
+  const envPort = getPublicEnvValue("PORT");
   if (envPort) {
     const parsed = parseInt(envPort, 10);
     if (!isNaN(parsed) && parsed >= 0 && parsed < 65536) {
       return parsed;
     }
     console.error(
-      `[Plannotator] Warning: Invalid PLANNOTATOR_PORT "${envPort}", using default`
+      `[shuvplan] Warning: Invalid ${publicEnvNames("PORT")} "${envPort}", using default`
     );
   }
 

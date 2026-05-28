@@ -1,4 +1,4 @@
-# Plannotator policy for Gemini CLI
+# shuvplan policy for Gemini CLI
 # Allows exit_plan_mode without TUI confirmation so the browser UI is the sole gate.
 # Installed to: ~/.gemini/policies/plannotator.toml
 

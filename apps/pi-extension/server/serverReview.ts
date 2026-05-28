@@ -54,6 +54,7 @@ import {
 import { html, json, parseBody, requestUrl } from "./helpers.js";
 import { createPiAIRuntime, handlePiAIRequest } from "./ai-runtime.js";
 
+import { getPublicEnvValue } from "./env.js";
 import { isRemoteSession, listenOnPort } from "./network.js";
 import {
 	fetchPR,
@@ -418,11 +419,11 @@ export async function startReviewServer(options: {
 		},
 	});
 	const sharingEnabled =
-		options.sharingEnabled ?? process.env.PLANNOTATOR_SHARE !== "disabled";
+		options.sharingEnabled ?? getPublicEnvValue("SHARE") !== "disabled";
 	const shareBaseUrl =
-		(options.shareBaseUrl ?? process.env.PLANNOTATOR_SHARE_URL) || undefined;
+		(options.shareBaseUrl ?? getPublicEnvValue("SHARE_URL")) || undefined;
 	const pasteApiUrl =
-		(options.pasteApiUrl ?? process.env.PLANNOTATOR_PASTE_URL) || undefined;
+		(options.pasteApiUrl ?? getPublicEnvValue("PASTE_URL")) || undefined;
 	let resolveDecision!: (result: {
 		approved: boolean;
 		feedback: string;

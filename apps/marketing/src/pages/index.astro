@@ -7,7 +7,7 @@ import SocialProofBar from '../components/landing/SocialProofBar.astro';
 import AnnoReplace from '../components/landing/AnnoReplace.astro';
 ---
 <Base
-  title="Plannotator - Plan & Code Review for AI Coding Agents"
+  title="shuvplan - Plan & Code Review for AI Coding Agents"
   description="Free, open-source review tooling for Claude Code, OpenCode, Codex, Pi, and Droid. Review agent plans before they execute, annotate agent-written code, and send structured feedback back locally."
 >
   <div class="min-h-screen bg-background text-foreground">
@@ -95,12 +95,12 @@ import AnnoReplace from '../components/landing/AnnoReplace.astro';
                 <div class="browser-frame-dot bg-destructive/50"></div>
                 <div class="browser-frame-dot bg-accent/50"></div>
                 <div class="browser-frame-dot bg-success/50"></div>
-                <span class="ml-2 text-[0.6875rem] text-muted-foreground">Plannotator</span>
+                <span class="ml-2 text-[0.6875rem] text-muted-foreground">shuvplan</span>
               </div>
               <div class="relative">
                 <img
                   src="/assets/plan-review.webp"
-                  alt="Plannotator plan review with inline annotations"
+                  alt="shuvplan plan review with inline annotations"
                   class="w-full block"
                   loading="lazy"
                 />
@@ -136,7 +136,7 @@ import AnnoReplace from '../components/landing/AnnoReplace.astro';
               Review the diff before you commit
             </h2>
             <p class="text-sm text-muted-foreground mb-4 leading-relaxed">
-              Run <code class="font-mono text-xs bg-muted px-1.5 py-0.5 rounded">{"/"}plannotator-review</code>
+              Run <code class="font-mono text-xs bg-muted px-1.5 py-0.5 rounded">{"/"}shuvplan-review</code>
               and get a PR-style diff viewer for your agent's uncommitted changes.
               The same workflow you use for human PRs, applied to agent output.
             </p>
@@ -199,12 +199,12 @@ import AnnoReplace from '../components/landing/AnnoReplace.astro';
                 <div class="browser-frame-dot bg-destructive/50"></div>
                 <div class="browser-frame-dot bg-accent/50"></div>
                 <div class="browser-frame-dot bg-success/50"></div>
-                <span class="ml-2 text-[0.6875rem] text-muted-foreground">Plannotator · Code Review</span>
+                <span class="ml-2 text-[0.6875rem] text-muted-foreground">shuvplan · Code Review</span>
               </div>
               <div class="relative">
                 <img
                   src="/assets/code-review.webp"
-                  alt="Plannotator code review with diff annotations"
+                  alt="shuvplan code review with diff annotations"
                   class="w-full block"
                   loading="lazy"
                 />
@@ -250,20 +250,20 @@ import AnnoReplace from '../components/landing/AnnoReplace.astro';
             <div class="browser-frame-dot bg-destructive/50"></div>
             <div class="browser-frame-dot bg-accent/50"></div>
             <div class="browser-frame-dot bg-success/50"></div>
-            <span class="ml-2 text-[0.6875rem] text-muted-foreground hiw-bar-title">Plannotator · Plan Review</span>
+            <span class="ml-2 text-[0.6875rem] text-muted-foreground hiw-bar-title">shuvplan · Plan Review</span>
           </div>
           <div class="bg-background">
             <img
               id="hiw-img-plan"
               src="/assets/hiw-plan.webp"
-              alt="Plannotator plan review showing annotations on an agent's proposed plan"
+              alt="shuvplan plan review showing annotations on an agent's proposed plan"
               class="w-full block"
               loading="lazy"
             />
             <img
               id="hiw-img-code"
               src="/assets/hiw-code.webp"
-              alt="Plannotator code review showing diff annotations on agent-written code"
+              alt="shuvplan code review showing diff annotations on agent-written code"
               class="w-full block hidden"
               loading="lazy"
             />
@@ -278,7 +278,7 @@ import AnnoReplace from '../components/landing/AnnoReplace.astro';
               <h4 class="text-sm font-medium">Use your agent normally</h4>
             </div>
             <p class="text-sm text-muted-foreground leading-relaxed" id="hiw-step-1">
-              Work with your coding agent exactly as you do today. When it proposes a plan, Plannotator intercepts the approval step automatically.
+              Work with your coding agent exactly as you do today. When it proposes a plan, shuvplan intercepts the approval step automatically.
             </p>
           </div>
           <div>
@@ -315,15 +315,15 @@ import AnnoReplace from '../components/landing/AnnoReplace.astro';
               <span class="cap-desc">Automatic: hooks into your agent's plan step</span>
             </div>
             <div class="cap-item">
-              <code class="cap-cmd">/plannotator-annotate &lt;file|dir|url&gt;</code>
+              <code class="cap-cmd">/shuvplan-annotate &lt;file|dir|url&gt;</code>
               <span class="cap-desc">Annotate any markdown, spec/plan, folder, or URL and send feedback</span>
             </div>
             <div class="cap-item">
-              <code class="cap-cmd">/plannotator-last</code>
+              <code class="cap-cmd">/shuvplan-last</code>
               <span class="cap-desc">Annotate the agent's last message</span>
             </div>
             <div class="cap-item">
-              <code class="cap-cmd">/plannotator-review &lt;null|pr-url&gt;</code>
+              <code class="cap-cmd">/shuvplan-review &lt;null|pr-url&gt;</code>
               <span class="cap-desc">Code review for local changes or GitHub and GitLab PRs</span>
             </div>
           </div>
@@ -409,7 +409,7 @@ import AnnoReplace from '../components/landing/AnnoReplace.astro';
         <div class="relative z-10 max-w-2xl mx-auto text-center">
           <span class="workspaces-cta-pill mb-4">
             <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
-            Plannotator Workspaces · waitlist
+            shuvplan Workspaces · waitlist
           </span>
           <h2 class="font-display text-xl sm:text-2xl font-semibold tracking-tight mb-3">
             Turn agent plans and code reviews into <span class="text-primary">shared team knowledge</span>.
@@ -441,7 +441,7 @@ import AnnoReplace from '../components/landing/AnnoReplace.astro';
             Shape what gets built. Own what ships.
           </p>
           <div class="install-block max-w-lg mx-auto mb-4 hidden sm:flex">
-            <code>curl -fsSL https://plannotator.ai/install.sh | bash</code>
+            <code>curl -fsSL https://plan.shuv.dev/install.sh | bash</code>
             <button class="install-copy-btn" aria-label="Copy install command">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
             </button>

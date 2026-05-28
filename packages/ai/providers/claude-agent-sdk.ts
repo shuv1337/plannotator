@@ -2,9 +2,9 @@
  * Claude Agent SDK provider — the first concrete AIProvider implementation.
  *
  * Uses @anthropic-ai/claude-agent-sdk to create sessions that can:
- * - Start fresh with Plannotator context as the system prompt
+ * - Start fresh with shuvplan context as the system prompt
  * - Fork from a parent Claude Code session (preserving full history)
- * - Resume a previous Plannotator inline chat session
+ * - Resume a previous shuvplan inline chat session
  * - Stream text deltas back to the UI in real time
  *
  * Sessions are read-only by default (tools limited to Read, Glob, Grep)

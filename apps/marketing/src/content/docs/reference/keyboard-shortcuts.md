@@ -1,6 +1,6 @@
 ---
 title: "Keyboard Shortcuts"
-description: "All keyboard shortcuts available in the Plannotator UI."
+description: "All keyboard shortcuts available in the shuvplan UI."
 sidebar:
   order: 31
 section: "Reference"

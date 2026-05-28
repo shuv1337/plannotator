@@ -1,20 +1,20 @@
 ---
-title: "Introducing Plannotator"
+title: "Introducing shuvplan"
 description: "A plan review UI for Claude Code that lets you approve or request changes with annotated feedback."
 date: 2025-12-27
 author: "backnotprop"
 tags: ["announcement", "release"]
 ---
 
-Plannotator is a plan review UI for Claude Code that intercepts `ExitPlanMode` via hooks, letting you approve or request changes with annotated feedback.
+shuvplan is a plan review UI for Claude Code that intercepts `ExitPlanMode` via hooks, letting you approve or request changes with annotated feedback.
 
 ## Watch the Demo
 
-<iframe width="100%" style="aspect-ratio: 16/9;" src="https://www.youtube.com/embed/a_AT7cEN_9I" title="Plannotator Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="100%" style="aspect-ratio: 16/9;" src="https://www.youtube.com/embed/a_AT7cEN_9I" title="shuvplan Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-## What is Plannotator?
+## What is shuvplan?
 
-When Claude Code generates a plan, Plannotator opens an interactive review UI in your browser. You can read through the plan, select text to annotate, and provide structured feedback — deletions, comments, global comments, quick labels, and "looks good" approvals — before approving or requesting changes.
+When Claude Code generates a plan, shuvplan opens an interactive review UI in your browser. You can read through the plan, select text to annotate, and provide structured feedback — deletions, comments, global comments, quick labels, and "looks good" approvals — before approving or requesting changes.
 
 ## Key Features
 
@@ -26,4 +26,4 @@ When Claude Code generates a plan, Plannotator opens an interactive review UI in
 
 ## Getting Started
 
-Check out the [installation guide](/docs/getting-started/installation/) to get started with Plannotator in Claude Code or OpenCode.
+Check out the [installation guide](/docs/getting-started/installation/) to get started with shuvplan in Claude Code or OpenCode.

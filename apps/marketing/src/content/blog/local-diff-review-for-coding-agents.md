@@ -1,22 +1,22 @@
 ---
 title: "Local Diff Review for Coding Agents"
-description: "How Plannotator's /plannotator-review command gives you a browser-based diff viewer to annotate agent-generated code changes and send structured feedback back to the session."
+description: "How shuvplan's /plannotator-review command gives you a browser-based diff viewer to annotate agent-generated code changes and send structured feedback back to the session."
 date: 2026-02-19
 author: "backnotprop"
 tags: ["code-review", "diff", "hooks"]
 ---
 
-**Plannotator is an open-source review UI for AI coding agents.** Beyond plan review, it includes a full code review workflow. Run `/plannotator-review` and a browser-based diff viewer opens with your uncommitted changes — file tree, split or unified diffs, line-level annotations. When you're done, your feedback goes directly back to the agent session as structured markdown. No copy-pasting. No context switching.
+**shuvplan is an open-source review UI for AI coding agents.** Beyond plan review, it includes a full code review workflow. Run `/plannotator-review` and a browser-based diff viewer opens with your uncommitted changes — file tree, split or unified diffs, line-level annotations. When you're done, your feedback goes directly back to the agent session as structured markdown. No copy-pasting. No context switching.
 
 ## Watch the Demo
 
-<iframe width="100%" style="aspect-ratio: 16/9;" src="https://www.youtube.com/embed/a_AT7cEN_9I" title="Plannotator Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="100%" style="aspect-ratio: 16/9;" src="https://www.youtube.com/embed/a_AT7cEN_9I" title="shuvplan Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## The scenario
 
 You asked Claude Code to add input validation to your API endpoints. It ran for a few minutes, touched eight files, and now you have a pile of uncommitted changes. You could scroll through `git diff` in the terminal. But the output is flat — no file navigation, no way to comment on specific lines, and if you want to tell the agent "this part is wrong", you're typing freeform into the chat.
 
-With Plannotator, you run a slash command instead.
+With shuvplan, you run a slash command instead.
 
 ### 1. You run the command
 
@@ -45,7 +45,7 @@ Each annotation attaches to the exact lines you selected, on the side you select
 
 ### 5. Feedback goes back to the agent
 
-Click **Send Feedback**. Plannotator formats your annotations into structured markdown — grouped by file, sorted by line number — and sends it to the `/api/feedback` endpoint. The server resolves the blocking promise, outputs the feedback to stdout, and the slash command captures it. Claude Code receives something like:
+Click **Send Feedback**. shuvplan formats your annotations into structured markdown — grouped by file, sorted by line number — and sends it to the `/api/feedback` endpoint. The server resolves the blocking promise, outputs the feedback to stdout, and the slash command captures it. Claude Code receives something like:
 
 ```markdown
 # Code Review Feedback
@@ -137,4 +137,4 @@ The `/plannotator-review` command fits a specific moment in the agent workflow: 
 
 ## Try it
 
-Install Plannotator as a [Claude Code plugin](/docs/getting-started/installation/), let the agent make some changes, and run `/plannotator-review`. Navigate the files, annotate what needs fixing, and send it back.
+Install shuvplan as a [Claude Code plugin](/docs/getting-started/installation/), let the agent make some changes, and run `/plannotator-review`. Navigate the files, annotate what needs fixing, and send it back.

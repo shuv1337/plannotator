@@ -1,11 +1,11 @@
 ---
 name: plannotator-last
-description: Open Plannotator on the latest rendered assistant message and use the returned annotations to revise that message or continue.
+description: Open shuvplan on the latest rendered assistant message and use the returned annotations to revise that message or continue.
 ---
 
-# Plannotator Last
+# shuvplan Last
 
-Use this skill when the user wants to annotate the latest assistant response in Plannotator.
+Use this skill when the user wants to annotate the latest assistant response in shuvplan.
 
 Do not send a commentary/status message before running the command. The command
 targets the latest rendered assistant response, so a preamble can mistakenly become the
@@ -23,5 +23,7 @@ Behavior:
 2. Wait for the annotation session to finish.
 3. If feedback is returned, incorporate it into the follow-up response.
 4. If the session closes without feedback, mention that briefly and continue.
+
+Run this as a foreground command. Do not use `systemd-run`, `nohup`, `&`, or any other detached wrapper for annotation sessions, because the returned feedback must stay connected to the current agent turn.
 
 Run the command yourself rather than telling the user to invoke shell syntax manually.

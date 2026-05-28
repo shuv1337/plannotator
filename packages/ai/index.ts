@@ -1,8 +1,8 @@
 /**
- * @plannotator/ai — AI provider layer for Plannotator.
+ * @plannotator/ai — AI provider layer for shuvplan.
  *
  * This package provides the backbone for AI-powered features (inline chat,
- * plan Q&A, code review assistance) across all Plannotator surfaces.
+ * plan Q&A, code review assistance) across all shuvplan surfaces.
  *
  * Architecture:
  *

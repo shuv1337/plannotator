@@ -4,13 +4,14 @@
  * Run: bun test packages/server/storage.test.ts
  */
 
-import { afterEach, describe, expect, test } from "bun:test";
-import { mkdtempSync, rmSync, readFileSync, readdirSync } from "node:fs";
+import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { mkdirSync, mkdtempSync, rmSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { generateSlug, getPlanDir, savePlan, saveToHistory, getPlanVersion, getVersionCount, listVersions } from "./storage";
 
 const tempDirs: string[] = [];
+const originalHome = process.env.HOME;
 
 function makeTempDir(): string {
   const dir = mkdtempSync(join(tmpdir(), "plannotator-storage-test-"));
@@ -18,7 +19,16 @@ function makeTempDir(): string {
   return dir;
 }
 
+beforeEach(() => {
+  process.env.HOME = makeTempDir();
+});
+
 afterEach(() => {
+  if (originalHome === undefined) {
+    delete process.env.HOME;
+  } else {
+    process.env.HOME = originalHome;
+  }
   for (const dir of tempDirs.splice(0)) {
     rmSync(dir, { recursive: true, force: true });
   }
@@ -68,18 +78,25 @@ describe("getPlanDir", () => {
 
   test("uses default when no custom path", () => {
     const result = getPlanDir();
-    expect(result).toMatch(/\.plannotator\/plans$/);
+    expect(result).toMatch(/\.shuvplan\/plans$/);
   });
 
   test("uses default for null", () => {
     const result = getPlanDir(null);
-    expect(result).toMatch(/\.plannotator\/plans$/);
+    expect(result).toMatch(/\.shuvplan\/plans$/);
   });
 
   test("uses default for whitespace-only custom path", () => {
     const result = getPlanDir("   ");
-    expect(result).toMatch(/\.plannotator\/plans$/);
+    expect(result).toMatch(/\.shuvplan\/plans$/);
     expect(result).not.toBe(process.cwd());
+  });
+
+  test("reads legacy default path when new path is missing", () => {
+    const legacy = join(process.env.HOME!, ".plannotator", "plans");
+    mkdirSync(legacy, { recursive: true });
+
+    expect(getPlanDir(undefined, "read")).toBe(legacy);
   });
 });
 
@@ -98,8 +115,20 @@ describe("saveToHistory", () => {
     const result = saveToHistory("test-project", slug, "# V1");
     expect(result.version).toBe(1);
     expect(result.path).toEndWith("001.md");
+    expect(result.path).toContain(".shuvplan");
     expect(result.isNew).toBe(true);
     expect(readFileSync(result.path, "utf-8")).toBe("# V1");
+  });
+
+  test("reads legacy history when new history is missing", () => {
+    const slug = `legacy-history-${Date.now()}`;
+    const legacyDir = join(process.env.HOME!, ".plannotator", "history", "test-project", slug);
+    mkdirSync(legacyDir, { recursive: true });
+    writeFileSync(join(legacyDir, "001.md"), "# Legacy");
+
+    expect(getPlanVersion("test-project", slug, 1)).toBe("# Legacy");
+    expect(getVersionCount("test-project", slug)).toBe(1);
+    expect(listVersions("test-project", slug)).toHaveLength(1);
   });
 
   test("increments version number", () => {

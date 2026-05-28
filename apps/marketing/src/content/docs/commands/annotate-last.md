@@ -1,43 +1,43 @@
 ---
 title: "Annotate Last"
-description: "The /plannotator-last slash command for annotating the agent's most recent message."
+description: "The /shuvplan-last slash command for annotating the agent's most recent message."
 sidebar:
   order: 13
 section: "Commands"
 ---
 
-The `/plannotator-last` command opens the agent's most recent response in the annotation UI, letting you highlight text, add comments, and send structured feedback back.
+The `/shuvplan-last` command opens the agent's most recent response in the annotation UI, letting you highlight text, add comments, and send structured feedback back.
 
 ## Usage
 
 ### Claude Code
 
 ```
-/plannotator-last
+/shuvplan-last
 ```
 
 ### OpenCode
 
 ```
-/plannotator-last
+/shuvplan-last
 ```
 
 ### Pi
 
 ```
-/plannotator-last
+/shuvplan-last
 ```
 
 ### Codex
 
 ```
-!plannotator last
+!shuvplan last
 ```
 
 ## How it works
 
 ```
-User runs /plannotator-last
+User runs /shuvplan-last
         ↓
 Last assistant message extracted from session
         ↓
@@ -67,7 +67,7 @@ For Claude Code, the parser handles streamed chunks (multiple JSONL lines sharin
 
 ## Annotate-last mode differences
 
-The annotation UI in `annotate-last` mode works the same as `/plannotator-annotate`, with minor copy changes:
+The annotation UI in `annotate-last` mode works the same as `/shuvplan-annotate`, with minor copy changes:
 
 - Copy button shows "Copy message" instead of "Copy plan"
 - Completion screen says "annotations on the message"
@@ -75,12 +75,12 @@ The annotation UI in `annotate-last` mode works the same as `/plannotator-annota
 
 ## Flags
 
-`plannotator annotate-last` accepts the same `--gate`, `--json`, and `--hook` flags as `plannotator annotate`. See [Annotate → Flags](/docs/commands/annotate/#flags) for the full matrix.
+`shuvplan annotate-last` accepts the same `--gate`, `--json`, and `--hook` flags as `shuvplan annotate`. See [Annotate → Flags](/docs/commands/annotate/#flags) for the full matrix.
 
 The common use case for `--gate` on annotate-last is a turn-by-turn review gate wired to a Stop hook:
 
 ```bash
-plannotator annotate-last --gate
+shuvplan annotate-last --gate
 ```
 
 Paired with a Claude Code `Stop` hook, this pauses every agent turn for human review. Approve lets the turn end; Send Annotations re-prompts the agent with feedback. See [Hook integration recipes](/docs/guides/hook-integration/).

@@ -31,6 +31,7 @@ export const SHIKI_THEME_MAP: Record<string, { dark: string | null; light: strin
   'poimandres': { dark: 'poimandres', light: null },
   'red': { dark: 'red', light: null },
   'rose-pine': { dark: 'rose-pine', light: 'rose-pine-dawn' },
+  'shuvplan': { dark: 'night-owl', light: 'light-plus' },
   'slack': { dark: 'slack-dark', light: 'slack-ochin' },
   'snazzy-light': { dark: null, light: 'snazzy-light' },
   'solarized': { dark: 'solarized-dark', light: 'solarized-light' },

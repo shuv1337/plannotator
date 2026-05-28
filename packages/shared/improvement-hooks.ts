@@ -1,8 +1,8 @@
 /**
  * Improvement Hook Reader
  *
- * Reads improvement hook files from ~/.plannotator/hooks/.
- * Falls back to the legacy path (~/.plannotator/) when the new-path
+ * Reads improvement hook files from ~/.shuvplan/hooks/.
+ * Falls back to legacy paths under ~/.plannotator when the new-path
  * file is absent, for compatibility with files written before the
  * path migration. If the new-path file exists but is invalid (empty,
  * oversized, not a regular file), the legacy path is NOT consulted —
@@ -14,25 +14,35 @@
  * - Hardcoded base paths (no user input determines file path)
  * - KNOWN_HOOKS allowlist (only pre-registered relative paths)
  * - Size cap to prevent runaway context injection
- * - Same trust model as ~/.plannotator/config.json
+ * - Same trust model as ~/.shuvplan/config.json
  */
 
 import { homedir } from "os";
 import { join } from "path";
 import { readFileSync, statSync } from "fs";
+import { DATA_DIR_NAME, LEGACY_DATA_DIR_NAME } from "./data-dir";
 
 /** Base directory for hook-injectable files (new path) */
-const HOOKS_BASE_DIR = join(homedir(), ".plannotator", "hooks");
+function getHooksBaseDir(): string {
+  return join(homedir(), DATA_DIR_NAME, "hooks");
+}
+
+/** Legacy hooks directory (previous new path) */
+function getLegacyHooksBaseDir(): string {
+  return join(homedir(), LEGACY_DATA_DIR_NAME, "hooks");
+}
 
 /** Legacy base directory (pre-migration path) */
-const LEGACY_BASE_DIR = join(homedir(), ".plannotator");
+function getLegacyBaseDir(): string {
+  return join(homedir(), LEGACY_DATA_DIR_NAME);
+}
 
 /** Maximum file size to read (50 KB) */
 const MAX_FILE_SIZE = 50 * 1024;
 
 /**
  * Known improvement hook file paths, keyed by hook name.
- * `path` is relative to HOOKS_BASE_DIR (~/.plannotator/hooks/).
+ * `path` is relative to HOOKS_BASE_DIR (~/.shuvplan/hooks/).
  * `legacyPath` is relative to LEGACY_BASE_DIR (~/.plannotator/).
  */
 const KNOWN_HOOKS = {
@@ -49,7 +59,7 @@ export function getImprovementHookExpectedPath(
 ): string | null {
   const entry = KNOWN_HOOKS[hookName];
   if (!entry) return null;
-  return join(HOOKS_BASE_DIR, entry.path);
+  return join(getHooksBaseDir(), entry.path);
 }
 
 export interface ImprovementHookResult {
@@ -92,7 +102,8 @@ function tryReadHookFile(
  * Lookup order:
  * 1. New path (HOOKS_BASE_DIR + path). If it exists and validates, return it.
  * 2. If the new path exists but is invalid (empty, oversized, etc.), return null.
- * 3. Only if the new path does not exist, try the legacy path (LEGACY_BASE_DIR + legacyPath).
+ * 3. Only if the new path does not exist, try legacy ~/.plannotator/hooks/.
+ * 4. Finally try the oldest legacy path (~/.plannotator/).
  */
 export function readImprovementHook(
   hookName: ImprovementHookName,
@@ -100,14 +111,18 @@ export function readImprovementHook(
   const entry = KNOWN_HOOKS[hookName];
   if (!entry) return null;
 
-  const newPath = join(HOOKS_BASE_DIR, entry.path);
+  const newPath = join(getHooksBaseDir(), entry.path);
 
   // New path exists — use it exclusively (even if invalid)
   if (fileExists(newPath)) {
     return tryReadHookFile(newPath, hookName);
   }
 
-  // New path absent — fall back to legacy path
-  const legacyFilePath = join(LEGACY_BASE_DIR, entry.legacyPath);
+  // New path absent — fall back through legacy paths
+  const legacyHooksFilePath = join(getLegacyHooksBaseDir(), entry.path);
+  const legacyHooks = tryReadHookFile(legacyHooksFilePath, hookName);
+  if (legacyHooks) return legacyHooks;
+
+  const legacyFilePath = join(getLegacyBaseDir(), entry.legacyPath);
   return tryReadHookFile(legacyFilePath, hookName);
 }

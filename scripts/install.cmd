@@ -1,7 +1,7 @@
 @echo off
 setlocal enabledelayedexpansion
 
-REM Plannotator Windows CMD Bootstrap Script
+REM shuvplan Windows CMD Bootstrap Script
 
 REM Parse command line arguments
 set "VERSION=latest"
@@ -9,7 +9,7 @@ REM Tracks whether a version was explicitly set via --version or positional.
 REM Used to reject mixing --version <tag> with a stray positional token.
 set "VERSION_EXPLICIT=0"
 REM Three-layer opt-in for SLSA provenance verification.
-REM Precedence: CLI flag > env var > %USERPROFILE%\.plannotator\config.json > default.
+REM Precedence: CLI flag > env var > %USERPROFILE%\.shuvplan\config.json > %USERPROFILE%\.plannotator\config.json > default.
 REM -1 = flag not set (fall through); 0 = disable; 1 = enable.
 set "VERIFY_ATTESTATION_FLAG=-1"
 
@@ -103,7 +103,7 @@ if /i "%PROCESSOR_ARCHITEW6432%"=="AMD64"    set "PLATFORM=win32-x64"
 if /i "%PROCESSOR_ARCHITEW6432%"=="ARM64"    set "PLATFORM=win32-arm64"
 
 if "!PLATFORM!"=="" (
-    echo Plannotator does not support 32-bit Windows. >&2
+    echo shuvplan does not support 32-bit Windows. >&2
     exit /b 1
 )
 
@@ -156,22 +156,30 @@ echo Installing plannotator !TAG!...
 
 REM Resolve SLSA build-provenance verification opt-in BEFORE the download so
 REM we can fail fast without wasting bandwidth if the requested tag predates
-REM provenance support. Precedence: CLI flag > env var > config.json > default.
+REM provenance support. Precedence: CLI flag > env var > new config.json > legacy config.json > default.
 set "VERIFY_ATTESTATION=0"
 
 REM Layer 3: config file (lowest precedence of the opt-in sources).
-if exist "%USERPROFILE%\.plannotator\config.json" (
-    findstr /r /c:"\"verifyAttestation\"[ 	]*:[ 	]*true" "%USERPROFILE%\.plannotator\config.json" >nul 2>&1
+set "VERIFY_CONFIG=%USERPROFILE%\.shuvplan\config.json"
+if not exist "!VERIFY_CONFIG!" if exist "%USERPROFILE%\.plannotator\config.json" set "VERIFY_CONFIG=%USERPROFILE%\.plannotator\config.json"
+if exist "!VERIFY_CONFIG!" (
+    findstr /r /c:"\"verifyAttestation\"[ 	]*:[ 	]*true" "!VERIFY_CONFIG!" >nul 2>&1
     if !ERRORLEVEL! equ 0 set "VERIFY_ATTESTATION=1"
 )
 
-REM Layer 2: env var (overrides config file).
+REM Layer 2: env vars (override config file; SHUVPLAN_* wins over legacy PLANNOTATOR_*).
 if /i "!PLANNOTATOR_VERIFY_ATTESTATION!"=="1"    set "VERIFY_ATTESTATION=1"
 if /i "!PLANNOTATOR_VERIFY_ATTESTATION!"=="true" set "VERIFY_ATTESTATION=1"
 if /i "!PLANNOTATOR_VERIFY_ATTESTATION!"=="yes"  set "VERIFY_ATTESTATION=1"
 if /i "!PLANNOTATOR_VERIFY_ATTESTATION!"=="0"    set "VERIFY_ATTESTATION=0"
 if /i "!PLANNOTATOR_VERIFY_ATTESTATION!"=="false" set "VERIFY_ATTESTATION=0"
 if /i "!PLANNOTATOR_VERIFY_ATTESTATION!"=="no"   set "VERIFY_ATTESTATION=0"
+if /i "!SHUVPLAN_VERIFY_ATTESTATION!"=="1"    set "VERIFY_ATTESTATION=1"
+if /i "!SHUVPLAN_VERIFY_ATTESTATION!"=="true" set "VERIFY_ATTESTATION=1"
+if /i "!SHUVPLAN_VERIFY_ATTESTATION!"=="yes"  set "VERIFY_ATTESTATION=1"
+if /i "!SHUVPLAN_VERIFY_ATTESTATION!"=="0"    set "VERIFY_ATTESTATION=0"
+if /i "!SHUVPLAN_VERIFY_ATTESTATION!"=="false" set "VERIFY_ATTESTATION=0"
+if /i "!SHUVPLAN_VERIFY_ATTESTATION!"=="no"   set "VERIFY_ATTESTATION=0"
 
 REM Layer 1: CLI flag (overrides everything).
 if "!VERIFY_ATTESTATION_FLAG!"=="1" set "VERIFY_ATTESTATION=1"
@@ -226,8 +234,8 @@ if "!VERIFY_ATTESTATION!"=="1" (
         echo signed build provenance is !MIN_ATTESTED_VERSION!. Options: >&2
         echo   - Pin to !MIN_ATTESTED_VERSION! or later: --version !MIN_ATTESTED_VERSION! >&2
         echo   - Install without provenance verification: --skip-attestation >&2
-        echo   - Or unset PLANNOTATOR_VERIFY_ATTESTATION / remove verifyAttestation >&2
-        echo     from %USERPROFILE%\.plannotator\config.json >&2
+        echo   - Or unset SHUVPLAN_VERIFY_ATTESTATION / remove verifyAttestation >&2
+        echo     from %USERPROFILE%\.shuvplan\config.json >&2
         exit /b 1
     )
 )
@@ -320,22 +328,25 @@ if "!VERIFY_ATTESTATION!"=="1" (
     ) else (
         echo verifyAttestation is enabled but gh CLI was not found. >&2
         echo Install https://cli.github.com ^(and run 'gh auth login'^), >&2
-        echo or unset PLANNOTATOR_VERIFY_ATTESTATION / remove verifyAttestation >&2
-        echo from %USERPROFILE%\.plannotator\config.json / pass --skip-attestation. >&2
+        echo or unset SHUVPLAN_VERIFY_ATTESTATION / remove verifyAttestation >&2
+        echo from %USERPROFILE%\.shuvplan\config.json / pass --skip-attestation. >&2
         del "!TEMP_FILE!"
         exit /b 1
     )
 ) else (
     echo SHA256 verified. For build provenance verification, see
-    echo https://plannotator.ai/docs/getting-started/installation/#verifying-your-install
+    echo https://plan.shuv.dev/docs/getting-started/installation/#verifying-your-install
 )
 
 REM Install binary
-set "INSTALL_PATH=!INSTALL_DIR!\plannotator.exe"
+set "INSTALL_PATH=!INSTALL_DIR!\shuvplan.exe"
+set "LEGACY_INSTALL_PATH=!INSTALL_DIR!\plannotator.exe"
 move /y "!TEMP_FILE!" "!INSTALL_PATH!" >nul
+copy /y "!INSTALL_PATH!" "!LEGACY_INSTALL_PATH!" >nul
 
 echo.
-echo plannotator !TAG! installed to !INSTALL_PATH!
+echo shuvplan !TAG! installed to !INSTALL_PATH!
+echo Compatibility alias installed to !LEGACY_INSTALL_PATH!
 
 REM Check if install directory is in PATH
 echo !PATH! | findstr /i /c:"!INSTALL_DIR!" >nul
@@ -501,13 +512,27 @@ echo Installed /plannotator-setup-goal command to !OPENCODE_COMMANDS_DIR!\planno
 
 (
 echo ---
-echo description: Generate a Plannotator-themed self-contained HTML visual explainer
+echo description: Generate a shuvplan-themed self-contained HTML visual explainer
 echo ---
 echo.
-echo Use $plannotator-visual-explainer to generate a self-contained HTML visualization with Plannotator theming. Treat any command arguments as the visualization brief; if there are no arguments, infer the brief from the current conversation or ask the user for the missing details.
+echo Use $plannotator-visual-explainer to generate a self-contained HTML visualization with shuvplan theming. Treat any command arguments as the visualization brief; if there are no arguments, infer the brief from the current conversation or ask the user for the missing details.
 ) > "!OPENCODE_COMMANDS_DIR!\plannotator-visual-explainer.md"
 
 echo Installed /plannotator-visual-explainer command to !OPENCODE_COMMANDS_DIR!\plannotator-visual-explainer.md
+
+for %%F in (plannotator-review.md plannotator-annotate.md plannotator-last.md) do (
+    set "SHUV_FILE=%%F"
+    set "SHUV_FILE=!SHUV_FILE:plannotator-=shuvplan-!"
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "$src=$env:CLAUDE_COMMANDS_DIR + '\%%F'; $dst=$env:CLAUDE_COMMANDS_DIR + '\' + $env:SHUV_FILE; if (Test-Path $src) { $content=(Get-Content -Path $src -Raw).Replace('Plannotator','shuvplan').Replace('plannotator','shuvplan'); [System.IO.File]::WriteAllText($dst,$content,[System.Text.UTF8Encoding]::new($false)) }"
+    echo Installed /!SHUV_FILE:.md=! command to !CLAUDE_COMMANDS_DIR!\!SHUV_FILE!
+)
+
+for %%F in (plannotator-review.md plannotator-annotate.md plannotator-last.md plannotator-setup-goal.md plannotator-visual-explainer.md) do (
+    set "SHUV_FILE=%%F"
+    set "SHUV_FILE=!SHUV_FILE:plannotator-=shuvplan-!"
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "$src=$env:OPENCODE_COMMANDS_DIR + '\%%F'; $dst=$env:OPENCODE_COMMANDS_DIR + '\' + $env:SHUV_FILE; if (Test-Path $src) { $content=(Get-Content -Path $src -Raw).Replace('Plannotator','shuvplan').Replace('plannotator','shuvplan'); [System.IO.File]::WriteAllText($dst,$content,[System.Text.UTF8Encoding]::new($false)) }"
+    echo Installed /!SHUV_FILE:.md=! command to !OPENCODE_COMMANDS_DIR!\!SHUV_FILE!
+)
 
 REM Install skills (requires git)
 REM Remove legacy Codex-oriented skills from the older shared agent scope.
@@ -519,9 +544,9 @@ for %%S in (plannotator-review plannotator-annotate plannotator-last) do (
         set "LEGACY_SKILLS_REMOVED=1"
     )
 )
-if "!LEGACY_SKILLS_REMOVED!"=="1" echo Removed legacy Plannotator skills from !LEGACY_AGENTS_SKILLS_DIR!
+if "!LEGACY_SKILLS_REMOVED!"=="1" echo Removed legacy shuvplan/plannotator skills from !LEGACY_AGENTS_SKILLS_DIR!
 
-REM Remove Plannotator skills that still belong only in the shared agent scope from Codex.
+REM Remove shuvplan/plannotator skills that still belong only in the shared agent scope from Codex.
 set "STALE_CODEX_SKILLS_DIR=%USERPROFILE%\.codex\skills"
 set "STALE_CODEX_SKILLS_REMOVED=0"
 for %%S in (plannotator-compound) do (
@@ -530,7 +555,7 @@ for %%S in (plannotator-compound) do (
         set "STALE_CODEX_SKILLS_REMOVED=1"
     )
 )
-if "!STALE_CODEX_SKILLS_REMOVED!"=="1" echo Removed shared-agent Plannotator skills from !STALE_CODEX_SKILLS_DIR!
+if "!STALE_CODEX_SKILLS_REMOVED!"=="1" echo Removed shared-agent shuvplan/plannotator skills from !STALE_CODEX_SKILLS_DIR!
 
 where git >nul 2>&1
 if !ERRORLEVEL! equ 0 (
@@ -599,13 +624,13 @@ if !ERRORLEVEL! equ 0 (
             if exist "!PI_SETTINGS_PATH!" (
                 where powershell >nul 2>&1
                 if !ERRORLEVEL! equ 0 (
-                    powershell -NoProfile -ExecutionPolicy Bypass -Command "$p=$env:PI_SETTINGS_PATH; if ((Test-Path $p) -eq $false) { exit 0 }; try { $s=Get-Content -Path $p -Raw -ErrorAction Stop | ConvertFrom-Json } catch { Write-Host 'Skipping Pi settings update (could not parse settings.json)'; exit 0 }; if (($null -eq $s) -or ($null -eq $s.packages)) { exit 0 }; $pattern='^(?:npm:)?@plannotator/pi-extension(?:@.+)?$'; $changed=$false; $packages=@(); foreach ($entry in @($s.packages)) { if (($entry -is [string]) -and ($entry -match $pattern)) { $packages += [pscustomobject]@{ source=$entry; skills=@() }; $changed=$true; continue }; $sourceProperty=$null; if (($null -ne $entry) -and ($null -ne $entry.PSObject)) { $sourceProperty=$entry.PSObject.Properties['source'] }; if (($null -ne $sourceProperty) -and ($sourceProperty.Value -is [string]) -and ($sourceProperty.Value -match $pattern)) { $skillsProperty=$entry.PSObject.Properties['skills']; if (($null -eq $skillsProperty) -or (@($skillsProperty.Value).Count -ne 0)) { if ($null -ne $skillsProperty) { $entry.skills=@() } else { $entry | Add-Member -NotePropertyName 'skills' -NotePropertyValue @() }; $changed=$true } }; $packages += $entry }; if ($changed) { $s.packages=@($packages); $tmp=[System.IO.Path]::GetTempFileName(); try { $json=($s | ConvertTo-Json -Depth 20)+[Environment]::NewLine; $utf8NoBom=New-Object System.Text.UTF8Encoding -ArgumentList $false; [System.IO.File]::WriteAllText($tmp,$json,$utf8NoBom); Move-Item -Force $tmp $p; Write-Host 'Configured Pi to use global Plannotator skills and skip bundled package skills.' } catch { Write-Host 'Skipping Pi settings update (could not rewrite settings.json)'; Remove-Item -Force $tmp -ErrorAction SilentlyContinue } }"
+                    powershell -NoProfile -ExecutionPolicy Bypass -Command "$p=$env:PI_SETTINGS_PATH; if ((Test-Path $p) -eq $false) { exit 0 }; try { $s=Get-Content -Path $p -Raw -ErrorAction Stop | ConvertFrom-Json } catch { Write-Host 'Skipping Pi settings update (could not parse settings.json)'; exit 0 }; if (($null -eq $s) -or ($null -eq $s.packages)) { exit 0 }; $pattern='^(?:npm:)?@plannotator/pi-extension(?:@.+)?$'; $changed=$false; $packages=@(); foreach ($entry in @($s.packages)) { if (($entry -is [string]) -and ($entry -match $pattern)) { $packages += [pscustomobject]@{ source=$entry; skills=@() }; $changed=$true; continue }; $sourceProperty=$null; if (($null -ne $entry) -and ($null -ne $entry.PSObject)) { $sourceProperty=$entry.PSObject.Properties['source'] }; if (($null -ne $sourceProperty) -and ($sourceProperty.Value -is [string]) -and ($sourceProperty.Value -match $pattern)) { $skillsProperty=$entry.PSObject.Properties['skills']; if (($null -eq $skillsProperty) -or (@($skillsProperty.Value).Count -ne 0)) { if ($null -ne $skillsProperty) { $entry.skills=@() } else { $entry | Add-Member -NotePropertyName 'skills' -NotePropertyValue @() }; $changed=$true } }; $packages += $entry }; if ($changed) { $s.packages=@($packages); $tmp=[System.IO.Path]::GetTempFileName(); try { $json=($s | ConvertTo-Json -Depth 20)+[Environment]::NewLine; $utf8NoBom=New-Object System.Text.UTF8Encoding -ArgumentList $false; [System.IO.File]::WriteAllText($tmp,$json,$utf8NoBom); Move-Item -Force $tmp $p; Write-Host 'Configured Pi to use global shuvplan skills and skip bundled package skills.' } catch { Write-Host 'Skipping Pi settings update (could not rewrite settings.json)'; Remove-Item -Force $tmp -ErrorAction SilentlyContinue } }"
                 ) else (
                     echo Skipping Pi settings update ^(PowerShell not found^)
                 )
             )
         ) else (
-            echo Leaving Pi bundled skills enabled ^(global Plannotator agent skills not found^).
+            echo Leaving Pi bundled skills enabled ^(global shuvplan agent skills not found^).
         )
         echo Pi extension updated.
     ) else (
@@ -618,7 +643,7 @@ if exist "%USERPROFILE%\.gemini" (
     REM Install policy file
     if not exist "%USERPROFILE%\.gemini\policies" mkdir "%USERPROFILE%\.gemini\policies"
     (
-echo # Plannotator policy for Gemini CLI
+echo # shuvplan policy for Gemini CLI
 echo # Allows exit_plan_mode without TUI confirmation so the browser UI is the sole gate.
 echo [[rule]]
 echo toolName = "exit_plan_mode"
@@ -704,18 +729,26 @@ echo Address the annotation feedback above. The user has reviewed the markdown f
 echo """
     ) > "%USERPROFILE%\.gemini\commands\plannotator-annotate.toml"
 
+    for %%F in (plannotator-review.toml plannotator-annotate.toml) do (
+        set "SHUV_FILE=%%F"
+        set "SHUV_FILE=!SHUV_FILE:plannotator-=shuvplan-!"
+        set "GEMINI_COMMANDS_DIR=%USERPROFILE%\.gemini\commands"
+        powershell -NoProfile -ExecutionPolicy Bypass -Command "$src=$env:GEMINI_COMMANDS_DIR + '\%%F'; $dst=$env:GEMINI_COMMANDS_DIR + '\' + $env:SHUV_FILE; if (Test-Path $src) { $content=(Get-Content -Path $src -Raw).Replace('Plannotator','shuvplan').Replace('plannotator','shuvplan'); [System.IO.File]::WriteAllText($dst,$content,[System.Text.UTF8Encoding]::new($false)) }"
+    )
+
     echo Installed Gemini slash commands to %USERPROFILE%\.gemini\commands\
 )
 
 echo.
 echo Test the install:
-echo   echo {"tool_input":{"plan":"# Test Plan\\n\\nHello world"}} ^| plannotator
+echo   echo {"tool_input":{"plan":"# Test Plan\\n\\nHello world"}} ^| shuvplan
 echo.
 echo Then install the Claude Code plugin:
 echo   /plugin marketplace add backnotprop/plannotator
 echo   /plugin install plannotator@plannotator
 echo.
-echo The /plannotator-review, /plannotator-annotate, /plannotator-last, /plannotator-setup-goal, and /plannotator-visual-explainer commands are ready to use!
+echo The /shuvplan-review, /shuvplan-annotate, /shuvplan-last, /shuvplan-setup-goal, and /shuvplan-visual-explainer commands are ready to use!
+echo Legacy /plannotator-* commands remain installed as compatibility aliases.
 
 REM Warn if plannotator is configured in both settings.json hooks AND the plugin (causes double execution)
 REM Only warn when the plugin is installed — manual-only users won't have overlap

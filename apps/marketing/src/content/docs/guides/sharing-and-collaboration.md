@@ -6,7 +6,7 @@ sidebar:
 section: "Guides"
 ---
 
-Plannotator lets you share plans and annotations with teammates via URL. Small plans are encoded entirely in the URL hash — no backend, no accounts, no server stores anything. Large plans can optionally use short URLs via the [paste service](/docs/guides/self-hosting/#3-deploy-the-paste-service).
+shuvplan lets you share plans and annotations with teammates via URL. Small plans are encoded entirely in the URL hash — no backend, no accounts, no server stores anything. Large plans can optionally use short URLs via the [paste service](/docs/guides/self-hosting/#3-deploy-the-paste-service).
 
 ## How sharing works
 
@@ -20,7 +20,7 @@ When you share a plan:
 The share URL looks like:
 
 ```
-https://share.plannotator.ai/#eNqrVkrOz0nV...
+https://plan.shuv.dev/#eNqrVkrOz0nV...
 ```
 
 All data lives entirely in the URL. The share portal is a static page that reads the hash and renders it — it makes no network requests.
@@ -49,7 +49,7 @@ This lets you see exactly what a teammate flagged, merge their feedback with you
 If you want to prevent sharing (e.g., for sensitive plans), set:
 
 ```bash
-export PLANNOTATOR_SHARE=disabled
+export SHUVPLAN_SHARE=disabled
 ```
 
 When sharing is disabled:
@@ -59,7 +59,7 @@ When sharing is disabled:
 
 ## Short URLs for large plans
 
-When a plan is too large for a URL (~2KB+ compressed), messaging apps like Slack and WhatsApp may truncate it. Plannotator can create a short link by temporarily storing the compressed plan in a paste service.
+When a plan is too large for a URL (~2KB+ compressed), messaging apps like Slack and WhatsApp may truncate it. shuvplan can create a short link by temporarily storing the compressed plan in a paste service.
 
 ### How it works
 
@@ -67,7 +67,7 @@ When a plan is too large for a URL (~2KB+ compressed), messaging apps like Slack
 2. If the URL is large, you'll see a notice: "This plan is too large for a URL"
 3. Click **Create short link** to confirm
 4. The compressed plan is temporarily stored, then automatically deleted after the configured TTL
-5. A short URL like `share.plannotator.ai/p/aBcDeFgH` is generated
+5. A short URL like `plan.shuv.dev/p/aBcDeFgH` is generated
 6. Both the short URL and the full hash URL are shown — the short URL is safe for messaging apps
 
 ### Privacy & encryption
@@ -82,7 +82,7 @@ When a plan is too large for a URL (~2KB+ compressed), messaging apps like Slack
 
 ## Self-hosting the share portal
 
-By default, share URLs point to `https://share.plannotator.ai`. You can self-host the portal and point Plannotator at your instance. See the [self-hosting guide](/docs/guides/self-hosting/) for details.
+By default, share URLs use the current hosted compatibility portal until shuvplan deployment smoke passes. Set `SHUVPLAN_SHARE_URL=https://plan.shuv.dev`, or self-host the portal and point shuvplan at your instance. See the [self-hosting guide](/docs/guides/self-hosting/) for details.
 
 ## Privacy model
 

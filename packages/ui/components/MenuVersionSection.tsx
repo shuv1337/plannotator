@@ -9,8 +9,8 @@ const PI_INSTALL_COMMAND = 'pi install npm:@plannotator/pi-extension';
 function getInstallCommand(origin?: Origin | null, isWSL = false): string {
   if (origin === 'pi') return PI_INSTALL_COMMAND;
   return isWindows && !isWSL
-    ? 'powershell -c "irm https://plannotator.ai/install.ps1 | iex"'
-    : 'curl -fsSL https://plannotator.ai/install.sh | bash';
+    ? 'powershell -c "irm https://plan.shuv.dev/install.ps1 | iex"'
+    : 'curl -fsSL https://plan.shuv.dev/install.sh | bash';
 }
 
 interface MenuVersionSectionProps {
@@ -45,13 +45,13 @@ export const MenuVersionSection: React.FC<MenuVersionSectionProps> = ({
     <div className="px-3 py-2 space-y-2">
       <div className="flex items-center justify-between gap-3">
         <a
-          href="https://github.com/backnotprop/plannotator"
+          href="https://plan.shuv.dev"
           target="_blank"
           rel="noopener noreferrer"
           onClick={closeMenu}
           className="text-[10px] font-semibold tracking-wide text-muted-foreground hover:text-foreground transition-colors"
         >
-          Plannotator
+          shuvplan
         </a>
         <span className="text-[10px] font-mono text-muted-foreground/70">
           v{appVersion}

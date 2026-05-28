@@ -1,6 +1,6 @@
 ---
 name: plannotator-setup-goal
-description: Turn an idea or objective into a goal package for /goal. Interviews the user, builds a reviewed fact sheet via Plannotator, then explores the codebase to produce an execution plan.
+description: Turn an idea or objective into a goal package for /goal. Interviews the user, builds a reviewed fact sheet via shuvplan, then explores the codebase to produce an execution plan.
 ---
 
 # Setup Goal
@@ -21,11 +21,11 @@ mkdir -p goals/<slug>
 
 Use `goals/<slug>/` for both working JSON files and final docs. The JSON files are provenance and iteration state; the markdown files are the human-readable authoritative goal package.
 
-**Browser session patience rule:** Plannotator goal setup is a user-driven browser session. After launching an interview or facts command, be absolutely patient and keep waiting on the user until they submit, dismiss, or explicitly ask you to stop. Do not close, kill, restart, refresh, or open a second copy just because the UI is idle or the user is taking time. Never close and reopen the session as a way to update state; if a rerun is needed after the prior session ends, update the working JSON file and launch a new command from that file.
+**Browser session patience rule:** shuvplan goal setup is a user-driven browser session. After launching an interview or facts command, be absolutely patient and keep waiting on the user until they submit, dismiss, or explicitly ask you to stop. Do not close, kill, restart, refresh, or open a second copy just because the UI is idle or the user is taking time. Never close and reopen the session as a way to update state; if a rerun is needed after the prior session ends, update the working JSON file and launch a new command from that file.
 
 ### 2. Interview Bundle
 
-Build a compact bundle of questions that can derive every "fact" this goal should produce. Package the questions together so the user can answer them quickly in the Plannotator goal setup UI. For each question, include your recommended answer and use options when they make answering faster.
+Build a compact bundle of questions that can derive every "fact" this goal should produce. Package the questions together so the user can answer them quickly in the shuvplan goal setup UI. For each question, include your recommended answer and use options when they make answering faster.
 
 Do not ask obvious confirmation questions. If the answer can be inferred from the user's request, from the conversation, or from shallow codebase exploration, infer it and move on. If an obvious area has meaningful nuance, present the inferred answer as a recommendation with options or a custom "add/correct this" path rather than asking the user to restate the obvious.
 
@@ -146,7 +146,7 @@ Write `goals/<slug>/plan.md`:
 - Verification for each step (concrete commands or checks)
 - Risks or open questions worth flagging
 
-Gate the plan with Plannotator:
+Gate the plan with shuvplan:
 
 ```bash
 plannotator annotate goals/<slug>/plan.md --gate

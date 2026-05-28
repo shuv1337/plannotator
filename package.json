@@ -2,17 +2,18 @@
   "name": "plannotator",
   "version": "0.19.23",
   "private": true,
-  "description": "Interactive Plan Review for Claude Code - annotate plans visually, share with team, automatically send feedback",
+  "description": "shuvplan: interactive plan and code review for AI coding agents, with Plannotator compatibility aliases",
   "author": "backnotprop",
   "license": "MIT OR Apache-2.0",
   "bin": {
+    "shuvplan": "bin/plannotator.js",
     "plannotator": "bin/plannotator.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/backnotprop/plannotator.git"
   },
-  "homepage": "https://github.com/backnotprop/plannotator",
+  "homepage": "https://plan.shuv.dev",
   "bugs": {
     "url": "https://github.com/backnotprop/plannotator/issues"
   },
